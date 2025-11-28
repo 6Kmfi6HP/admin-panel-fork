@@ -1,5 +1,5 @@
-import { HttpTypes } from "@medusajs/types"
-import { useQueryParams } from "../../use-query-params"
+import { useQueryParams } from "@hooks/use-query-params"
+import type { HttpTypes } from "@medusajs/types"
 
 type UseOrderTableQueryProps = {
   prefix?: string

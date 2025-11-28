@@ -1,34 +1,34 @@
 import { useParams } from "react-router-dom"
-import { MetadataForm } from "../../../components/forms/metadata-form/metadata-form"
-import { useCollection, useUpdateCollection } from "../../../hooks/api"
+import { MetadataForm } from "@components/forms/metadata-form/metadata-form"
+import { useCollection, useUpdateCollection } from "@hooks/api"
 import { FetchError } from "@medusajs/js-sdk"
 
 export const CollectionMetadata = () => {
   const { id } = useParams()
 
   const { collection, isPending, isError, error } = useCollection(id!)
-
-  const { mutateAsync, isPending: isMutating } = useUpdateCollection(
-    collection?.id!
-  )
+  const { mutateAsync, isPending: isMutating } = useUpdateCollection(id!)
 
   if (isError) {
     throw error
   }
+console.log(id)
+console.log( collection?.id)
 
   const handleSubmit = async (
     params: { metadata?: Record<string, unknown> | null },
-    callbacks: { onSuccess: () => void; onError: (error: FetchError | string) => void }
+    callbacks: { onSuccess?: () => void; onError?: (error: FetchError | string) => void }
   ) => {
     try {
       const result = await mutateAsync({
         metadata: params.metadata ?? undefined,
       })
-      callbacks.onSuccess()
+      callbacks.onSuccess?.()
+
       return result
     } catch (error) {
       const message = error instanceof FetchError ? error.message : 'An error occurred'
-      callbacks.onError(message)
+      callbacks.onError?.(message)
       throw error
     }
   }

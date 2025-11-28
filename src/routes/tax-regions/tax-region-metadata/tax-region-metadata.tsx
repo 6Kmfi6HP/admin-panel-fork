@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom"
 
-import { useTaxRegion, useUpdateTaxRegion } from "../../../hooks/api"
-import { MetadataForm } from "../../../components/forms/metadata-form"
-import { RouteDrawer } from "../../../components/modals"
+import { useTaxRegion, useUpdateTaxRegion } from "@hooks/api"
+import { MetadataForm } from "@components/forms/metadata-form"
+import { RouteDrawer } from "@components/modals"
 import { FetchError } from "@medusajs/js-sdk"
 
 export const TaxRegionMetadata = () => {
@@ -17,17 +17,18 @@ export const TaxRegionMetadata = () => {
 
   const handleSubmit = async (
     params: { metadata?: Record<string, unknown> | null },
-    callbacks: { onSuccess: () => void; onError: (error: FetchError | string) => void }
+    callbacks: { onSuccess?: () => void; onError?: (error: FetchError | string) => void }
   ) => {
     try {
       const result = await mutateAsync({
         metadata: params.metadata ?? undefined,
       })
-      callbacks.onSuccess()
+      callbacks.onSuccess?.()
+
       return result
     } catch (error) {
       const message = error instanceof FetchError ? error.message : 'An error occurred'
-      callbacks.onError(message)
+      callbacks.onError?.(message)
       throw error
     }
   }

@@ -19,17 +19,17 @@ import {
   Trash,
 } from "@medusajs/icons"
 import { FetchError } from "@medusajs/js-sdk"
-import { ComponentPropsWithoutRef, forwardRef } from "react"
-import { ConditionalTooltip } from "../../common/conditional-tooltip"
-import { Form } from "../../common/form"
-import { Skeleton } from "../../common/skeleton"
-import { RouteDrawer, useRouteModal } from "../../modals"
-import { KeyboundForm } from "../../utilities/keybound-form"
-import { useDocumentDirection } from "../../../hooks/use-document-direction"
+import { useDocumentDirection } from "@hooks/use-document-direction"
+import { KeyboundForm } from "@components/utilities/keybound-form"
+import { RouteDrawer, useRouteModal } from "@components/modals"
+import { Skeleton } from "@components/common/skeleton"
+import { Form } from "@components/common/form"
+import { ConditionalTooltip } from "@components/common/conditional-tooltip"
+import { type ComponentPropsWithoutRef, forwardRef } from "react"
 
 type MetaDataSubmitHook<TRes> = (
   params: { metadata?: Record<string, unknown> | null },
-  callbacks: { onSuccess: () => void; onError: (error: FetchError | string) => void }
+  callbacks: { onSuccess?: () => void; onError?: (error: FetchError | string) => void }
 ) => Promise<TRes>
 
 type MetadataFormProps<TRes> = {
@@ -414,6 +414,7 @@ function parseValues(
 
     if (disabled) {
       update[key] = value
+    
       return
     }
 

@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom"
-import { MetadataForm } from "../../../components/forms/metadata-form/metadata-form"
+import { MetadataForm } from "@components/forms/metadata-form/metadata-form"
 import {
   useShippingProfile,
   useUpdateShippingProfile,
-} from "../../../hooks/api"
+} from "@hooks/api"
 import { FetchError } from "@medusajs/js-sdk"
 
 export const ShippingProfileMetadata = () => {
@@ -12,9 +12,8 @@ export const ShippingProfileMetadata = () => {
   const { shipping_profile, isPending, isError, error } = useShippingProfile(
     shipping_profile_id!
   )
-
   const { mutateAsync, isPending: isMutating } = useUpdateShippingProfile(
-    shipping_profile?.id!
+    shipping_profile_id!
   )
 
   if (isError) {
@@ -23,17 +22,18 @@ export const ShippingProfileMetadata = () => {
 
   const handleSubmit = async (
     params: { metadata?: Record<string, unknown> | null },
-    callbacks: { onSuccess: () => void; onError: (error: FetchError | string) => void }
+    callbacks: { onSuccess?: () => void; onError?: (error: FetchError | string) => void }
   ) => {
     try {
       const result = await mutateAsync({
         metadata: params.metadata ?? undefined,
       })
-      callbacks.onSuccess()
+      callbacks.onSuccess?.()
+
       return result
     } catch (error) {
       const message = error instanceof FetchError ? error.message : 'An error occurred'
-      callbacks.onError(message)
+      callbacks.onError?.(message)
       throw error
     }
   }

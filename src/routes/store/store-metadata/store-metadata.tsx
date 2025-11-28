@@ -1,12 +1,12 @@
-import { MetadataForm } from "../../../components/forms/metadata-form"
-import { RouteDrawer } from "../../../components/modals"
-import { useStore, useUpdateStore } from "../../../hooks/api"
+import { MetadataForm } from "@components/forms/metadata-form"
+import { RouteDrawer } from "@components/modals"
+import { useStore, useUpdateStore } from "@hooks/api"
 import { FetchError } from "@medusajs/js-sdk"
 
 export const StoreMetadata = () => {
   const { store, isPending, isError, error } = useStore()
 
-  const { mutateAsync, isPending: isMutating } = useUpdateStore(store?.id!)
+  const { mutateAsync, isPending: isMutating } = useUpdateStore(store?.id ?? '')
 
   if (isError) {
     throw error
@@ -14,17 +14,24 @@ export const StoreMetadata = () => {
 
   const handleSubmit = async (
     params: { metadata?: Record<string, unknown> | null },
-    callbacks: { onSuccess: () => void; onError: (error: FetchError | string) => void }
+    callbacks: { onSuccess?: () => void; onError?: (error: FetchError | string) => void }
   ) => {
+    if (!store?.id) {
+      callbacks.onError?.('Store ID not available')
+
+      return
+    }
+
     try {
       const result = await mutateAsync({
         metadata: params.metadata ?? undefined,
       })
-      callbacks.onSuccess()
+      callbacks.onSuccess?.()
+
       return result
     } catch (error) {
       const message = error instanceof FetchError ? error.message : 'An error occurred'
-      callbacks.onError(message)
+      callbacks.onError?.(message)
       throw error
     }
   }
