@@ -1,8 +1,8 @@
 import { Divider, Heading, Input, RadioGroup, Select, Text } from "@medusajs/ui"
-import { UseFormReturn } from "react-hook-form"
+import type { UseFormReturn } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
-import { HttpTypes } from "@medusajs/types"
+import type { HttpTypes } from "@medusajs/types"
 
 import { Form } from "../../../../../components/common/form"
 import { SwitchBox } from "../../../../../components/common/switch-box"
@@ -13,13 +13,14 @@ import { formatProvider } from "../../../../../lib/format-provider"
 import { FulfillmentSetType, ShippingOptionPriceType, } from "../../../common/constants"
 import { CreateShippingOptionSchema } from "./schema"
 import { useDocumentDirection } from "../../../../../hooks/use-document-direction"
+import type { ExtendedAdminFulfillmentProviderOption } from "@custom-types/fulfillment-providers/common"
 
 type CreateShippingOptionDetailsFormProps = {
   form: UseFormReturn<CreateShippingOptionSchema>
   isReturn?: boolean
   zone: HttpTypes.AdminServiceZone
   locationId: string
-  fulfillmentProviderOptions: HttpTypes.AdminFulfillmentProviderOption[]
+  fulfillmentProviderOptions: ExtendedAdminFulfillmentProviderOption[]
   selectedProviderId?: string
   type: FulfillmentSetType
 }
@@ -70,6 +71,7 @@ export const CreateShippingOptionDetailsForm = ({
         value: provider.id,
       })),
   })
+  console.log(fulfillmentProviderOptions)
 
   return (
     <div className="flex flex-1 flex-col items-center overflow-y-auto">
