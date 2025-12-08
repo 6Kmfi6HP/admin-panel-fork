@@ -15,7 +15,6 @@ export const DEFAULT_RELATIONS = [
   "*sales_channel",
   "orders.*",
   "orders.seller.*",
-  "orders.total",
 ];
 
 export const DEFAULT_FIELDS = `${DEFAULT_PROPERTIES.join(",")},${DEFAULT_RELATIONS.join(",")}`;
