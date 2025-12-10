@@ -2794,11 +2794,11 @@
   },
   "login": {
     "forgotPassword": "Forgot password? - <0>Reset</0>",
-    "title": "Welcome to Medusa",
+    "title": "Welcome to Mercur Admin Panel",
     "hint": "Sign in to access the account area"
   },
   "invite": {
-    "title": "Welcome to Medusa",
+    "title": "Welcome to Mercur Admin Panel",
     "hint": "Create your account below",
     "backToLogin": "Back to login",
     "createAccount": "Create account",
@@ -3185,7 +3185,11 @@
     }
   },
   "attributes": {
-    "domain": "Product Attributes"
+    "domain": "Product Attributes",
+    "create": {
+      "fillNameWarning": "Please fill in at least the name field before proceeding to Type configuration.",
+      "possibleValuesRequired": "At least one possible value is required for this type"
+    }
   },
   "requests": {
     "domain": "Requests",
