@@ -1,8 +1,9 @@
 import { useTranslation } from "react-i18next";
 
-import type { Filter } from "../../../components/table/data-table";
-import { useSalesChannels } from "../../api/sales-channels";
-import { useSellers } from "../../api/sellers";
+import type { Filter } from "@components/table/data-table";
+
+import { useSalesChannels } from "@hooks/api/sales-channels";
+import { useSellers } from "@hooks/api/sellers";
 
 export const useOrderSetsTableFilters = (): Filter[] => {
   const { t } = useTranslation();
@@ -51,7 +52,19 @@ export const useOrderSetsTableFilters = (): Filter[] => {
       },
       {
         label: t("orders.payment.status.captured"),
-        value: "captured",
+        value: "completed",
+      },
+      {
+        label: t("orders.payment.status.authorized"),
+        value: "authorized",
+      },
+      {
+        label: t("orders.payment.status.partiallyAuthorized"),
+        value: "partially_authorized",
+      },
+      {
+        label: t("orders.payment.status.partiallyCaptured"),
+        value: "partially_captured",
       },
       {
         label: t("orders.payment.status.refunded"),
@@ -72,6 +85,8 @@ export const useOrderSetsTableFilters = (): Filter[] => {
     ],
   };
 
+  // Note: Fulfillment status is a computed field, so it's filtered post-query on the backend
+  // by checking individual orders within each order set
   const fulfillmentStatusFilter: Filter = {
     key: "fulfillment_status",
     label: t("orders.fulfillment.statusLabel"),
@@ -91,20 +106,28 @@ export const useOrderSetsTableFilters = (): Filter[] => {
         value: "partially_fulfilled",
       },
       {
-        label: t("orders.fulfillment.status.returned"),
-        value: "returned",
-      },
-      {
-        label: t("orders.fulfillment.status.partiallyReturned"),
-        value: "partially_returned",
-      },
-      {
         label: t("orders.fulfillment.status.shipped"),
         value: "shipped",
       },
       {
         label: t("orders.fulfillment.status.partiallyShipped"),
         value: "partially_shipped",
+      },
+      {
+        label: t("orders.fulfillment.status.delivered"),
+        value: "delivered",
+      },
+      {
+        label: t("orders.fulfillment.status.partiallyDelivered"),
+        value: "partially_delivered",
+      },
+      {
+        label: t("orders.fulfillment.status.returned"),
+        value: "returned",
+      },
+      {
+        label: t("orders.fulfillment.status.partiallyReturned"),
+        value: "partially_returned",
       },
       {
         label: t("orders.fulfillment.status.canceled"),

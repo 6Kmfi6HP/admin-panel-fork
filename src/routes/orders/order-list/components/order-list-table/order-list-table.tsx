@@ -9,7 +9,6 @@ import { Container, Heading } from '@medusajs/ui';
 import { keepPreviousData } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
-import { DEFAULT_FIELDS } from '../../const';
 import { hasMultipleOrders } from '../../utils/is-order-set';
 
 const PAGE_SIZE = 20;
@@ -23,7 +22,6 @@ export const OrderListTable = () => {
 
   const { order_sets, count, isError, error, isLoading } = useOrderSets(
     {
-      fields: DEFAULT_FIELDS,
       ...searchParams
     },
     {

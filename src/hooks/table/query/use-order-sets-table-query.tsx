@@ -1,4 +1,4 @@
-import { FulfillmentStatus, PaymentStatus } from "@medusajs/types";
+import type { FulfillmentStatus, PaymentStatus } from "@medusajs/types";
 
 import { useQueryParams } from "@hooks/use-query-params";
 
@@ -44,8 +44,8 @@ export const useOrderSetsTableQuery = ({
     sales_channel_id,
     created_at,
     updated_at,
-    fulfillment_status,
     payment_status,
+    fulfillment_status,
     seller_id,
     q,
     order,
@@ -55,8 +55,8 @@ export const useOrderSetsTableQuery = ({
     limit: pageSize,
     offset: offset ? Number(offset) : 0,
     sales_channel_id: sales_channel_id?.split(","),
-    fulfillment_status: fulfillment_status?.split(",") as FulfillmentStatus[],
     payment_status: payment_status?.split(",") as PaymentStatus[],
+    fulfillment_status: fulfillment_status?.split(",") as FulfillmentStatus[],
     created_at: created_at ? JSON.parse(created_at) : undefined,
     updated_at: updated_at ? JSON.parse(updated_at) : undefined,
     seller_id: seller_id?.split(","),

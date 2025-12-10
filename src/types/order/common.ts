@@ -70,6 +70,8 @@ export interface OrderSet {
   currency_code: string;
   total: number;
   orders: Order[];
+  payment_status: PaymentStatus;
+  fulfillment_status: FulfillmentStatus;
 }
 
 export type OrderTableRow = OrderSet;

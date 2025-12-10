@@ -3,10 +3,11 @@ import { useMemo } from "react";
 import { TriangleRightMini } from "@medusajs/icons";
 import { IconButton, clx } from "@medusajs/ui";
 
-import { CellContext, createColumnHelper } from "@tanstack/react-table";
+import type { CellContext } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
 
-import { Order, OrderSet } from "@custom-types/order";
+import type { Order, OrderSet } from "@custom-types/order";
 
 import { DateCell } from "@components/table/table-cells/common/date-cell";
 import {
@@ -39,6 +40,7 @@ function getOrderFromRow(row: RowContext): Order | null {
   if (!hasMultipleOrders(row.original)) {
     return row.original.orders[0] ?? null;
   }
+
   return null;
 }
 
@@ -151,6 +153,7 @@ export const useOrderSetTableColumns = () => {
         header: () => <TextHeader text={t("fields.date")} />,
         cell: ({ row }) => {
           const order = getOrderFromRow(row);
+
           return (
             <DateCell date={order?.created_at ?? row.original.created_at} />
           );
@@ -162,12 +165,18 @@ export const useOrderSetTableColumns = () => {
         header: () => <TextHeader text={t("fields.customer")} />,
         cell: ({ row }) => {
           const { customer } = row.original;
-          if (!customer?.first_name && !customer?.last_name) {
-            return null;
+          if (customer?.first_name || customer?.last_name) {
+            return (
+              <TextCell
+                text={`${customer.first_name ?? ""} ${customer.last_name ?? ""}`.trim()}
+              />
+            );
           }
-          return (
-            <TextCell text={`${customer.first_name} ${customer.last_name}`} />
-          );
+          if (customer?.email) {
+            return <TextCell text={customer.email} />;
+          }
+
+          return null;
         },
       }),
 
@@ -175,18 +184,28 @@ export const useOrderSetTableColumns = () => {
         id: "payment_status",
         header: () => <PaymentStatusHeader />,
         cell: ({ row }) =>
-          renderOrderCell(row, (order) => (
-            <PaymentStatusCell status={order.payment_status} />
-          )),
+          renderOrderCell(
+            row,
+            (order) => <PaymentStatusCell status={order.payment_status} />,
+            (orderSet) => (
+              <PaymentStatusCell status={orderSet.payment_status} />
+            ),
+          ),
       }),
 
       columnHelper.display({
         id: "fulfillment_status",
         header: () => <FulfillmentStatusHeader />,
         cell: ({ row }) =>
-          renderOrderCell(row, (order) => (
-            <FulfillmentStatusCell status={order.fulfillment_status} />
-          )),
+          renderOrderCell(
+            row,
+            (order) => (
+              <FulfillmentStatusCell status={order.fulfillment_status} />
+            ),
+            (orderSet) => (
+              <FulfillmentStatusCell status={orderSet.fulfillment_status} />
+            ),
+          ),
       }),
 
       columnHelper.display({

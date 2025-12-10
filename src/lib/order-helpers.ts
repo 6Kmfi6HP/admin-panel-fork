@@ -1,4 +1,4 @@
-import { TFunction } from "i18next";
+import type { TFunction } from "i18next";
 
 export const getCanceledOrderStatus = (
   t: TFunction<"translation">,
@@ -24,6 +24,7 @@ export const getOrderPaymentStatus = (
     ],
     awaiting: [t("orders.payment.status.awaiting"), "orange"],
     captured: [t("orders.payment.status.captured"), "green"],
+    completed: [t("orders.payment.status.captured"), "green"],
     refunded: [t("orders.payment.status.refunded"), "green"],
     partially_refunded: [
       t("orders.payment.status.partiallyRefunded"),
