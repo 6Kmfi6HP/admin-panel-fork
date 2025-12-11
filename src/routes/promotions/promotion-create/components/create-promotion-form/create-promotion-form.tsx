@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import {
+import type {
   ApplicationMethodAllocationValues,
   ApplicationMethodTargetTypeValues,
   ApplicationMethodTypeValues,
@@ -7,6 +7,8 @@ import {
   PromotionStatusValues,
   PromotionTypeValues,
 } from "@medusajs/types"
+import type {
+  ProgressStatus} from "@medusajs/ui";
 import {
   Alert,
   Badge,
@@ -16,7 +18,6 @@ import {
   Divider,
   Heading,
   Input,
-  ProgressStatus,
   ProgressTabs,
   RadioGroup,
   Switch,
@@ -26,7 +27,7 @@ import {
 import { useEffect, useMemo, useState } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import { Trans, useTranslation } from "react-i18next"
-import { z } from "zod"
+import type { z } from "zod"
 import { Form } from "../../../../../components/common/form"
 import { DeprecatedPercentageInput } from "../../../../../components/inputs/percentage-input"
 import {
@@ -51,7 +52,7 @@ import { useDocumentDirection } from "../../../../../hooks/use-document-directio
 const defaultValues = {
   campaign_id: undefined,
   template_id: templates[0].id!,
-  campaign_choice: "none" as "none",
+  campaign_choice: "none" as const,
   is_automatic: "false",
   code: "",
   type: "standard" as PromotionTypeValues,
@@ -70,6 +71,7 @@ const defaultValues = {
 }
 
 type TabState = Record<Tab, ProgressStatus>
+type AllocationMode = "each" | "across" | "once"
 
 export const CreatePromotionForm = () => {
   const [tab, setTab] = useState<Tab>(Tab.TYPE)
@@ -87,6 +89,7 @@ export const CreatePromotionForm = () => {
     resolver: zodResolver(CreatePromotionSchema),
   })
   const { setValue, reset, getValues } = form
+  const [allocationMode, setAllocationMode] = useState<AllocationMode>("each")
 
   const { mutateAsync: createPromotion } = useCreatePromotion()
 
@@ -106,6 +109,8 @@ export const CreatePromotionForm = () => {
         buy_rules: buyRulesData = [],
         ...applicationMethodData
       } = application_method
+      const allocationTyped =
+        applicationMethodData.allocation as ApplicationMethodAllocationValues
 
       const disguisedRules = [
         ...targetRulesData.filter((r) => !!r.disguised),
@@ -152,6 +157,7 @@ export const CreatePromotionForm = () => {
           rules: buildRulesData(rules),
           application_method: {
             ...applicationMethodData,
+            allocation: allocationTyped,
             ...applicationMethodRuleData,
             value: parseFloat(applicationMethodData.value as string) as number,
             target_rules: buildRulesData(targetRulesData),
@@ -289,10 +295,10 @@ export const CreatePromotionForm = () => {
   })
 
   useEffect(() => {
-    if (watchAllocation === "across") {
-      setValue("application_method.max_quantity", null)
+    if (watchAllocation) {
+      setAllocationMode(watchAllocation as AllocationMode)
     }
-  }, [watchAllocation, setValue])
+  }, [watchAllocation])
 
   const watchType = useWatch({
     control: form.control,
@@ -432,7 +438,7 @@ export const CreatePromotionForm = () => {
                           <Form.Control data-testid="promotion-create-form-template-control">
                             <RadioGroup
                               dir={direction}
-                              key={"template_id"}
+                              key="template_id"
                               className="flex-col gap-y-3"
                               {...field}
                               onValueChange={field.onChange}
@@ -514,7 +520,7 @@ export const CreatePromotionForm = () => {
                               data-testid="promotion-create-form-method-radio-group"
                             >
                               <RadioGroup.ChoiceBox
-                                value={"false"}
+                                value="false"
                                 label={t("promotions.form.method.code.title")}
                                 description={t(
                                   "promotions.form.method.code.description"
@@ -524,7 +530,7 @@ export const CreatePromotionForm = () => {
                               />
 
                               <RadioGroup.ChoiceBox
-                                value={"true"}
+                                value="true"
                                 label={t(
                                   "promotions.form.method.automatic.title"
                                 )}
@@ -562,7 +568,7 @@ export const CreatePromotionForm = () => {
                               data-testid="promotion-create-form-status-radio-group"
                             >
                               <RadioGroup.ChoiceBox
-                                value={"draft"}
+                                value="draft"
                                 label={t("promotions.form.status.draft.title")}
                                 description={t(
                                   "promotions.form.status.draft.description"
@@ -572,7 +578,7 @@ export const CreatePromotionForm = () => {
                               />
 
                               <RadioGroup.ChoiceBox
-                                value={"active"}
+                                value="active"
                                 label={t("promotions.form.status.active.title")}
                                 description={t(
                                   "promotions.form.status.active.description"
@@ -686,7 +692,7 @@ export const CreatePromotionForm = () => {
                                 data-testid="promotion-create-form-type-radio-group"
                               >
                                 <RadioGroup.ChoiceBox
-                                  value={"standard"}
+                                  value="standard"
                                   label={t(
                                     "promotions.form.type.standard.title"
                                   )}
@@ -698,7 +704,7 @@ export const CreatePromotionForm = () => {
                                 />
 
                                 <RadioGroup.ChoiceBox
-                                  value={"buyget"}
+                                  value="buyget"
                                   label={t("promotions.form.type.buyget.title")}
                                   description={t(
                                     "promotions.form.type.buyget.description"
@@ -717,7 +723,7 @@ export const CreatePromotionForm = () => {
 
                   <Divider />
 
-                  <RulesFormField form={form} ruleType={"rules"} />
+                  <RulesFormField form={form} ruleType="rules" />
 
                   {!currentTemplate?.hiddenFields?.includes(
                     "application_method.type"
@@ -742,7 +748,7 @@ export const CreatePromotionForm = () => {
                                   data-testid="promotion-create-form-value-type-radio-group"
                                 >
                                   <RadioGroup.ChoiceBox
-                                    value={"fixed"}
+                                    value="fixed"
                                     label={t(
                                       "promotions.form.value_type.fixed.title"
                                     )}
@@ -754,7 +760,7 @@ export const CreatePromotionForm = () => {
                                   />
 
                                   <RadioGroup.ChoiceBox
-                                    value={"percentage"}
+                                    value="percentage"
                                     label={t(
                                       "promotions.form.value_type.percentage.title"
                                     )}
@@ -869,8 +875,8 @@ export const CreatePromotionForm = () => {
                     </>
                   )}
 
-                  {((isTypeStandard && watchAllocation === "each") ||
-                    isTypeBuyGet) && (
+                  {(isTypeStandard || isTypeBuyGet) &&
+                    allocationMode !== "across" && (
                     <>
                       {isTypeBuyGet && (
                         <>
@@ -920,14 +926,28 @@ export const CreatePromotionForm = () => {
                     </>
                   )}
 
-                  {isTypeStandard &&
-                    !currentTemplate?.hiddenFields?.includes(
+                {!currentTemplate?.hiddenFields?.includes(
                       "application_method.allocation"
                     ) && (
                       <Form.Field
                         control={form.control}
                         name="application_method.allocation"
                         render={({ field }) => {
+                        const handleAllocationChange = (
+                          value: AllocationMode
+                        ) => {
+                          setAllocationMode(value)
+                          setValue(
+                            "application_method.allocation",
+                            value as ApplicationMethodAllocationValues
+                          )
+                          field.onChange(value as ApplicationMethodAllocationValues)
+
+                          if (value === "once") {
+                            setValue("application_method.max_quantity", 1)
+                          }
+                        }
+
                           return (
                             <Form.Item data-testid="promotion-create-form-allocation-item">
                               <Form.Label data-testid="promotion-create-form-allocation-label">
@@ -938,12 +958,16 @@ export const CreatePromotionForm = () => {
                                 <RadioGroup
                                   dir={direction}
                                   className="flex gap-y-3"
-                                  {...field}
-                                  onValueChange={field.onChange}
+                                  value={allocationMode}
+                                  onValueChange={(val) =>
+                                    handleAllocationChange(
+                                      val as AllocationMode
+                                    )
+                                  }
                                   data-testid="promotion-create-form-allocation-radio-group"
                                 >
                                   <RadioGroup.ChoiceBox
-                                    value={"each"}
+                                    value="each"
                                     label={t(
                                       "promotions.form.allocation.each.title"
                                     )}
@@ -954,17 +978,30 @@ export const CreatePromotionForm = () => {
                                     data-testid="promotion-create-form-allocation-option-each"
                                   />
 
-                                  <RadioGroup.ChoiceBox
-                                    value={"across"}
-                                    label={t(
-                                      "promotions.form.allocation.across.title"
-                                    )}
-                                    description={t(
-                                      "promotions.form.allocation.across.description"
-                                    )}
-                                    className={clx("basis-1/2")}
-                                    data-testid="promotion-create-form-allocation-option-across"
-                                  />
+                                <RadioGroup.ChoiceBox
+                                  value="once"
+                                  label={t("promotions.form.allocation.once.title", {
+                                    defaultValue: "Once",
+                                  })}
+                                  description={t(
+                                    "promotions.form.allocation.once.description",
+                                    { defaultValue: "Limit discount to max quantity" }
+                                  )}
+                                  className={clx("basis-1/2")}
+                                  data-testid="promotion-create-form-allocation-option-once"
+                                />
+
+                                <RadioGroup.ChoiceBox
+                                  value="across"
+                                  label={t(
+                                    "promotions.form.allocation.across.title"
+                                  )}
+                                  description={t(
+                                    "promotions.form.allocation.across.description"
+                                  )}
+                                  className={clx("basis-1/2")}
+                                  data-testid="promotion-create-form-allocation-option-across"
+                                />
                                 </RadioGroup>
                               </Form.Control>
                               <Form.ErrorMessage data-testid="promotion-create-form-allocation-error" />
@@ -979,7 +1016,7 @@ export const CreatePromotionForm = () => {
                       <Divider />
                       <RulesFormField
                         form={form}
-                        ruleType={"buy-rules"}
+                        ruleType="buy-rules"
                         scope="application_method.buy_rules"
                       />
                     </>
@@ -990,7 +1027,7 @@ export const CreatePromotionForm = () => {
                       <Divider />
                       <RulesFormField
                         form={form}
-                        ruleType={"target-rules"}
+                        ruleType="target-rules"
                         scope="application_method.target_rules"
                       />
                     </>
