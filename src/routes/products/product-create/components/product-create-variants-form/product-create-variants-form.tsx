@@ -22,6 +22,8 @@ type ProductCreateVariantsFormProps = {
   pricePreferences: HttpTypes.AdminPricePreference[]
 }
 
+type VariantWithIndex = ProductCreateVariantSchema & { originalIndex: number }
+
 export const ProductCreateVariantsForm = ({
   form,
   regions,
@@ -57,10 +59,9 @@ export const ProductCreateVariantsForm = ({
     pricePreferences,
   })
 
-  console.log(variants, 'variants')
 
   const variantData = useMemo(() => {
-    const ret: Array<ProductCreateVariantSchema & { originalIndex: number }> = []
+    const ret: VariantWithIndex[] = []
 
     variants.forEach((v, i) => {
       if (v.should_create) {
@@ -84,7 +85,7 @@ export const ProductCreateVariantsForm = ({
 }
 
 const columnHelper = createDataGridHelper<
-  ProductCreateVariantSchema,
+  VariantWithIndex,
   ProductCreateSchemaType
 >()
 
@@ -186,7 +187,7 @@ const useColumns = ({
       }),
 
       ...createDataGridPriceColumns<
-        ProductCreateVariantSchema,
+        VariantWithIndex,
         ProductCreateSchemaType
       >({
         currencies,
@@ -196,6 +197,7 @@ const useColumns = ({
           if (context.column.id?.startsWith("currency_prices")) {
             return `variants.${context.row.original.originalIndex}.prices.${value}`
           }
+          
           return `variants.${context.row.original.originalIndex}.prices.${value}`
         },
         t,
