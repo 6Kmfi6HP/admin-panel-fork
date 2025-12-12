@@ -3,14 +3,13 @@ import { UseFormReturn, useWatch } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
-import { HttpTypes } from "@medusajs/types"
-
 import { Form } from "../../../../../components/common/form"
 import { Combobox } from "../../../../../components/inputs/combobox"
 import { CreateProductVariantSchema } from "./constants"
+import { ExtendedAdminProduct } from "@custom-types/product"
 
 type DetailsTabProps = {
-  product: HttpTypes.AdminProduct
+  product: ExtendedAdminProduct
   form: UseFormReturn<z.infer<typeof CreateProductVariantSchema>>
 }
 
@@ -60,7 +59,7 @@ function DetailsTab({ form, product }: DetailsTabProps) {
             }}
           />
 
-          {product.options?.map((option: any) => (
+          {product.options?.map((option) => (
             <Form.Field
               key={option.id}
               control={form.control}
@@ -76,10 +75,10 @@ function DetailsTab({ form, product }: DetailsTabProps) {
                           onChange(v)
                         }}
                         {...field}
-                        options={option.values.map((v: any) => ({
+                        options={option.values?.map((v) => ({
                           label: v.value,
                           value: v.value,
-                        }))}
+                        })) ?? []}
                       />
                     </Form.Control>
                   </Form.Item>

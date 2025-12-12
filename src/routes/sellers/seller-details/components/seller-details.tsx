@@ -1,5 +1,3 @@
-import type { AdminProductListResponse } from "@medusajs/types";
-
 import { useParams } from "react-router-dom";
 
 import type { AdminCustomerGroupListResponse } from "@custom-types/customer-group";
@@ -86,13 +84,13 @@ export const SellerDetails = () => {
   if (isLoading || ordersLoading || productsLoading || customerGroupsLoading) {
     return <div>Loading...</div>;
   }
-
+  
   return (
     <>
       <SellerGeneralSection seller={data?.seller as VendorSeller} />
       <SellerOrdersSection seller_orders={orders as AdminOrderListResponse} />
       <SellerProductsSection
-        seller_products={products as AdminProductListResponse}
+        seller_products={products || { products: [], count: 0, limit: PAGE_SIZE, offset: 0 }}
         refetch={productsRefetch}
       />
       <SellerCustomerGroupsSection

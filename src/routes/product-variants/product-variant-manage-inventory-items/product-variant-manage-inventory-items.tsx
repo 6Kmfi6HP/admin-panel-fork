@@ -13,8 +13,10 @@ export function ProductVariantManageInventoryItems() {
     isPending: isLoading,
     isError,
     error,
-  } = useProductVariant(id!, variant_id!, {
+  } = useProductVariant(id ?? "", variant_id ?? "", {
     fields: VARIANT_DETAIL_FIELDS,
+  }, {
+    enabled: !!id && !!variant_id,
   })
 
   if (isError) {
@@ -23,7 +25,7 @@ export function ProductVariantManageInventoryItems() {
 
   return (
     <RouteFocusModal>
-      {!isLoading && variant && (
+      {!isLoading && variant && variant.inventory_items && (
         <ManageVariantInventoryItemsForm variant={variant} />
       )}
     </RouteFocusModal>

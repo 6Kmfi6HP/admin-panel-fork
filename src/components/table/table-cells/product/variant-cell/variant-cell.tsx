@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next"
 
 import { PlaceholderCell } from "../../common/placeholder-cell"
-import { HttpTypes } from "@medusajs/types"
+import type { ExtendedAdminProductVariant } from "@custom-types/product"
 
 type VariantCellProps = {
-  variants?: HttpTypes.AdminProductVariant[] | null
+  variants?: ExtendedAdminProductVariant[] | null
   "data-testid"?: string
 }
 

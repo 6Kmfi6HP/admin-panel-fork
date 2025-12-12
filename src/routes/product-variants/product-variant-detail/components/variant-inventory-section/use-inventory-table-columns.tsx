@@ -1,14 +1,11 @@
-import { InventoryNext, ProductVariantDTO } from "@medusajs/types"
+import type { InventoryLevelDTO } from "@medusajs/types"
 
 import { InventoryActions } from "./inventory-actions"
 import { PlaceholderCell } from "../../../../../components/table/table-cells/common/placeholder-cell"
 import { createColumnHelper } from "@tanstack/react-table"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-
-interface ExtendedInventoryItem extends InventoryNext.InventoryItemDTO {
-  variants: ProductVariantDTO[]
-}
+import type { ExtendedInventoryItem } from "../../../../../types/product"
 
 const columnHelper = createColumnHelper<ExtendedInventoryItem>()
 
@@ -17,10 +14,11 @@ export const useInventoryTableColumns = () => {
 
   return useMemo(
     () => [
-      columnHelper.accessor("title", {
+      columnHelper.display({
+        id: "title",
         header: t("fields.title"),
-        cell: ({ getValue }) => {
-          const title = getValue()
+        cell: ({ row }) => {
+          const title = row.original.title
 
           if (!title) {
             return <PlaceholderCell />
@@ -33,10 +31,11 @@ export const useInventoryTableColumns = () => {
           )
         },
       }),
-      columnHelper.accessor("sku", {
+      columnHelper.display({
+        id: "sku",
         header: t("fields.sku"),
-        cell: ({ getValue }) => {
-          const sku = getValue() as string
+        cell: ({ row }) => {
+          const sku = row.original.sku
 
           if (!sku) {
             return <PlaceholderCell />
@@ -49,12 +48,13 @@ export const useInventoryTableColumns = () => {
           )
         },
       }),
-      columnHelper.accessor("required_quantity", {
+      columnHelper.display({
+        id: "required_quantity",
         header: t("fields.requiredQuantity"),
-        cell: ({ getValue }) => {
-          const quantity = getValue()
+        cell: ({ row }) => {
+          const quantity = row.original.required_quantity
 
-          if (Number.isNaN(quantity)) {
+          if (quantity === undefined || Number.isNaN(quantity)) {
             return <PlaceholderCell />
           }
 
@@ -76,7 +76,7 @@ export const useInventoryTableColumns = () => {
           let quantity = 0
           let locations = 0
 
-          inventory.location_levels.forEach((level) => {
+          inventory.location_levels.forEach((level: InventoryLevelDTO) => {
             quantity += level.available_quantity
             locations += 1
           })

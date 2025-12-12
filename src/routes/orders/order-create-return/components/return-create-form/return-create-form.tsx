@@ -6,7 +6,7 @@ import type {
   AdminReturn,
   InventoryLevelDTO,
 } from "@medusajs/types"
-import type { AdminProductVariantListResponseWithInventory } from "@custom-types/product"
+import type { ExtendedAdminProductVariantListResponse } from "@custom-types/product"
 import {
   Alert,
   Button,
@@ -374,7 +374,7 @@ export const ReturnCreateForm = ({
       const { variants } = (await sdk.admin.productVariant.list({
         id: variantIds,
         fields: "*inventory.location_levels",
-      })) as AdminProductVariantListResponseWithInventory
+      })) as ExtendedAdminProductVariantListResponse
 
       variants.forEach((variant) => {
         ret[variant.id] = variant.inventory?.[0]?.location_levels || []

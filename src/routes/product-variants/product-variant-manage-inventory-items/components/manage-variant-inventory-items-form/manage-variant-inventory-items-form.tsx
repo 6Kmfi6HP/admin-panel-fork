@@ -23,15 +23,17 @@ import { useProductVariantsInventoryItemsBatch } from "../../../../../hooks/api/
 import { useComboboxData } from "../../../../../hooks/use-combobox-data"
 import { castNumber } from "../../../../../lib/cast-number"
 import { sdk } from "../../../../../lib/client"
+import { ExtendedAdminProductVariant } from "@custom-types/product"
 
 type ManageVariantInventoryItemsFormProps = {
-  variant: AdminProductVariant & {
-    inventory_items: {
-      inventory: HttpTypes.AdminInventoryItem
-      inventory_item_id: string
-      required_quantity: number
-    }[]
-  }
+  // variant: AdminProductVariant & {
+  //   inventory_items: {
+  //     inventory: HttpTypes.AdminInventoryItem
+  //     inventory_item_id: string
+  //     required_quantity: number
+  //   }[]
+  // }\
+  variant: ExtendedAdminProductVariant
 }
 
 const ManageVariantInventoryItemsSchema = zod.object({
@@ -207,7 +209,7 @@ export function ManageVariantInventoryItemsForm({
 
   const form = useForm<zod.infer<typeof ManageVariantInventoryItemsSchema>>({
     defaultValues: {
-      inventory: variant.inventory_items.length
+      inventory: variant.inventory_items?.length
         ? variant.inventory_items!.map((i) => ({
             required_quantity: i.required_quantity,
             inventory_item_id: i.inventory.id,
@@ -255,7 +257,7 @@ export function ManageVariantInventoryItemsForm({
     const existingItems: Record<string, number> = {}
     const selectedItems: Record<string, boolean> = {}
 
-    variant.inventory_items.forEach(
+    variant.inventory_items?.forEach(
       (i) => (existingItems[i.inventory.id] = i.required_quantity)
     )
 
@@ -285,7 +287,7 @@ export function ManageVariantInventoryItemsForm({
       }
     })
 
-    variant.inventory_items.forEach((i) => {
+    variant.inventory_items?.forEach((i) => {
       if (!(i.inventory.id in selectedItems)) {
         payload.delete = payload.delete || []
 
@@ -356,7 +358,7 @@ export function ManageVariantInventoryItemsForm({
                   isItemOptionDisabled={isItemOptionDisabled}
                   onRemove={() => inventory.remove(inventoryIndex)}
                 />
-              ))}
+              ))}  
             </div>
           </div>
         </RouteFocusModal.Body>

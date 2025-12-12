@@ -11,7 +11,7 @@ import { useUpdateProductVariantsBatch } from "../../../hooks/api/products"
 import { useRegions } from "../../../hooks/api/regions"
 import { castNumber } from "../../../lib/cast-number"
 import { VariantPricingForm } from "../common/variant-pricing-form"
-import type { AdminProductWithPriceRules } from "@custom-types/product"
+import type { ExtendedAdminProduct } from "@custom-types/product"
 
 export const UpdateVariantPricesSchema = zod.object({
   variants: zod.array(
@@ -31,7 +31,7 @@ export const PricingEdit = ({
   product,
   variantId,
 }: {
-  product: AdminProductWithPriceRules
+  product: ExtendedAdminProduct
   variantId?: string
 }) => {
   const { t } = useTranslation()

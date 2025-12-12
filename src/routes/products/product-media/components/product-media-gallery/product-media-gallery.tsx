@@ -10,12 +10,12 @@ import { useCallback, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useLocation } from "react-router-dom"
 
-import { HttpTypes } from "@medusajs/types"
-import { RouteFocusModal } from "../../../../../components/modals"
-import { useUpdateProduct } from "../../../../../hooks/api/products"
+import { RouteFocusModal } from "@components/modals"
+import { useUpdateProduct } from "@hooks/api/products"
+import type { ExtendedAdminProduct, ExtendedAdminProductImage } from "@custom-types/product"
 
 type ProductMediaGalleryProps = {
-  product: HttpTypes.AdminProduct
+  product: ExtendedAdminProduct
 }
 
 export const ProductMediaGallery = ({ product }: ProductMediaGalleryProps) => {
@@ -305,7 +305,7 @@ type Media = {
 }
 
 const getMedia = (
-  images: HttpTypes.AdminProductImage[] | null,
+  images: ExtendedAdminProductImage[] | null,
   thumbnail: string | null
 ) => {
   const media: Media[] =

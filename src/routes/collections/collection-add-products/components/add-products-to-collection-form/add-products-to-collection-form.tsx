@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { HttpTypes } from "@medusajs/types"
+import type { HttpTypes } from "@medusajs/types"
 import { Button, Checkbox, Hint, Tooltip, toast } from "@medusajs/ui"
 import { keepPreviousData } from "@tanstack/react-query"
 import {
@@ -23,6 +23,7 @@ import { useProductTableColumns } from "../../../../../hooks/table/columns/use-p
 import { useProductTableFilters } from "../../../../../hooks/table/filters/use-product-table-filters.tsx"
 import { useProductTableQuery } from "../../../../../hooks/table/query/use-product-table-query.tsx"
 import { useDataTable } from "../../../../../hooks/use-data-table.tsx"
+import { ExtendedAdminProduct } from "@custom-types/index.ts"
 
 type AddProductsToCollectionFormProps = {
   collection: HttpTypes.AdminCollection
@@ -194,7 +195,7 @@ export const AddProductsToCollectionForm = ({
   )
 }
 
-const columnHelper = createColumnHelper<HttpTypes.AdminProduct>()
+const columnHelper = createColumnHelper<ExtendedAdminProduct>()
 
 const useColumns = () => {
   const { t } = useTranslation()

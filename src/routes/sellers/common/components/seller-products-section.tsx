@@ -8,8 +8,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import type { AdminProductListResponse } from "@custom-types/product";
-import type { AdminProduct } from "@custom-types/product/common";
+import type { AdminProductListResponse, ExtendedAdminProduct } from "@custom-types/product/common";
 
 import { ActionsButton } from "@components/common/actions-button";
 import { ProductStatusBadge } from "@components/common/product-status-badge";
@@ -79,14 +78,14 @@ export const SellerProductsSection = ({
   );
 };
 
-const columnHelper = createColumnHelper<AdminProduct>();
+const columnHelper = createColumnHelper<ExtendedAdminProduct>();
 
 const useColumns = (refetch: () => void) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const prompt = usePrompt();
 
-  const handleDelete = async (product: AdminProduct) => {
+  const handleDelete = async (product: ExtendedAdminProduct) => {
     const res = await prompt({
       title: t("general.areYouSure"),
       description: t("products.deleteWarning", {

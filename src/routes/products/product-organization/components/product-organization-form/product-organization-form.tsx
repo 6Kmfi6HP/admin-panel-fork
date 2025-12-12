@@ -16,9 +16,10 @@ import { useComboboxData } from "../../../../../hooks/use-combobox-data"
 import { sdk } from "../../../../../lib/client"
 import { useExtension } from "../../../../../providers/extension-provider"
 import { CategoryCombobox } from "../../../common/components/category-combobox"
+import type { ExtendedAdminProduct } from "@custom-types/product"
 
 type ProductOrganizationFormProps = {
-  product: HttpTypes.AdminProduct
+  product: ExtendedAdminProduct
 }
 
 const ProductOrganizationSchema = zod.object({

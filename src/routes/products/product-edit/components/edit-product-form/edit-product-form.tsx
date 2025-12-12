@@ -1,22 +1,21 @@
-import { HttpTypes } from "@medusajs/types";
 import { Button, Input, Select, Text, Textarea, toast } from "@medusajs/ui";
 
 import { useTranslation } from "react-i18next";
 import * as zod from "zod";
 
-import { Form } from "../../../../../components/common/form";
-import { SwitchBox } from "../../../../../components/common/switch-box";
-import { RouteDrawer, useRouteModal } from "../../../../../components/modals";
-import { KeyboundForm } from "../../../../../components/utilities/keybound-form";
-import { FormExtensionZone } from "../../../../../dashboard-app";
-import { useExtendableForm } from "../../../../../dashboard-app/forms/hooks";
-import { useUpdateProduct } from "../../../../../hooks/api/products";
-import { useDocumentDirection } from "../../../../../hooks/use-document-direction";
-import { transformNullableFormData } from "../../../../../lib/form-helpers";
-import { useExtension } from "../../../../../providers/extension-provider";
+import { Form } from "@components/common/form";
+import { SwitchBox } from "@components/common/switch-box";
+import { RouteDrawer, useRouteModal } from "@components/modals";
+import { KeyboundForm } from "@components/utilities/keybound-form";
+import { useUpdateProduct } from "@hooks/api/products";
+import { useDocumentDirection } from "@hooks/use-document-direction";
+import { transformNullableFormData } from "@lib/form-helpers";
+import { useExtension } from "@providers/extension-provider";
+import { FormExtensionZone, useExtendableForm } from "@/dashboard-app";
+import type { ExtendedAdminProduct } from "@custom-types/product";
 
 type EditProductFormProps = {
-  product: HttpTypes.AdminProduct;
+  product: ExtendedAdminProduct;
 };
 
 const EditProductSchema = zod.object({
@@ -64,7 +63,7 @@ export const EditProductForm = ({ product }: EditProductFormProps) => {
         title,
         discountable,
         handle,
-        status: status as HttpTypes.AdminProductStatus,
+        status: status,
         ...nullableData,
       },
       {

@@ -4,22 +4,22 @@ import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
-import { HttpTypes } from "@medusajs/types"
-import { Form } from "../../../../../components/common/form"
-import { Combobox } from "../../../../../components/inputs/combobox"
-import { CountrySelect } from "../../../../../components/inputs/country-select"
-import { RouteDrawer, useRouteModal } from "../../../../../components/modals"
-import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
-import { useUpdateProductVariant } from "../../../../../hooks/api/products"
+import { Form } from "@components/common/form"
+import { Combobox } from "@components/inputs/combobox"
+import { CountrySelect } from "@components/inputs/country-select"
+import { RouteDrawer, useRouteModal } from "@components/modals"
+import { KeyboundForm } from "@components/utilities/keybound-form"
+import { useUpdateProductVariant } from "@hooks/api/products"
 import {
   transformNullableFormData,
   transformNullableFormNumber,
-} from "../../../../../lib/form-helpers"
-import { optionalInt } from "../../../../../lib/validation"
+} from "@lib/form-helpers"
+import { optionalInt } from "@lib/validation"
+import type { ExtendedAdminProduct, ExtendedAdminProductVariant } from "@custom-types/product"
 
 type ProductEditVariantFormProps = {
-  product: HttpTypes.AdminProduct
-  variant: HttpTypes.AdminProductVariant
+  product: ExtendedAdminProduct
+  variant: ExtendedAdminProductVariant
 }
 
 const ProductEditVariantSchema = z.object({
@@ -48,11 +48,12 @@ export const ProductEditVariantForm = ({
 }: ProductEditVariantFormProps) => {
   const { t } = useTranslation()
   const { handleSuccess } = useRouteModal()
-  const defaultOptions = product.options?.reduce((acc: any, option: any) => {
-    const varOpt = variant.options?.find((o: any) => o.option_id === option.id)
+  const defaultOptions = product.options?.reduce((acc, option) => {
+    const varOpt = variant.options?.find((o) => o.option_id === option.id)
     acc[option.title] = varOpt?.value
+
     return acc
-  }, {})
+  }, {} as Record<string, string | undefined>)
 
   const form = useForm<z.infer<typeof ProductEditVariantSchema>>({
     defaultValues: {
@@ -164,8 +165,9 @@ export const ProductEditVariantForm = ({
                 )
               }}
             />
-            {product.options?.map((option: any) => {
+            {product.options?.map((option) => {
               const optionKey = option.title.toLowerCase().replace(/\s+/g, "-")
+              
               return (
                 <Form.Field
                   key={option.id}
@@ -183,10 +185,10 @@ export const ProductEditVariantForm = ({
                                 onChange(v)
                               }}
                               {...field}
-                              options={option.values.map((v: any) => ({
+                              options={option.values?.map((v) => ({
                                 label: v.value,
                                 value: v.value,
-                              }))}
+                              })) ?? []}
                               data-testid={`product-variant-edit-form-option-${optionKey}-combobox`}
                             />
                           </div>

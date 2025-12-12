@@ -6,7 +6,6 @@ import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, Outlet, useLoaderData, useLocation } from "react-router-dom"
 
-import { HttpTypes } from "@medusajs/types"
 import { ActionMenu } from "../../../../../components/common/action-menu"
 import { _DataTable } from "../../../../../components/table/data-table"
 import {
@@ -20,6 +19,7 @@ import { useDataTable } from "../../../../../hooks/use-data-table"
 import { productsLoader } from "../../loader"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
 import { ConfigurableProductListTable } from "./configurable-product-list-table"
+import { ExtendedAdminProduct } from "@custom-types/product"
 
 const PAGE_SIZE = 20
 
@@ -53,7 +53,7 @@ export const ProductListTable = () => {
   const columns = useColumns()
 
   const { table } = useDataTable({
-    data: (products ?? []) as HttpTypes.AdminProduct[],
+    data: (products ?? []),
     columns,
     count,
     enablePagination: true,
@@ -108,7 +108,7 @@ export const ProductListTable = () => {
   )
 }
 
-const ProductActions = ({ product }: { product: HttpTypes.AdminProduct }) => {
+const ProductActions = ({ product }: { product: ExtendedAdminProduct }) => {
   const { t } = useTranslation()
   const prompt = usePrompt()
   const { mutateAsync } = useDeleteProduct(product.id)
@@ -170,7 +170,7 @@ const ProductActions = ({ product }: { product: HttpTypes.AdminProduct }) => {
   )
 }
 
-const columnHelper = createColumnHelper<HttpTypes.AdminProduct>()
+const columnHelper = createColumnHelper<ExtendedAdminProduct>()
 
 const useColumns = () => {
   const base = useProductTableColumns()

@@ -1,11 +1,11 @@
-import { HttpTypes } from "@medusajs/types"
 import { useProducts } from "../../../../../hooks/api/products"
 import { productColumnAdapter } from "../../../../../lib/table/entity-adapters"
 import { createTableAdapter, TableAdapter } from "../../../../../lib/table/table-adapters"
 import { useProductTableFilters } from "./use-product-table-filters"
+import type { ExtendedAdminProduct } from "@custom-types/product"
 
-export function createProductTableAdapter(): TableAdapter<HttpTypes.AdminProduct> {
-  return createTableAdapter<HttpTypes.AdminProduct>({
+export function createProductTableAdapter(): TableAdapter<ExtendedAdminProduct> {
+  return createTableAdapter<ExtendedAdminProduct>({
     entity: "products",
     queryPrefix: "p",
     pageSize: 20,
@@ -45,7 +45,7 @@ export function createProductTableAdapter(): TableAdapter<HttpTypes.AdminProduct
 /**
  * Hook to get the product table adapter with filters
  */
-export function useProductTableAdapter(): TableAdapter<HttpTypes.AdminProduct> {
+export function useProductTableAdapter(): TableAdapter<ExtendedAdminProduct> {
   const filters = useProductTableFilters()
   const adapter = createProductTableAdapter()
 

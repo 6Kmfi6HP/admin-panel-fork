@@ -29,6 +29,7 @@ import { useReturnReasons } from "../../hooks/api/return-reasons"
 import { Shortcut, ShortcutType } from "../../providers/keybind-provider"
 import { useGlobalShortcuts } from "../../providers/keybind-provider/hooks"
 import { DynamicSearchResult, SearchArea } from "./types"
+import { ExtendedAdminProduct, ExtendedAdminProductVariant } from "@custom-types/product"
 
 type UseSearchProps = {
   q?: string
@@ -426,6 +427,7 @@ const useDynamicSearchResults = (
         if (isAreaEnabled(currentArea, area) || currentArea === "all") {
           return transformDynamicSearchResults(area, limit, t, response)
         }
+
         return null
       })
       .filter(Boolean) // Remove null values
@@ -488,6 +490,7 @@ function isAreaEnabled(area: SearchArea, currentArea: SearchArea) {
   if (area === currentArea) {
     return true
   }
+  
   return false
 }
 
@@ -518,7 +521,7 @@ const transformMap: TransformMap = {
   },
   product: {
     dataKey: "products",
-    transform: (product: HttpTypes.AdminProduct) => ({
+    transform: (product: ExtendedAdminProduct) => ({
       id: product.id,
       title: product.title,
       to: `/products/${product.id}`,
@@ -528,7 +531,7 @@ const transformMap: TransformMap = {
   },
   productVariant: {
     dataKey: "variants",
-    transform: (variant: HttpTypes.AdminProductVariant) => ({
+    transform: (variant: ExtendedAdminProductVariant) => ({
       id: variant.id,
       title: variant.title!,
       subtitle: variant.sku ?? undefined,
@@ -561,6 +564,7 @@ const transformMap: TransformMap = {
       const name = [customer.first_name, customer.last_name]
         .filter(Boolean)
         .join(" ")
+        
       return {
         id: customer.id,
         title: name || customer.email,

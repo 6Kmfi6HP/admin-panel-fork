@@ -69,6 +69,7 @@ const useVariantPriceGridColumns = ({
         header: t("fields.title"),
         cell: (context) => {
           const entity = context.row.original
+
           return (
             <DataGrid.ReadonlyCell context={context}>
               <div className="flex h-full w-full items-center gap-x-2 overflow-hidden">
@@ -90,6 +91,7 @@ const useVariantPriceGridColumns = ({
           if (context.column.id?.startsWith("currency_prices")) {
             return `variants.${context.row.index}.prices.${value}`
           }
+          
           return `variants.${context.row.index}.prices.${value}`
         },
         t,

@@ -5,7 +5,7 @@ import { useFieldArray, useForm, useWatch } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
-import { AdminCreateProductVariantPrice, HttpTypes } from "@medusajs/types"
+import { AdminCreateProductVariantPrice } from "@medusajs/types"
 import {
   RouteDrawer,
   RouteFocusModal,
@@ -27,6 +27,7 @@ import DetailsTab from "./details-tab"
 import InventoryKitTab from "./inventory-kit-tab"
 import PricingTab from "./pricing-tab"
 import { useDocumentDirection } from "../../../../../hooks/use-document-direction"
+import { ExtendedAdminProduct } from "@custom-types/product"
 
 enum Tab {
   DETAIL = "detail",
@@ -43,7 +44,7 @@ const initialTabState: TabState = {
 }
 
 type CreateProductVariantFormProps = {
-  product: HttpTypes.AdminProduct
+  product: ExtendedAdminProduct
 }
 
 export const CreateProductVariantForm = ({
@@ -79,6 +80,7 @@ export const CreateProductVariantForm = ({
     return regions.reduce(
       (acc, reg) => {
         acc[reg.id] = reg.currency_code
+
         return acc
       },
       {} as Record<string, string>
@@ -134,6 +136,7 @@ export const CreateProductVariantForm = ({
       }))
 
       setTab(update)
+
       return
     }
 
@@ -155,6 +158,7 @@ export const CreateProductVariantForm = ({
             [tab]: "in-progress",
           }))
           setTab(tab)
+          
           return
         }
 

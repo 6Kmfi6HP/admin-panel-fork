@@ -32,13 +32,13 @@ export function OrderCreateFulfillmentItem({
   const { t } = useTranslation()
 
   const { variant } = useProductVariant(
-    item.product_id,
-    item.variant_id,
+    item.product_id ?? "",
+    item.variant_id ?? "",
     {
       fields: "*inventory,*inventory.location_levels,*inventory_items",
     },
     {
-      enabled: !!item.variant,
+      enabled: !!item.variant_id && !!item.product_id,
     }
   )
 

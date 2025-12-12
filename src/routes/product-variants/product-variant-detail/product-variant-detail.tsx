@@ -2,9 +2,9 @@ import { useLoaderData, useParams } from "react-router-dom"
 
 import { useProductVariant } from "../../../hooks/api/products"
 
-import { TwoColumnPageSkeleton } from "../../../components/common/skeleton"
-import { TwoColumnPage } from "../../../components/layout/pages"
-import { useExtension } from "../../../providers/extension-provider"
+import { TwoColumnPageSkeleton } from "@components/common/skeleton"
+import { TwoColumnPage } from "@components/layout/pages"
+import { useExtension } from "@providers/extension-provider"
 import { VariantGeneralSection } from "./components/variant-general-section"
 import {
   InventorySectionPlaceholder,
@@ -12,7 +12,7 @@ import {
 } from "./components/variant-inventory-section"
 import { VariantPricesSection } from "./components/variant-prices-section"
 import { VARIANT_DETAIL_FIELDS } from "./constants"
-import { variantLoader } from "./loader"
+import type { variantLoader } from "./loader"
 
 export const ProductVariantDetail = () => {
   const initialData = useLoaderData() as Awaited<
@@ -28,7 +28,7 @@ export const ProductVariantDetail = () => {
       initialData,
     }
   )
-
+console.log(variant, 'VARIANT')
   const { getWidgets } = useExtension()
 
   if (isLoading || !variant) {
@@ -65,13 +65,12 @@ export const ProductVariantDetail = () => {
           <InventorySectionPlaceholder />
         ) : (
           <VariantInventorySection
-            inventoryItems={variant.inventory_items?.map((i) => {
-              return {
+            inventoryItems={
+              variant.inventory_items?.map((i) => ({
                 ...i.inventory,
                 required_quantity: i.required_quantity,
-                variant,
-              }
-            }) ?? []}
+              })) ?? []
+            }
           />
         )}
       </TwoColumnPage.Main>

@@ -6,7 +6,7 @@ import type {
   AdminOrderPreview,
   InventoryLevelDTO,
 } from "@medusajs/types"
-import type { AdminProductVariantListResponseWithInventory } from "@custom-types/product"
+import type { ExtendedAdminProductVariantListResponse } from "@custom-types/product"
 import {
   Alert,
   Button,
@@ -534,7 +534,7 @@ export const ClaimCreateForm = ({
       const { variants } = (await sdk.admin.productVariant.list({
         id: variantIds,
         fields: "*inventory.location_levels",
-      })) as AdminProductVariantListResponseWithInventory
+      })) as ExtendedAdminProductVariantListResponse
 
       variants.forEach((variant) => {
         // TODO: fix this for inventory kits

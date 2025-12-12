@@ -2,54 +2,100 @@ import type { HttpTypes, PaginatedResponse, InventoryItemDTO, InventoryLevelDTO 
 
 import type { AttributeDTO } from "@custom-types/attribute";
 
+// TODO: Change any names to have Extended prefix
+export type AdminProductListResponse = PaginatedResponse<{
+  products: ExtendedAdminProduct[];
+}>;
+
+// ok
+export interface ExtendedAdminProductResponse {
+  product: ExtendedAdminProduct;
+}
+
+
+export interface ExtendedAdminProduct extends Omit<HttpTypes.AdminProduct, 'images' | 'variants'> {
+  attribute_values?: AttributeDTO[];
+  images: ExtendedAdminProductImage[] | null;
+  shipping_profile?: HttpTypes.AdminShippingProfile | null;
+  variants: ExtendedAdminProductVariant[]
+}
+
+// ok
 export interface ExtendedAdminProductImage extends HttpTypes.AdminProductImage {
   url: string
 }
 
-export interface AdminPrice extends HttpTypes.AdminPrice {
-  rules?: Record<string, string>;
+// to check
+export interface ExtendedAdminInventoryLevel extends HttpTypes.AdminInventoryLevel {
+  available_quantity: number;
+  stocked_quantity: number;
+  reserved_quantity: number;
+  incoming_quantity: number;
 }
 
-export interface AdminProduct extends Omit<HttpTypes.AdminProduct, 'images'> {
-  attribute_values?: AttributeDTO[];
-  images: ExtendedAdminProductImage[] | null;
-  shipping_profile?: HttpTypes.AdminShippingProfile | null;
+// to check
+export interface ExtendedAdminInventoryItem extends HttpTypes.AdminInventoryItem {
+  location_levels?: ExtendedAdminInventoryLevel[];
+  reserved_quantity?: number | null;
+  stocked_quantity?: number | null;
 }
 
-export interface AdminProductVariantWithPriceRules extends Omit<HttpTypes.AdminProductVariant, 'prices'> {
-  prices: AdminPrice[] | null;
+// to check
+export interface AdminProductVariantInventoryItem {
+  variant_id: string;
+  inventory_item_id: string;
+  id: string;
+  required_quantity: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  inventory: ExtendedAdminInventoryItem;
 }
 
-export interface AdminProductWithPriceRules extends Omit<AdminProduct, 'variants'> {
-  variants?: AdminProductVariantWithPriceRules[] | null;
-}
 
-export interface InventoryItemWithLevels extends InventoryItemDTO {
-  location_levels?: InventoryLevelDTO[];
-}
-
-export interface AdminProductVariantWithInventory extends HttpTypes.AdminProductVariant {
-  inventory?: InventoryItemWithLevels[];
-}
-
-export interface AdminProductVariantListResponseWithInventory extends Omit<HttpTypes.AdminProductVariantListResponse, 'variants'> {
-  variants: AdminProductVariantWithInventory[];
-}
-
-export interface AdminProductResponse {
-  product: AdminProduct;
-}
-
+// ok
 export interface AdminProductUpdate extends HttpTypes.AdminUpdateProduct {
   additional_data?: {
     values?: Record<string, string>[];
   };
 }
 
-export type AdminProductListResponse = PaginatedResponse<{
-  products: AdminProduct[];
-}>;
+export interface ExtendedAdminPrice extends HttpTypes.AdminPrice {
+  rules?: Record<string, string>;
+}
 
+// ok
 export interface ExtendedAdminProductListParams extends HttpTypes.AdminProductListParams {
   tag_id?: string | string[]
+}
+
+
+
+
+// --- Product variants ---
+
+export interface ExtendedAdminProductVariantListResponse extends Omit<HttpTypes.AdminProductVariantListResponse, 'variants'> {
+  variants: ExtendedAdminProductVariant[];
+}
+
+export interface ExtendedAdminProductVariantResponse {
+  variant: ExtendedAdminProductVariant;
+}
+export interface ExtendedAdminProductVariant extends Omit<HttpTypes.AdminProductVariant, 'prices' | 'inventory_items'> {
+  prices: ExtendedAdminPrice[] | null;
+  inventory_items?: AdminProductVariantInventoryItem[];
+  inventory?: ExtendedAdminInventoryItem[];
+}
+
+
+// export interface AdminProductVariantWithInventory extends Omit<HttpTypes.AdminProductVariant, 'inventory_items'> {
+//   inventory_items?: AdminProductVariantInventoryItem[];
+//   inventory?: ExtendedAdminInventoryItem[];
+// }
+
+
+
+// TODO: Check later
+export interface InventoryItem extends ExtendedAdminInventoryItem {
+  required_quantity?: number;
 }

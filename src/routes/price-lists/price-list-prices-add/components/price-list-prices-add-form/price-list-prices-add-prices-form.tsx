@@ -59,6 +59,7 @@ export const PriceListPricesAddPricesForm = ({
               currency_prices: {},
               region_prices: {},
             }
+            
             return variants
           }, {} as PriceListCreateProductVariantsSchema),
         })

@@ -1,12 +1,11 @@
-import { LoaderFunctionArgs } from "react-router-dom"
+import type { LoaderFunctionArgs } from "react-router-dom"
 
-import { productVariantQueryKeys } from "../../../hooks/api"
-import { sdk } from "../../../lib/client"
-import { queryClient } from "../../../lib/query-client"
+import { productVariantQueryKeys } from "@hooks/api"
+import { sdk } from "@lib/client"
+import { queryClient } from "@lib/query-client"
+import type { ExtendedAdminProductVariantResponse } from "@custom-types/product"
 
-const queryFn = async (id: string, variantId: string) => {
-  return await sdk.admin.product.retrieveVariant(id, variantId)
-}
+const queryFn = async (id: string, variantId: string) => sdk.admin.product.retrieveVariant(id, variantId) as Promise<ExtendedAdminProductVariantResponse>
 
 const editProductVariantQuery = (id: string, variantId: string) => ({
   queryKey: productVariantQueryKeys.detail(variantId),

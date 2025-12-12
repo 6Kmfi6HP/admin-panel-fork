@@ -12,10 +12,10 @@ import { sdk } from "../../../../../lib/client"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
-import type { AdminProduct } from "@custom-types/product"
+import type { ExtendedAdminProduct } from "@custom-types/product"
 
 type ProductShippingProfileFormProps = {
-  product: AdminProduct
+  product: ExtendedAdminProduct
 }
 
 const ProductShippingProfileSchema = zod.object({

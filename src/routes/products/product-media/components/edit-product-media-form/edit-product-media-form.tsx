@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState } from "react";
 
 import { ThumbnailBadge } from "@medusajs/icons";
-import { HttpTypes } from "@medusajs/types";
+import type { HttpTypes } from "@medusajs/types";
 import {
   Button,
   Checkbox,
@@ -51,9 +51,10 @@ import {
   MediaSchema,
 } from "../../../product-create/constants";
 import { EditProductMediaSchemaType } from "../../../product-create/types";
+import type { ExtendedAdminProduct } from "@custom-types/product";
 
 type ProductMediaViewProps = {
-  product: HttpTypes.AdminProduct;
+  product: ExtendedAdminProduct;
 };
 
 type Media = z.infer<typeof MediaSchema>;
@@ -125,6 +126,7 @@ export const EditProductMediaForm = ({ product }: ProductMediaViewProps) => {
             type: "invalid_file",
             message: t("products.media.failedToUpload"),
           });
+
           return { files: [] };
         });
       uploaded = uploads;
@@ -135,6 +137,7 @@ export const EditProductMediaForm = ({ product }: ProductMediaViewProps) => {
       if (toUploadIndex > -1) {
         return { ...entry, url: uploaded[toUploadIndex]?.url };
       }
+      
       return entry;
     });
     const thumbnail = withUpdatedUrls.find((m) => m.isThumbnail)?.url;
@@ -160,8 +163,12 @@ export const EditProductMediaForm = ({ product }: ProductMediaViewProps) => {
     (id: string) => {
       return (val: boolean) => {
         if (!val) {
-          const { [id]: _, ...rest } = selection;
-          setSelection(rest);
+          setSelection(prev => {
+            const next = { ...prev };
+            delete next[id];
+
+            return next;
+          });
         } else {
           setSelection((prev) => ({ ...prev, [id]: true }));
         }

@@ -16,9 +16,10 @@ import {
 } from "../../../../../components/modals"
 import { useUpdateProduct } from "../../../../../hooks/api/products"
 import { useSalesChannels } from "../../../../../hooks/api/sales-channels"
+import { ExtendedAdminProduct } from "@custom-types/product"
 
 type EditSalesChannelsFormProps = {
-  product: HttpTypes.AdminProduct
+  product: ExtendedAdminProduct
 }
 
 const EditSalesChannelsSchema = zod.object({
@@ -46,6 +47,7 @@ export const EditSalesChannelsForm = ({
   const initialState =
     product.sales_channels?.reduce((acc, curr) => {
       acc[curr.id] = true
+
       return acc
     }, {} as RowSelectionState) ?? {}
 

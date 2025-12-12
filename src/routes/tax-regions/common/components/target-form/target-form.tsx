@@ -39,6 +39,7 @@ import { useDataTable } from "../../../../../hooks/use-data-table"
 import { TaxRateRuleReferenceType } from "../../constants"
 import { TaxRateRuleReference } from "../../schemas"
 import { useShippingOptionTableColumns } from "../../../../../hooks/table/columns/use-shipping-option-table-columns"
+import { ExtendedAdminProduct } from "@custom-types/product"
 
 type TargetFormProps = {
   referenceType: TaxRateRuleReferenceType
@@ -355,7 +356,7 @@ const ProductTable = ({
   )
 }
 
-const pColumnHelper = createColumnHelper<HttpTypes.AdminProduct>()
+const pColumnHelper = createColumnHelper<ExtendedAdminProduct>()
 
 const useProductColumns = () => {
   const base = useProductTableColumns()

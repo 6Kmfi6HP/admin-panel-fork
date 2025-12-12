@@ -14,13 +14,13 @@ import {
 import { FormProvider, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 
-import { ActionMenu } from "../../../../../components/common/action-menu";
-import { RouteDrawer } from "../../../../../components/modals";
+import { ActionMenu } from "@components/common/action-menu";
+import { RouteDrawer } from "@components/modals";
 import {
   useProduct,
   useProductAttributes,
   useUpdateProduct,
-} from "../../../../../hooks/api";
+} from "@hooks/api";
 import { FormComponents } from "./components/form-components";
 
 export const ProductAdditionalAttributeSection = () => {
@@ -39,7 +39,7 @@ export const ProductAdditionalAttributeSection = () => {
   const form = useForm<any>({
     defaultValues: {},
   });
-
+console.log(product?.attribute_values, 'PRODUCT ATTRIBUTE VALUES')
   // Reset form when product data is loaded
   useEffect(() => {
     if (product?.attribute_values) {

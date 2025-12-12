@@ -1,15 +1,15 @@
-import { z } from "zod"
-import { useFieldArray, UseFormReturn } from "react-hook-form"
+import type { z } from "zod"
+import { useFieldArray, type UseFormReturn } from "react-hook-form"
 import { Button, Heading, IconButton, Input, Label } from "@medusajs/ui"
 
-import { CreateProductVariantSchema } from "./constants"
+import type { CreateProductVariantSchema } from "./constants"
 import { XMarkMini } from "@medusajs/icons"
 import { useTranslation } from "react-i18next"
 
-import { useComboboxData } from "../../../../../hooks/use-combobox-data"
-import { sdk } from "../../../../../lib/client"
-import { Form } from "../../../../../components/common/form"
-import { Combobox } from "../../../../../components/inputs/combobox"
+import { useComboboxData } from "@hooks/use-combobox-data"
+import { sdk } from "@lib/client"
+import { Form } from "@components/common/form"
+import { Combobox } from "@components/inputs/combobox"
 
 type InventoryKitTabProps = {
   form: UseFormReturn<z.infer<typeof CreateProductVariantSchema>>

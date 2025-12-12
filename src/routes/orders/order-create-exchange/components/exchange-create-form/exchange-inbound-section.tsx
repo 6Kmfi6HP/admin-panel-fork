@@ -33,7 +33,7 @@ import { ItemPlaceholder } from "../../../order-create-claim/components/claim-cr
 import { AddExchangeInboundItemsTable } from "../add-exchange-inbound-items-table"
 import { ExchangeInboundItem } from "./exchange-inbound-item"
 import { CreateExchangeSchemaType } from "./schema"
-import { AdminProductVariantListResponseWithInventory } from "@custom-types/product"
+import { ExtendedAdminProductVariantListResponse } from "@custom-types/product"
 
 type ExchangeInboundSectionProps = {
   order: AdminOrder
@@ -322,7 +322,7 @@ export const ExchangeInboundSection = ({
       const { variants } = (await sdk.admin.productVariant.list({
         id: variantIds,
         fields: "*inventory.location_levels",
-      })) as AdminProductVariantListResponseWithInventory
+      })) as ExtendedAdminProductVariantListResponse
 
       variants.forEach((variant) => {
         ret[variant.id] = variant.inventory?.[0]?.location_levels || []

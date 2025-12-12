@@ -1,14 +1,14 @@
 import { PencilSquare } from "@medusajs/icons"
-import { HttpTypes } from "@medusajs/types"
 import { Container, Heading } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
-import { ActionMenu } from "../../../../../components/common/action-menu"
-import { SectionRow } from "../../../../../components/common/section"
-import { getFormattedCountry } from "../../../../../lib/addresses"
-import { useExtension } from "../../../../../providers/extension-provider"
+import { ActionMenu } from "@components/common/action-menu"
+import { SectionRow } from "@components/common/section"
+import { getFormattedCountry } from "@lib/addresses"
+import { useExtension } from "@providers/extension-provider"
+import type { ExtendedAdminProduct } from "@custom-types/product"
 
 type ProductAttributeSectionProps = {
-  product: HttpTypes.AdminProduct
+  product: ExtendedAdminProduct
 }
 
 export const ProductAttributeSection = ({

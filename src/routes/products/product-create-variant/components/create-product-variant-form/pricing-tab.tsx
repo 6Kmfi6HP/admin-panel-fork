@@ -1,18 +1,18 @@
 import { useMemo } from "react"
-import { UseFormReturn, useWatch } from "react-hook-form"
-import { HttpTypes } from "@medusajs/types"
+import { type UseFormReturn, useWatch } from "react-hook-form"
+import type { HttpTypes } from "@medusajs/types"
 import { useTranslation } from "react-i18next"
-import { z } from "zod"
+import type { z } from "zod"
 
-import { CreateProductVariantSchema } from "./constants"
-import { useRegions, useStore } from "../../../../../hooks/api"
-import { usePricePreferences } from "../../../../../hooks/api/price-preferences"
-import { useRouteModal } from "../../../../../components/modals"
+import type { CreateProductVariantSchema } from "./constants"
+import { useRegions, useStore } from "@hooks/api"
+import { usePricePreferences } from "@hooks/api/price-preferences"
+import { useRouteModal } from "@components/modals"
 import {
   createDataGridHelper,
   createDataGridPriceColumns,
   DataGrid,
-} from "../../../../../components/data-grid"
+} from "@components/data-grid"
 
 type PricingTabProps = {
   form: UseFormReturn<z.infer<typeof CreateProductVariantSchema>>
@@ -33,7 +33,7 @@ function PricingTab({ form }: PricingTabProps) {
 
   const variant = useWatch({
     control: form.control,
-  }) as any
+  })
 
   return (
     <DataGrid
@@ -68,6 +68,7 @@ const useVariantPriceGridColumns = ({
         header: t("fields.title"),
         cell: (context) => {
           const entity = context.row.original
+
           return (
             <DataGrid.ReadonlyCell context={context}>
               <div className="flex h-full w-full items-center gap-x-2 overflow-hidden">
@@ -89,6 +90,7 @@ const useVariantPriceGridColumns = ({
           if (context.column.id?.startsWith("currency_prices")) {
             return `prices.${value}`
           }
+          
           return `prices.${value}`
         },
         t,

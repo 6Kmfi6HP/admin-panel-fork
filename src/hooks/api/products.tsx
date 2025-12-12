@@ -13,10 +13,12 @@ import { queryKeysFactory } from "../../lib/query-key-factory";
 import { inventoryItemsQueryKeys } from "./inventory.tsx";
 import { AttributeDTO } from "../../types/index.ts";
 import {
-  AdminProductResponse,
+  ExtendedAdminProductResponse,
   AdminProductUpdate,
   ExtendedAdminProductListParams,
   AdminProductListResponse,
+  ExtendedAdminProductVariantResponse,
+  ExtendedAdminProductVariantListResponse,
 } from "../../types/product/common.ts";
 
 const PRODUCTS_QUERY_KEY = "products" as const;
@@ -97,17 +99,16 @@ export const useProductVariant = (
   query?: HttpTypes.AdminProductVariantParams,
   options?: Omit<
     UseQueryOptions<
-      HttpTypes.AdminProductVariantResponse,
-      FetchError,
-      HttpTypes.AdminProductVariantResponse,
-      QueryKey
+    ExtendedAdminProductVariantResponse,
+    FetchError,
+    ExtendedAdminProductVariantResponse,
+    QueryKey
     >,
     "queryFn" | "queryKey"
   >
 ) => {
   const { data, ...rest } = useQuery({
-    queryFn: () =>
-      sdk.admin.product.retrieveVariant(productId, variantId, query),
+    queryFn: async () => sdk.admin.product.retrieveVariant(productId, variantId, query) as Promise<ExtendedAdminProductVariantResponse>,
     queryKey: variantsQueryKeys.detail(variantId, query),
     ...options,
   });
@@ -118,18 +119,20 @@ export const useProductVariant = (
 export const useProductVariants = (
   productId: string,
   query?: HttpTypes.AdminProductVariantParams,
+
   options?: Omit<
     UseQueryOptions<
-      HttpTypes.AdminProductVariantListResponse,
+      ExtendedAdminProductVariantListResponse,
       FetchError,
-      HttpTypes.AdminProductVariantListResponse,
+      ExtendedAdminProductVariantListResponse,
       QueryKey
     >,
     "queryFn" | "queryKey"
   >
 ) => {
   const { data, ...rest } = useQuery({
-    queryFn: () => sdk.admin.product.listVariants(productId, query),
+    queryFn: async () => 
+      sdk.admin.product.listVariants(productId, query) as Promise<ExtendedAdminProductVariantListResponse>,
     queryKey: variantsQueryKeys.list({ productId, ...query }),
     ...options,
   });
@@ -279,20 +282,16 @@ export const useProduct = (
   query?: Record<string, unknown>,
   options?: Omit<
     UseQueryOptions<
-      AdminProductResponse,
+      ExtendedAdminProductResponse,
       FetchError,
-      AdminProductResponse,
+      ExtendedAdminProductResponse,
       QueryKey
     >,
     "queryFn" | "queryKey"
   >
 ) => {
   const { data, ...rest } = useQuery({
-    queryFn: async () => {
-      const response = await sdk.admin.product.retrieve(id, query)
-      
-      return response as unknown as AdminProductResponse
-    },
+    queryFn: async () => sdk.admin.product.retrieve(id, query) as Promise<ExtendedAdminProductResponse>,
     queryKey: productsQueryKeys.detail(id, query),
     ...options,
   });
@@ -349,7 +348,7 @@ export const useCreateProduct = (
 export const useUpdateProduct = (
   id: string,
   options?: UseMutationOptions<
-    AdminProductResponse,
+    ExtendedAdminProductResponse,
     FetchError,
     AdminProductUpdate
   >
@@ -358,7 +357,7 @@ export const useUpdateProduct = (
     mutationFn: async (payload) => {
       const response = await sdk.admin.product.update(id, payload)
       
-      return response as unknown as AdminProductResponse
+      return response as unknown as ExtendedAdminProductResponse
     },
     onSuccess: async (data, variables, context) => {
       await queryClient.invalidateQueries({

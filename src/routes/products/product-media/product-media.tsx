@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
-import { RouteFocusModal } from "../../../components/modals"
-import { useProduct } from "../../../hooks/api/products"
+import { RouteFocusModal } from "@components/modals"
+import { useProduct } from "@hooks/api/products"
 import { ProductMediaView } from "./components/product-media-view"
 
 export const ProductMedia = () => {

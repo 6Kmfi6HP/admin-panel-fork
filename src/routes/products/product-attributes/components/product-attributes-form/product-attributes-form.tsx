@@ -1,4 +1,3 @@
-import { HttpTypes } from "@medusajs/types"
 import { Button, Input } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 import * as zod from "zod"
@@ -12,9 +11,10 @@ import {
 } from "../../../../../dashboard-app"
 import { useUpdateProduct } from "../../../../../hooks/api/products"
 import { useExtension } from "../../../../../providers/extension-provider"
+import type { ExtendedAdminProduct } from "@custom-types/product"
 
 type ProductAttributesFormProps = {
-  product: HttpTypes.AdminProduct
+  product: ExtendedAdminProduct
 }
 
 const dimension = zod
@@ -23,6 +23,7 @@ const dimension = zod
     if (value === "") {
       return null
     }
+
     return Number(value)
   })
   .optional()

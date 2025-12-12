@@ -32,7 +32,7 @@ import { ItemPlaceholder } from "./item-placeholder"
 import { CreateClaimSchemaType } from "./schema"
 import { useOrderShippingOptions } from "../../../../../hooks/api/orders"
 import { getFormattedShippingOptionLocationName } from "../../../../../lib/shipping-options"
-import { AdminProductVariantListResponseWithInventory } from "@custom-types/product"
+import { ExtendedAdminProductVariantListResponse } from "@custom-types/product"
 
 type ClaimOutboundSectionProps = {
   order: AdminOrder
@@ -279,7 +279,7 @@ export const ClaimOutboundSection = ({
       const { variants } = (await sdk.admin.productVariant.list({
         id: variantIds,
         fields: "*inventory.location_levels",
-      })) as AdminProductVariantListResponseWithInventory
+      })) as ExtendedAdminProductVariantListResponse
 
       variants.forEach((variant) => {
         ret[variant.id] = variant.inventory?.[0]?.location_levels || []

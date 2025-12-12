@@ -26,9 +26,10 @@ import {
 } from "../../../../../hooks/api/products"
 import { useQueryParams } from "../../../../../hooks/use-query-params"
 import { PRODUCT_VARIANT_IDS_KEY } from "../../../common/constants"
+import type { ExtendedAdminProduct, ExtendedAdminProductVariant } from "@custom-types/product"
 
 type ProductVariantSectionProps = {
-  product: HttpTypes.AdminProduct
+  product: ExtendedAdminProduct
 }
 
 const PAGE_SIZE = 10
@@ -145,9 +146,9 @@ export const ProductVariantSection = ({
 }
 
 const columnHelper =
-  createDataTableColumnHelper<HttpTypes.AdminProductVariant>()
+  createDataTableColumnHelper<ExtendedAdminProductVariant>()
 
-const useColumns = (product: HttpTypes.AdminProduct) => {
+const useColumns = (product: ExtendedAdminProduct) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { mutateAsync } = useDeleteVariantLazy(product.id)
@@ -161,10 +162,11 @@ const useColumns = (product: HttpTypes.AdminProduct) => {
         filtered.append(key, value)
       }
     }
+    
     return filtered
   }, [searchParams])
 
-  const dateColumns = useDataTableDateColumns<HttpTypes.AdminProductVariant>()
+  const dateColumns = useDataTableDateColumns<ExtendedAdminProductVariant>()
 
   const handleDelete = useCallback(
     async (id: string, title: string) => {
@@ -224,12 +226,10 @@ const useColumns = (product: HttpTypes.AdminProduct) => {
   }, [product])
 
   const getActions = useCallback(
-    (ctx: CellContext<HttpTypes.AdminProductVariant, unknown>) => {
-      const variant = ctx.row.original as HttpTypes.AdminProductVariant & {
-        inventory_items: { inventory: HttpTypes.AdminInventoryItem }[]
-      }
+    (ctx: CellContext<ExtendedAdminProductVariant, unknown>) => {
+      const variant = ctx.row.original
 
-      const mainActions: DataTableAction<HttpTypes.AdminProductVariant>[] = [
+      const mainActions: DataTableAction<ExtendedAdminProductVariant>[] = [
         {
           icon: <PencilSquare />,
           label: t("actions.edit"),
@@ -248,7 +248,7 @@ const useColumns = (product: HttpTypes.AdminProduct) => {
         },
       ]
 
-      const secondaryActions: DataTableAction<HttpTypes.AdminProductVariant>[] =
+      const secondaryActions: DataTableAction<ExtendedAdminProductVariant>[] =
         [
           {
             icon: <Trash />,
@@ -303,11 +303,7 @@ const useColumns = (product: HttpTypes.AdminProduct) => {
   )
 
   const getInventory = useCallback(
-    (variant: HttpTypes.AdminProductVariant) => {
-      const castVariant = variant as HttpTypes.AdminProductVariant & {
-        inventory_items: { inventory: HttpTypes.AdminInventoryItem }[]
-      }
-
+    (variant: ExtendedAdminProductVariant) => {
       if (!variant.manage_inventory) {
         return {
           text: t("products.variant.inventory.notManaged"),
@@ -318,9 +314,9 @@ const useColumns = (product: HttpTypes.AdminProduct) => {
 
       const quantity = variant.inventory_quantity
 
-      const inventoryItems = castVariant.inventory_items
+      const inventoryItems = variant.inventory_items
         ?.map((i) => i.inventory)
-        .filter(Boolean) as HttpTypes.AdminInventoryItem[]
+        .filter(Boolean) ?? []
 
       const hasInventoryKit = inventoryItems.length > 1
 
@@ -399,7 +395,7 @@ const useColumns = (product: HttpTypes.AdminProduct) => {
 }
 
 const filterHelper =
-  createDataTableFilterHelper<HttpTypes.AdminProductVariant>()
+  createDataTableFilterHelper<ExtendedAdminProductVariant>()
 
 const useFilters = () => {
   const { t } = useTranslation()

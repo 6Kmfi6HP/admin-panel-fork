@@ -15,10 +15,10 @@ import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 import { ActionMenu } from "@components/common/action-menu"
 import { useUpdateProduct } from "@hooks/api/products"
-import type { AdminProduct } from "@custom-types/product"
+import type { ExtendedAdminProduct } from "@custom-types/product"
 
 type ProductMedisaSectionProps = {
-  product: AdminProduct
+  product: ExtendedAdminProduct
 }
 
 export const ProductMediaSection = ({ product }: ProductMedisaSectionProps) => {
@@ -196,7 +196,7 @@ type Media = {
   isThumbnail: boolean
 }
 
-const getMedia = (product: AdminProduct) => {
+const getMedia = (product: ExtendedAdminProduct) => {
   const { images = [], thumbnail } = product
 
   const media: Media[] = (images || []).map((image) => ({
