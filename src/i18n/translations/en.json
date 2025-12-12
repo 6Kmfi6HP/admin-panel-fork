@@ -1201,6 +1201,7 @@
       "noteHint": "You can type freely if you want to specify something.",
       "location": "Location",
       "locationHint": "Choose which location you want to return the items to.",
+      "pleaseChooseLocation": "Please choose a location",
       "inboundShipping": "Return shipping",
       "inboundShippingHint": "Choose which method you want to use.",
       "noAddedItems": "No added items",
