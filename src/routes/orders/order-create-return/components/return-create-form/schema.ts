@@ -12,7 +12,9 @@ export const ReturnCreateSchema = z.object({
       })
     )
     .min(1, i18n.t("orders.returns.pleaseAddAtLeastOneItem")),
-  location_id: z.string().optional(),
+  location_id: z
+    .string()
+    .min(1, i18n.t("orders.returns.pleaseChooseLocation")),
   option_id: z.string(),
   send_notification: z.boolean().optional(),
   // TODO: implement this

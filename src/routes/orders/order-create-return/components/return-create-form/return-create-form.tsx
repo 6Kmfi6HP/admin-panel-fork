@@ -166,29 +166,31 @@ export const ReturnCreateForm = ({
    * FORM
    */
 
+  const defaultValues = useMemo(() => {
+    const method = preview.shipping_methods.find(
+      (s) => !!s.actions?.find((a) => a.action === "SHIPPING_ADD")
+    )
+
+    return {
+      items: previewItems.map((i) => ({
+        item_id: i.id,
+        quantity: i.detail.return_requested_quantity,
+        note: i.actions?.find((a) => a.action === "RETURN_ITEM")
+          ?.internal_note,
+        reason_id: i.actions?.find((a) => a.action === "RETURN_ITEM")?.details
+          ?.reason_id,
+      })),
+      option_id: method ? method.shipping_option_id : "",
+      location_id: activeReturn?.location_id,
+      send_notification: false,
+    }
+  }, [preview.shipping_methods, previewItems, activeReturn?.location_id])
+
   const form = useForm<ReturnCreateSchemaType>({
     /**
      * TODO: reason selection once Return reason settings are added
      */
-    defaultValues: () => {
-      const method = preview.shipping_methods.find(
-        (s) => !!s.actions?.find((a) => a.action === "SHIPPING_ADD")
-      )
-
-      return Promise.resolve({
-        items: previewItems.map((i) => ({
-          item_id: i.id,
-          quantity: i.detail.return_requested_quantity,
-          note: i.actions?.find((a) => a.action === "RETURN_ITEM")
-            ?.internal_note,
-          reason_id: i.actions?.find((a) => a.action === "RETURN_ITEM")?.details
-            ?.reason_id,
-        })),
-        option_id: method ? method.shipping_option_id : "",
-        location_id: activeReturn?.location_id,
-        send_notification: false,
-      })
-    },
+    defaultValues,
     resolver: zodResolver(ReturnCreateSchema),
   })
 
@@ -565,6 +567,7 @@ export const ReturnCreateForm = ({
                               )}
                             />
                           </Form.Control>
+                          <Form.ErrorMessage />
                         </Form.Item>
                       )
                     }}
