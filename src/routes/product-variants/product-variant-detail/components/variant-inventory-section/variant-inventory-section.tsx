@@ -9,12 +9,12 @@ import { _DataTable } from "../../../../../components/table/data-table"
 import { LinkButton } from "../../../../../components/common/link-button"
 import { useDataTable } from "../../../../../hooks/use-data-table"
 import { useInventoryTableColumns } from "./use-inventory-table-columns"
-import type { ExtendedInventoryItem } from "../../../../../types/product"
+import type { ExtendedAdminProductVariantInventoryItemWithQuantity } from "../../../../../types/product"
 
 const PAGE_SIZE = 20
 
 type VariantInventorySectionProps = {
-  inventoryItems: ExtendedInventoryItem[]
+  inventoryItems: ExtendedAdminProductVariantInventoryItemWithQuantity[]
 }
 
 export function VariantInventorySection({

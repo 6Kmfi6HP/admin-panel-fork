@@ -1,5 +1,4 @@
 import { Buildings, Component, PencilSquare, Trash } from "@medusajs/icons"
-import { HttpTypes } from "@medusajs/types"
 import {
   Badge,
   clx,

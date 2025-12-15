@@ -17,6 +17,7 @@ import { useProductTableQuery } from "../../../../../hooks/table/query/use-produ
 import { useDataTable } from "../../../../../hooks/use-data-table"
 import { PriceListCreateProductsSchema } from "../../../common/schemas"
 import { PriceListPricesAddSchema } from "./schema"
+import type { ExtendedAdminProduct } from "@custom-types/product"
 
 type PriceListPricesAddProductIdsFormProps = {
   form: UseFormReturn<PriceListPricesAddSchema>
@@ -162,7 +163,7 @@ export const PriceListPricesAddProductIdsForm = ({
   )
 }
 
-const columnHelper = createColumnHelper<HttpTypes.AdminProduct>()
+const columnHelper = createColumnHelper<ExtendedAdminProduct>()
 
 const useColumns = () => {
   const base = useProductTableColumns()

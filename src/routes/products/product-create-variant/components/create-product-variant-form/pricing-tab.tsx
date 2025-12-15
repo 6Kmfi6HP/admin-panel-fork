@@ -33,10 +33,10 @@ function PricingTab({ form }: PricingTabProps) {
 
   const variant = useWatch({
     control: form.control,
-  })
+  }) as z.infer<typeof CreateProductVariantSchema>
 
   return (
-    <DataGrid
+    <DataGrid<z.infer<typeof CreateProductVariantSchema>, z.infer<typeof CreateProductVariantSchema>>
       columns={columns}
       data={[variant]}
       state={form}
@@ -46,7 +46,7 @@ function PricingTab({ form }: PricingTabProps) {
 }
 
 const columnHelper = createDataGridHelper<
-  HttpTypes.AdminProductVariant,
+  z.infer<typeof CreateProductVariantSchema>,
   z.infer<typeof CreateProductVariantSchema>
 >()
 
@@ -80,7 +80,7 @@ const useVariantPriceGridColumns = ({
         disableHiding: true,
       }),
       ...createDataGridPriceColumns<
-        HttpTypes.AdminProductVariant,
+        z.infer<typeof CreateProductVariantSchema>,
         z.infer<typeof CreateProductVariantSchema>
       >({
         currencies: currencies.map((c) => c.currency_code),

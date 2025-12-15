@@ -8,7 +8,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import type { AdminProductListResponse, ExtendedAdminProduct } from "@custom-types/product/common";
+import type { ExtendedAdminProductListResponse, ExtendedAdminProduct } from "@custom-types/product/common";
 
 import { ActionsButton } from "@components/common/actions-button";
 import { ProductStatusBadge } from "@components/common/product-status-badge";
@@ -26,7 +26,7 @@ export const SellerProductsSection = ({
   seller_products,
   refetch,
 }: {
-  seller_products: AdminProductListResponse;
+  seller_products: ExtendedAdminProductListResponse;
   refetch: () => void;
 }) => {
   const { products, count } = seller_products;

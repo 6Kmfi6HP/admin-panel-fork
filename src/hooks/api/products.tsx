@@ -14,9 +14,9 @@ import { inventoryItemsQueryKeys } from "./inventory.tsx";
 import { AttributeDTO } from "../../types/index.ts";
 import {
   ExtendedAdminProductResponse,
-  AdminProductUpdate,
+  ExtendedAdminProductUpdate,
   ExtendedAdminProductListParams,
-  AdminProductListResponse,
+  ExtendedAdminProductListResponse,
   ExtendedAdminProductVariantResponse,
   ExtendedAdminProductVariantListResponse,
 } from "../../types/product/common.ts";
@@ -303,9 +303,9 @@ export const useProducts = (
   query?: ExtendedAdminProductListParams,
   options?: Omit<
     UseQueryOptions<
-      AdminProductListResponse,
+      ExtendedAdminProductListResponse,
       FetchError,
-      AdminProductListResponse,
+      ExtendedAdminProductListResponse,
       QueryKey
     >,
     "queryFn" | "queryKey"
@@ -315,7 +315,7 @@ export const useProducts = (
     queryFn: async () => {
       const response = await sdk.admin.product.list(query)
 
-      return response as unknown as AdminProductListResponse
+      return response as unknown as ExtendedAdminProductListResponse
     },
     queryKey: productsQueryKeys.list(query),
     ...options,
@@ -350,7 +350,7 @@ export const useUpdateProduct = (
   options?: UseMutationOptions<
     ExtendedAdminProductResponse,
     FetchError,
-    AdminProductUpdate
+    ExtendedAdminProductUpdate
   >
 ) => {
   return useMutation({

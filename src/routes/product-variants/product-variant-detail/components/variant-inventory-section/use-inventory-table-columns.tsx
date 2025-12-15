@@ -5,9 +5,9 @@ import { PlaceholderCell } from "../../../../../components/table/table-cells/com
 import { createColumnHelper } from "@tanstack/react-table"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import type { ExtendedInventoryItem } from "../../../../../types/product"
+import type { ExtendedAdminProductVariantInventoryItemWithQuantity } from "../../../../../types/product"
 
-const columnHelper = createColumnHelper<ExtendedInventoryItem>()
+const columnHelper = createColumnHelper<ExtendedAdminProductVariantInventoryItemWithQuantity>()
 
 export const useInventoryTableColumns = () => {
   const { t } = useTranslation()

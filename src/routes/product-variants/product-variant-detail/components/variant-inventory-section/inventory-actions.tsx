@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next"
 
 import { Buildings } from "@medusajs/icons"
-import { InventoryItemDTO } from "@medusajs/types"
 
 import { ActionMenu } from "../../../../../components/common/action-menu"
+import type { ExtendedAdminProductVariantInventoryItemWithQuantity } from "../../../../../types/product"
 
-export const InventoryActions = ({ item }: { item: InventoryItemDTO }) => {
+export const InventoryActions = ({ item }: { item: ExtendedAdminProductVariantInventoryItemWithQuantity }) => {
   const { t } = useTranslation()
 
   return (

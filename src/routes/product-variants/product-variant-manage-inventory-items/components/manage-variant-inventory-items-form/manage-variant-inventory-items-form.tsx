@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { XMarkMini } from "@medusajs/icons"
-import { AdminProductVariant, HttpTypes } from "@medusajs/types"
+import { HttpTypes } from "@medusajs/types"
 import { Button, Heading, IconButton, Input, Label, toast } from "@medusajs/ui"
 import i18next from "i18next"
 import {
@@ -63,18 +63,18 @@ const ManageVariantInventoryItemsSchema = zod.object({
   ),
 })
 
-type InventoryItemFormData = zod.infer<
-  typeof ManageVariantInventoryItemsSchema
->["inventory"]
+type ManageVariantInventoryItemsFormData = zod.infer<typeof ManageVariantInventoryItemsSchema>
+
+type InventoryItemField = {
+  id: string
+  inventory_item_id: string
+  required_quantity: string | number
+}
 
 type VariantInventoryItemRowProps = {
-  form: UseFormReturn<InventoryItemFormData>
+  form: UseFormReturn<ManageVariantInventoryItemsFormData>
   inventoryIndex: number
-  inventoryItem: {
-    id: string
-    inventory_item_id: string
-    required_quantity: number
-  }
+  inventoryItem: InventoryItemField
   isItemOptionDisabled: (
     option: { value: string },
     inventoryIndex: number

@@ -8,7 +8,7 @@ import {
 
 import { sdk } from "../../lib/client";
 import { queryKeysFactory } from "../../lib/query-key-factory";
-import { AdminProductListResponse, ExtendedAdminProduct, VendorSeller } from "../../types";
+import { ExtendedAdminProductListResponse, ExtendedAdminProduct, VendorSeller } from "../../types";
 import type { AdminCustomerGroup, AdminOrder } from "@medusajs/types";
 import { OrderSet } from "../../types/order/common";
 
@@ -314,16 +314,16 @@ export const useSellerProducts = (
   filters?: any
 ) => {
   const { data, isLoading, refetch } = useQuery<
-    AdminProductListResponse,
+    ExtendedAdminProductListResponse,
     Error,
-    AdminProductListResponse
+    ExtendedAdminProductListResponse
   >({
     queryKey: ["seller-products", id, query],
     queryFn: () =>
       sdk.client.fetch(`/admin/sellers/${id}/products`, {
         method: "GET",
         query,
-      }) as Promise<AdminProductListResponse>,
+      }) as Promise<ExtendedAdminProductListResponse>,
   });
 
   if (!data?.products) {

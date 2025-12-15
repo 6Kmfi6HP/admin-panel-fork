@@ -20,10 +20,11 @@ import {
   PriceListUpdateProductsSchema,
 } from "../../../common/schemas"
 import { isProductRow } from "../../../common/utils"
+import type { ExtendedAdminProduct, ExtendedAdminProductVariant } from "@custom-types/product"
 
 type PriceListPricesEditFormProps = {
   priceList: HttpTypes.AdminPriceList
-  products: HttpTypes.AdminProduct[]
+  products: ExtendedAdminProduct[]
   regions: HttpTypes.AdminRegion[]
   currencies: HttpTypes.AdminStoreCurrency[]
   pricePreferences: HttpTypes.AdminPricePreference[]
@@ -93,7 +94,7 @@ export const PriceListPricesEditForm = ({
       <KeyboundForm onSubmit={handleSubmit} className="flex size-full flex-col">
         <RouteFocusModal.Header data-testid="price-list-prices-edit-form-header" />
         <RouteFocusModal.Body className="flex flex-col overflow-hidden" data-testid="price-list-prices-edit-form-body">
-          <DataGrid
+          <DataGrid<ExtendedAdminProduct | ExtendedAdminProductVariant, z.infer<typeof PricingProductPricesSchema>>
             columns={columns}
             data={products}
             getSubRows={(row) => {
@@ -125,7 +126,7 @@ export const PriceListPricesEditForm = ({
 
 function initRecord(
   priceList: HttpTypes.AdminPriceList,
-  products: HttpTypes.AdminProduct[]
+  products: ExtendedAdminProduct[]
 ): PriceListUpdateProductsSchema {
   const record: PriceListUpdateProductsSchema = {}
 
@@ -155,6 +156,7 @@ function initRecord(
     }
 
     variants[price.variant_id] = variantObject
+
     return variants
   }, {} as PriceListUpdateProductVariantsSchema)
 
@@ -189,10 +191,11 @@ function convertToPriceArray(
 
   const regionCurrencyMap = regions.reduce((map, region) => {
     map[region.id] = region.currency_code
+    
     return map
   }, {} as Record<string, string>)
 
-  for (const [_productId, product] of Object.entries(data || {})) {
+  for (const product of Object.values(data || {})) {
     const { variants } = product || {}
 
     for (const [variantId, variant] of Object.entries(variants || {})) {
@@ -250,11 +253,13 @@ function comparePrices(initialPrices: PriceObject[], newPrices: PriceObject[]) {
 
   const initialPriceMap = initialPrices.reduce((map, price) => {
     map[createMapKey(price)] = price
+
     return map
   }, {} as Record<string, (typeof initialPrices)[0]>)
 
   const newPriceMap = newPrices.reduce((map, price) => {
     map[createMapKey(price)] = price
+    
     return map
   }, {} as Record<string, (typeof newPrices)[0]>)
 

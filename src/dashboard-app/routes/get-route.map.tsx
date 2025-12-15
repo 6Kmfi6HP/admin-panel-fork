@@ -12,6 +12,9 @@ import { ErrorBoundary } from "@components/utilities/error-boundary";
 import { TaxRegionDetailBreadcrumb } from "@routes/tax-regions/tax-region-detail/breadcrumb";
 import { taxRegionLoader } from "@routes/tax-regions/tax-region-detail/loader";
 
+import type { ExtendedAdminProductResponse, ExtendedAdminProductVariantResponse } from "@custom-types/product";
+import type { ExtendedAdminInventoryItemResponse } from "@custom-types/inventory";
+
 export function getRouteMap({
   settingsRoutes,
   coreRoutes,
@@ -73,7 +76,7 @@ export function getRouteMap({
                       loader,
                       handle: {
                         breadcrumb: (
-                          match: UIMatch<HttpTypes.AdminProductResponse>,
+                          match: UIMatch<ExtendedAdminProductResponse>,
                         ) => <Breadcrumb {...match} />,
                       },
                     };
@@ -175,8 +178,7 @@ export function getRouteMap({
                           loader,
                           handle: {
                             breadcrumb: (
-                              // eslint-disable-next-line max-len
-                              match: UIMatch<HttpTypes.AdminProductVariantResponse>,
+                              match: UIMatch<ExtendedAdminProductVariantResponse>,
                             ) => <Breadcrumb {...match} />,
                           },
                         };
@@ -974,7 +976,7 @@ export function getRouteMap({
                       loader,
                       handle: {
                         breadcrumb: (
-                          match: UIMatch<HttpTypes.AdminInventoryItemResponse>,
+                          match: UIMatch<ExtendedAdminInventoryItemResponse>,
                         ) => <Breadcrumb {...match} />,
                       },
                     };
