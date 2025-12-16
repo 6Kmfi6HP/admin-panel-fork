@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { CreateCampaignSchema } from "../../../../campaigns/campaign-create/components/create-campaign-form"
+import { CreateCampaignSchema } from "@/routes/campaigns/campaign-create/components/create-campaign-form"
 import { PROMOTION_RULE_OPERATORS } from "@/routes/promotions/common/constants"
 
 const RuleSchema = z.array(
@@ -32,7 +32,7 @@ export const CreatePromotionSchema = z
     rules: RuleSchema,
     is_tax_inclusive: z.boolean().optional(),
     application_method: z.object({
-      allocation: z.enum(["each", "across"]),
+      allocation: z.enum(["each", "across", "once"]),
       value: z.number().min(0).or(z.string().min(1)),
       currency_code: z.string().optional(),
       max_quantity: z.number().optional().nullable(),

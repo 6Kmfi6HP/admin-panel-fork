@@ -2,7 +2,7 @@ import { AdminCampaign } from "@medusajs/types"
 import { Heading, Text } from "@medusajs/ui"
 import { Fragment } from "react"
 import { useTranslation } from "react-i18next"
-import { ExtendedCampaignBudgetType } from "@custom-types/promotion"
+import type { ExtendedCampaignBudgetType } from "@custom-types/promotion/common"
 
 const translationKeyMap: Record<ExtendedCampaignBudgetType, string> = {
   spend: "spend",

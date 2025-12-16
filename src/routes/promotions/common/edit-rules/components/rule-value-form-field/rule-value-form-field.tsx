@@ -177,7 +177,7 @@ export const RuleValueFormField = ({
                       ? t("labels.selectValue")
                       : t("labels.selectValues")
                   }
-                  disabled={!watchOperator}
+                  disabled={!fieldRule.attribute || !watchOperator}
                   onChange={onChange}
                   data-testid={`${testIdBase}-combobox`}
                 />

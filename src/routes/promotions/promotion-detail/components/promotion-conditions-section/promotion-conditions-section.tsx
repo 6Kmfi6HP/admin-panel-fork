@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next"
 import { ActionMenu } from "@/components/common/action-menu"
 import { BadgeListSummary } from "@/components/common/badge-list-summary"
 import { NoRecords } from "@/components/common/empty-table-content"
-import type { ExtendedAdminPromotionRule, FormattedPromotionRuleTypes } from "@custom-types/promotion"
+import type { ExtendedAdminPromotionRule, FormattedPromotionRuleTypes } from "@custom-types/promotion/common"
 import { getConditionsTitleKey } from "./helpers"
 
 type RuleProps = {
@@ -35,7 +35,7 @@ function RuleBlock({ rule }: RuleProps) {
           list={
             rule.field_type === "number"
               ? [String(rule.values)]
-              : rule.values?.map((v) => v.label ?? "").filter(Boolean) ?? []
+              : rule.values?.map((v: { label?: string }) => v.label ?? "").filter(Boolean) ?? []
           }
         />
       </div>

@@ -63,10 +63,11 @@ export const EditPromotionDetailsForm = ({
   const { mutateAsync, isPending } = useUpdatePromotion(promotion.id)
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    const value = parseFloat(data.value)
+    const value = parseFloat(String(data.value))
 
     if (isNaN(value) || value < 0) {
       form.setError("value", { message: t("promotions.form.value.invalid") })
+
       return
     }
 
@@ -77,9 +78,9 @@ export const EditPromotionDetailsForm = ({
         status: data.status,
         is_tax_inclusive: data.is_tax_inclusive,
         application_method: {
-          value: parseFloat(data.value),
-          type: data.value_type as any,
-          allocation: data.allocation as any,
+          value: parseFloat(String(data.value)),
+          type: data.value_type,
+          allocation: data.allocation,
         },
       },
       {
@@ -101,6 +102,7 @@ export const EditPromotionDetailsForm = ({
     }
   }, [allocationWatchValue, form, promotion])
   const direction = useDocumentDirection()
+
   return (
     <RouteDrawer.Form form={form} data-testid="promotion-edit-details-form">
       <KeyboundForm
@@ -126,7 +128,7 @@ export const EditPromotionDetailsForm = ({
                         data-testid="promotion-edit-details-form-status-radio-group"
                       >
                         <RadioGroup.ChoiceBox
-                          value={"draft"}
+                          value="draft"
                           label={t("promotions.form.status.draft.title")}
                           description={t(
                             "promotions.form.status.draft.description"
@@ -135,7 +137,7 @@ export const EditPromotionDetailsForm = ({
                         />
 
                         <RadioGroup.ChoiceBox
-                          value={"active"}
+                          value="active"
                           label={t("promotions.form.status.active.title")}
                           description={t(
                             "promotions.form.status.active.description"
@@ -144,7 +146,7 @@ export const EditPromotionDetailsForm = ({
                         />
 
                         <RadioGroup.ChoiceBox
-                          value={"inactive"}
+                          value="inactive"
                           label={t("promotions.form.status.inactive.title")}
                           description={t(
                             "promotions.form.status.inactive.description"
@@ -176,7 +178,7 @@ export const EditPromotionDetailsForm = ({
                         data-testid="promotion-edit-details-form-method-radio-group"
                       >
                         <RadioGroup.ChoiceBox
-                          value={"false"}
+                          value="false"
                           label={t("promotions.form.method.code.title")}
                           description={t(
                             "promotions.form.method.code.description"
@@ -184,7 +186,7 @@ export const EditPromotionDetailsForm = ({
                           data-testid="promotion-edit-details-form-method-option-code"
                         />
                         <RadioGroup.ChoiceBox
-                          value={"true"}
+                          value="true"
                           label={t("promotions.form.method.automatic.title")}
                           description={t(
                             "promotions.form.method.automatic.description"
@@ -260,7 +262,7 @@ export const EditPromotionDetailsForm = ({
                             data-testid="promotion-edit-details-form-value-type-radio-group"
                           >
                             <RadioGroup.ChoiceBox
-                              value={"fixed"}
+                              value="fixed"
                               label={t(
                                 "promotions.form.value_type.fixed.title"
                               )}
@@ -271,7 +273,7 @@ export const EditPromotionDetailsForm = ({
                             />
 
                             <RadioGroup.ChoiceBox
-                              value={"percentage"}
+                              value="percentage"
                               label={t(
                                 "promotions.form.value_type.percentage.title"
                               )}
@@ -360,7 +362,7 @@ export const EditPromotionDetailsForm = ({
                             data-testid="promotion-edit-details-form-allocation-radio-group"
                           >
                             <RadioGroup.ChoiceBox
-                              value={"each"}
+                              value="each"
                               label={t("promotions.form.allocation.each.title")}
                               description={t(
                                 "promotions.form.allocation.each.description"
@@ -369,7 +371,7 @@ export const EditPromotionDetailsForm = ({
                             />
 
                             <RadioGroup.ChoiceBox
-                              value={"across"}
+                              value="across"
                               label={t(
                                 "promotions.form.allocation.across.title"
                               )}

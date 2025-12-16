@@ -1,31 +1,33 @@
 import { XMarkMini } from "@medusajs/icons"
-import { PromotionDTO } from "@medusajs/types"
+import type { HttpTypes, PromotionRuleOperatorValues } from "@medusajs/types"
 import { Badge, Button, Heading, IconButton, Select, Text } from "@medusajs/ui"
 import { forwardRef, Fragment, useEffect, useRef } from "react"
-import {
+import type {
   ControllerRenderProps,
-  useFieldArray,
+  FieldValues,
   UseFormReturn,
-  useWatch,
 } from "react-hook-form"
+import { useFieldArray, useWatch } from "react-hook-form"
 import { useTranslation } from "react-i18next"
-import { Form } from "../../../../../../components/common/form"
+import type { FormRule, RuleToRemove } from "@custom-types/promotion/common"
+import { Form } from "@/components/common/form"
 import {
   usePromotionRuleAttributes,
   usePromotionRules,
-} from "../../../../../../hooks/api/promotions"
-import { useDocumentDirection } from "../../../../../../hooks/use-document-direction"
-import { CreatePromotionSchemaType } from "../../../../promotion-create/components/create-promotion-form/form-schema"
-import { generateRuleAttributes } from "../edit-rules-form/utils"
-import { RuleValueFormField } from "../rule-value-form-field"
+} from "@/hooks/api/promotions"
+import { useDocumentDirection } from "@/hooks/use-document-direction"
+import type { CreatePromotionSchemaType } from "@/routes/promotions/promotion-create/components/create-promotion-form/form-schema"
+import type { EditRulesType } from "@/routes/promotions/common/edit-rules/components/edit-rules-form/form-schema"
+import { generateRuleAttributes } from "@/routes/promotions/common/edit-rules/components/edit-rules-form/utils"
+import { RuleValueFormField } from "@/routes/promotions/common/edit-rules/components/rule-value-form-field"
 import { requiredProductRule } from "./constants"
 
 type RulesFormFieldType = {
-  promotion?: PromotionDTO
-  form: UseFormReturn<CreatePromotionSchemaType>
+  promotion?: HttpTypes.AdminPromotion
+  form: UseFormReturn<CreatePromotionSchemaType> | UseFormReturn<EditRulesType>
   ruleType: "rules" | "target-rules" | "buy-rules"
-  setRulesToRemove?: any
-  rulesToRemove?: any
+  setRulesToRemove?: (rules: RuleToRemove[]) => void
+  rulesToRemove?: RuleToRemove[]
   scope?:
     | "application_method.buy_rules"
     | "rules"
@@ -46,46 +48,92 @@ export const RulesFormField = ({
 
   const { t } = useTranslation()
   const direction = useDocumentDirection()
+  
+  // Type-safe form data access based on formType
   const formData = form.getValues()
+  const formTypeValue = formType === "create" 
+    ? (formData as CreatePromotionSchemaType).type
+    : (formData as EditRulesType).type
+  
+  const applicationMethodTargetTypeValue = formType === "create"
+    ? (formData as CreatePromotionSchemaType).application_method?.target_type
+    : (formData as EditRulesType).application_method?.target_type
+
   const { attributes } = usePromotionRuleAttributes(
     ruleType,
-    formData.type,
-    formData.application_method?.target_type
+    formTypeValue,
+    applicationMethodTargetTypeValue
   )
 
-  const { fields, append, remove, update, replace } = useFieldArray({
-    control: form.control,
-    name: scope,
-    keyName: scope,
-  })
+  // Type-safe field array - use conditional logic based on formType
+  // Helper to get the correct field name based on scope
+  const getFieldName = (): "rules" | "application_method.buy_rules" | "application_method.target_rules" => {
+    if (scope === "rules") {
+      return "rules"
+    }
+    if (scope === "application_method.buy_rules") {
+      return "application_method.buy_rules"
+    }
 
-  const promotionType = useWatch({
-    control: form.control,
-    name: "type",
-    defaultValue: promotion?.type,
-  })
+    return "application_method.target_rules"
+  }
 
-  const applicationMethodType = useWatch({
-    control: form.control,
-    name: "application_method.type",
-    defaultValue: promotion?.application_method?.type,
-  })
+  const fieldName = getFieldName()
 
-  const applicationMethodTargetType = useWatch({
-    control: form.control,
-    name: "application_method.target_type",
-    defaultValue: promotion?.application_method?.target_type,
-  })
+  const createFormFieldArray = formType === "create"
+    ? useFieldArray({
+        control: (form as UseFormReturn<CreatePromotionSchemaType>).control,
+        name: fieldName as "rules" | "application_method.buy_rules" | "application_method.target_rules",
+      })
+    : useFieldArray({
+        control: (form as UseFormReturn<EditRulesType>).control,
+        name: "rules" as const, // EditRulesType only supports "rules"
+      })
+
+  const { fields, append, remove, update, replace } = createFormFieldArray
+
+  // Type-safe watch - handle union type properly
+  const promotionType = formType === "create"
+    ? useWatch({
+        control: (form as UseFormReturn<CreatePromotionSchemaType>).control,
+        name: "type",
+        defaultValue: promotion?.type,
+      })
+    : useWatch({
+        control: (form as UseFormReturn<EditRulesType>).control,
+        name: "type",
+        defaultValue: promotion?.type,
+      })
+
+  const applicationMethodType = formType === "create"
+    ? useWatch({
+        control: (form as UseFormReturn<CreatePromotionSchemaType>).control,
+        name: "application_method.type",
+        defaultValue: promotion?.application_method?.type,
+      })
+    : undefined
+
+  const applicationMethodTargetType = formType === "create"
+    ? useWatch({
+        control: (form as UseFormReturn<CreatePromotionSchemaType>).control,
+        name: "application_method.target_type",
+        defaultValue: promotion?.application_method?.target_type,
+      })
+    : useWatch({
+        control: (form as UseFormReturn<EditRulesType>).control,
+        name: "application_method.target_type",
+        defaultValue: promotion?.application_method?.target_type,
+      })
 
   const query: Record<string, string> = promotionType
     ? {
         promotion_type: promotionType,
-        application_method_type: applicationMethodType,
-        application_method_target_type: applicationMethodTargetType,
+        ...(applicationMethodType && { application_method_type: applicationMethodType }),
+        ...(applicationMethodTargetType && { application_method_target_type: applicationMethodTargetType }),
       }
     : {}
 
-  const { rules, isLoading } = usePromotionRules(
+  const { rules: apiRules, isLoading } = usePromotionRules(
     promotion?.id || null,
     ruleType,
     query,
@@ -93,6 +141,9 @@ export const RulesFormField = ({
       enabled: !!promotion?.id || (!!promotionType && !!applicationMethodType),
     }
   )
+
+  // Type-safe conversion: API returns HttpTypes.AdminPromotionRule[] but we need ExtendedAdminPromotionRule[]
+  const rules = apiRules as HttpTypes.AdminPromotionRule[] | undefined
 
   useEffect(() => {
     if (isLoading) {
@@ -108,29 +159,37 @@ export const RulesFormField = ({
     }
 
     if (ruleType === "rules" && !fields.length) {
-      form.resetField("rules")
-
-      replace(generateRuleAttributes(rules) as any)
+      if (formType === "create") {
+        (form as UseFormReturn<CreatePromotionSchemaType>).resetField("rules")
+      } else {
+        (form as UseFormReturn<EditRulesType>).resetField("rules")
+      }
+      replace(generateRuleAttributes(rules) as CreatePromotionSchemaType["rules"] | EditRulesType["rules"])
     }
 
     if (ruleType === "buy-rules" && !fields.length) {
-      form.resetField("application_method.buy_rules")
+      // EditRulesType doesn't have buy_rules, only CreatePromotionSchemaType does
+      if (formType === "create") {
+        (form as UseFormReturn<CreatePromotionSchemaType>).resetField("application_method.buy_rules")
+      }
       const rulesToAppend =
         promotion?.id || promotionType === "standard"
           ? rules
-          : [...rules, requiredProductRule]
+          : [...(rules || []), requiredProductRule as HttpTypes.AdminPromotionRule]
 
-      replace(generateRuleAttributes(rulesToAppend) as any)
+      replace(generateRuleAttributes(rulesToAppend) as CreatePromotionSchemaType["application_method"]["buy_rules"])
     }
 
     if (ruleType === "target-rules" && !fields.length) {
-      form.resetField("application_method.target_rules")
+      if (formType === "create") {
+        (form as UseFormReturn<CreatePromotionSchemaType>).resetField("application_method.target_rules")
+      }
       const rulesToAppend =
         promotion?.id || promotionType === "standard"
           ? rules
-          : [...rules, requiredProductRule]
+          : [...(rules || []), requiredProductRule as HttpTypes.AdminPromotionRule]
 
-      replace(generateRuleAttributes(rulesToAppend) as any)
+      replace(generateRuleAttributes(rulesToAppend) as CreatePromotionSchemaType["application_method"]["target_rules"])
     }
 
     initialRulesSet.current = true
@@ -149,26 +208,35 @@ export const RulesFormField = ({
   return (
     <div className="flex flex-col" data-testid={`rules-form-field-${ruleType}`}>
       <Heading level="h2" className="mb-2" data-testid={`rules-form-field-heading-${ruleType}`}>
-        {t(
-          ruleType === "target-rules"
-            ? `promotions.fields.conditions.${ruleType}.${applicationMethodTargetType}.title`
-            : `promotions.fields.conditions.${ruleType}.title`
-        )}
+        {ruleType === "target-rules" && applicationMethodTargetType
+          ? applicationMethodTargetType === "order"
+            ? t("promotions.fields.conditions.target-rules.order.title")
+            : applicationMethodTargetType === "shipping_methods"
+            ? t("promotions.fields.conditions.target-rules.shipping_methods.title")
+            : t("promotions.fields.conditions.target-rules.items.title")
+          : ruleType === "rules"
+          ? t("promotions.fields.conditions.rules.title")
+          : t("promotions.fields.conditions.buy-rules.title")}
       </Heading>
 
       <Text className="text-ui-fg-subtle txt-small mb-6" data-testid={`rules-form-field-description-${ruleType}`}>
-        {t(
-          ruleType === "target-rules"
-            ? `promotions.fields.conditions.${ruleType}.${applicationMethodTargetType}.description`
-            : `promotions.fields.conditions.${ruleType}.description`
-        )}
+        {ruleType === "target-rules" && applicationMethodTargetType
+          ? applicationMethodTargetType === "order"
+            ? t("promotions.fields.conditions.target-rules.order.description")
+            : applicationMethodTargetType === "shipping_methods"
+            ? t("promotions.fields.conditions.target-rules.shipping_methods.description")
+            : t("promotions.fields.conditions.target-rules.items.description")
+          : ruleType === "rules"
+          ? t("promotions.fields.conditions.rules.description")
+          : t("promotions.fields.conditions.buy-rules.description")}
       </Text>
 
       {fields.map((fieldRule, index) => {
-        const identifier = fieldRule.id
+        const typedFieldRule = fieldRule as FormRule
+        const identifier = typedFieldRule.id ?? `field-${index}`
 
         return (
-          <Fragment key={`${fieldRule.id}.${index}.${fieldRule.attribute}`}>
+          <Fragment key={`${typedFieldRule.id ?? identifier}.${index}.${typedFieldRule.attribute}`}>
             <div className="bg-ui-bg-subtle border-ui-border-base flex flex-row gap-2 rounded-xl border px-2 py-2" data-testid={`rules-form-field-rule-${ruleType}-${index}`}>
               <div className="grow">
                 <Form.Field
@@ -177,30 +245,31 @@ export const RulesFormField = ({
                     const { onChange, ref, ...fieldProps } = field
 
                     const existingAttributes =
-                      fields?.map((field: any) => field.attribute) || []
+                      fields?.map((field) => (field as FormRule).attribute).filter(Boolean) as string[] || []
+                    
                     const attributeOptions =
                       attributes?.filter((attr) => {
-                        if (attr.value === fieldRule.attribute) {
+                        if (attr.value === typedFieldRule.attribute) {
                           return true
                         }
 
                         return !existingAttributes.includes(attr.value)
                       }) || []
 
-                    const disabled = !!fieldRule.required
+                    const disabled = !!typedFieldRule.required
                     const onValueChange = (e: string) => {
                       const currentAttributeOption = attributeOptions.find(
                         (ao) => ao.id === e
                       )
 
-                      const fieldRuleOverrides: typeof fieldRule = {
-                        ...fieldRule,
+                      const fieldRuleOverrides: FormRule = {
+                        ...typedFieldRule,
                         disguised: currentAttributeOption?.disguised || false,
                       }
 
                       if (currentAttributeOption?.operators?.length === 1) {
                         fieldRuleOverrides.operator =
-                          currentAttributeOption.operators[0].value
+                          currentAttributeOption.operators[0].value as PromotionRuleOperatorValues
                       }
 
                       if (fieldRuleOverrides.operator === "eq") {
@@ -215,7 +284,7 @@ export const RulesFormField = ({
 
                     return (
                       <Form.Item className="mb-2" data-testid={`rules-form-field-rule-${ruleType}-${index}-attribute-item`}>
-                        {fieldRule.required && (
+                        {typedFieldRule.required && (
                           <div className="flex items-center px-2" data-testid={`rules-form-field-rule-${ruleType}-${index}-required-label`}>
                             <p className="text text-ui-fg-muted txt-small">
                               {t("promotions.form.required")}
@@ -229,7 +298,7 @@ export const RulesFormField = ({
                               dir={direction}
                               {...fieldProps}
                               onValueChange={onValueChange}
-                              disabled={fieldRule.required}
+                              disabled={typedFieldRule.required}
                               data-testid={`rules-form-field-rule-${ruleType}-${index}-attribute-select`}
                             >
                               <Select.Trigger
@@ -262,8 +331,8 @@ export const RulesFormField = ({
                             <DisabledField
                               label={
                                 attributeOptions?.find(
-                                  (ao) => ao.value === fieldRule.attribute
-                                )?.label || ""
+                                  (ao) => ao.value === typedFieldRule.attribute
+                                )?.label ?? ""
                               }
                               field={field}
                             />
@@ -282,7 +351,7 @@ export const RulesFormField = ({
                       const { onChange, ref, ...fieldProps } = field
 
                       const currentAttributeOption = attributes?.find(
-                        (attr) => attr.value === fieldRule.attribute
+                        (attr) => attr.value === typedFieldRule.attribute
                       )
 
                       const options =
@@ -293,16 +362,17 @@ export const RulesFormField = ({
                         })) || []
 
                       const disabled =
-                        !!fieldRule.attribute && options?.length <= 1
+                        !!typedFieldRule.attribute && options?.length <= 1
 
                       return (
                         <Form.Item className="basis-1/2" data-testid={`rules-form-field-rule-${ruleType}-${index}-operator-item`}>
                           <Form.Control data-testid={`rules-form-field-rule-${ruleType}-${index}-operator-control`}>
                             {!disabled ? (
                               <Select
-                                dir= {direction}
+                                dir={direction}
                                 {...fieldProps}
-                                disabled={!fieldRule.attribute}
+                                value={fieldProps.value || undefined}
+                                disabled={!typedFieldRule.attribute}
                                 onValueChange={onChange}
                                 data-testid={`rules-form-field-rule-${ruleType}-${index}-operator-select`}
                               >
@@ -347,8 +417,8 @@ export const RulesFormField = ({
                     scope={scope}
                     name={`${scope}.${index}.values`}
                     operator={`${scope}.${index}.operator`}
-                    fieldRule={fieldRule}
-                    attributes={attributes}
+                    fieldRule={typedFieldRule}
+                    attributes={attributes ?? []}
                     ruleType={ruleType}
                     applicationMethodTargetType={applicationMethodTargetType}
                   />
@@ -356,19 +426,27 @@ export const RulesFormField = ({
               </div>
 
               <div className="size-7 flex-none self-center">
-                {!fieldRule.required && (
+                {!typedFieldRule.required && (
                   <IconButton
                     size="small"
                     variant="transparent"
                     className="text-ui-fg-muted"
                     type="button"
                     onClick={() => {
-                      if (!fieldRule.required) {
-                        setRulesToRemove &&
-                          setRulesToRemove([...rulesToRemove, fieldRule])
-
-                        remove(index)
+                      if (!typedFieldRule.required && typedFieldRule.id && typedFieldRule.attribute) {
+                        const ruleToRemove: RuleToRemove = {
+                          id: typedFieldRule.id,
+                          attribute: typedFieldRule.attribute,
+                          disguised: typedFieldRule.disguised,
+                        }
+                        if (setRulesToRemove) {
+                          const existingIds = new Set((rulesToRemove || []).map((r) => r.id))
+                          if (!existingIds.has(ruleToRemove.id)) {
+                            setRulesToRemove([...(rulesToRemove || []), ruleToRemove])
+                          }
+                        }
                       }
+                      remove(index)
                     }}
                     data-testid={`rules-form-field-rule-${ruleType}-${index}-remove-button`}
                   >
@@ -397,12 +475,13 @@ export const RulesFormField = ({
           variant="secondary"
           className="inline-block"
           onClick={() => {
-            append({
+            const newRule: FormRule = {
               attribute: "",
-              operator: "",
+              operator: "" as PromotionRuleOperatorValues,
               values: [],
               required: false,
-            } as any)
+            }
+            append(newRule)
           }}
           data-testid={`rules-form-field-add-condition-button-${ruleType}`}
         >
@@ -415,12 +494,27 @@ export const RulesFormField = ({
             variant="transparent"
             className="text-ui-fg-muted hover:text-ui-fg-subtle ml-2 inline-block"
             onClick={() => {
-              const indicesToRemove = fields
-                .map((field: any, index) => (field.required ? null : index))
-                .filter((f) => f !== null)
+              const typedFields = fields as FormRule[]
+              const indicesToRemove = typedFields
+                .map((field, index) => (field.required ? null : index))
+                .filter((f): f is number => f !== null)
 
-              setRulesToRemove &&
-                setRulesToRemove(fields.filter((field: any) => !field.required))
+              const rulesToRemoveFromFields: RuleToRemove[] = typedFields
+                .filter((field): field is FormRule & { id: string; attribute: string } => 
+                  !field.required && !!field.id && !!field.attribute
+                )
+                .map((field) => ({
+                  id: field.id,
+                  attribute: field.attribute,
+                  disguised: field.disguised,
+                }))
+
+              if (setRulesToRemove) {
+                // Merge with existing rulesToRemove, avoiding duplicates
+                const existingIds = new Set((rulesToRemove || []).map((r) => r.id))
+                const newRulesToRemove = rulesToRemoveFromFields.filter((r) => !existingIds.has(r.id))
+                setRulesToRemove([...(rulesToRemove || []), ...newRulesToRemove])
+              }
               remove(indicesToRemove)
             }}
             data-testid={`rules-form-field-clear-all-button-${ruleType}`}
@@ -435,7 +529,7 @@ export const RulesFormField = ({
 
 type DisabledAttributeProps = {
   label: string
-  field: ControllerRenderProps
+  field: Partial<ControllerRenderProps<FieldValues>>
 }
 
 /**

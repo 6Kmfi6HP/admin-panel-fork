@@ -93,14 +93,14 @@ export const AddCampaignPromotionFields = ({
                   data-testid="promotion-add-campaign-form-campaign-choice-radio-group"
                 >
                   <RadioGroup.ChoiceBox
-                    value={"none"}
+                    value="none"
                     label={t("promotions.form.campaign.none.title")}
                     description={t("promotions.form.campaign.none.description")}
                     data-testid="promotion-add-campaign-form-campaign-choice-option-none"
                   />
 
                   <RadioGroup.ChoiceBox
-                    value={"existing"}
+                    value="existing"
                     label={t("promotions.form.campaign.existing.title")}
                     description={t(
                       "promotions.form.campaign.existing.description"
@@ -110,7 +110,7 @@ export const AddCampaignPromotionFields = ({
 
                   {withNewCampaign && (
                     <RadioGroup.ChoiceBox
-                      value={"new"}
+                      value="new"
                       label={t("promotions.form.campaign.new.title")}
                       description={t(
                         "promotions.form.campaign.new.description"

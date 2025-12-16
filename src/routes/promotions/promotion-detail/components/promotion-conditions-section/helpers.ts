@@ -1,4 +1,4 @@
-import type { FormattedPromotionRuleTypes } from "@custom-types/promotion"
+import type { FormattedPromotionRuleTypes } from "@custom-types/promotion/common"
 import type { ApplicationMethodTargetTypeValues } from "@medusajs/types"
 
 export const getConditionsTitleKey = (
