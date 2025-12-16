@@ -839,12 +839,8 @@ export const ClaimCreateForm = ({
                 <span className="txt-small text-ui-fg-subtle">
                   {getStylizedAmount(
                     inboundPreviewItems.reduce((acc, item) => {
-                      const action = item.actions?.find(
-                        (act) => act.action === "RETURN_ITEM"
-                      )
-                      acc = acc + (action?.amount || 0)
 
-                      return acc
+                      return acc + item.total
                     }, 0) * -1,
                     order.currency_code
                   )}
@@ -859,12 +855,8 @@ export const ClaimCreateForm = ({
                 <span className="txt-small text-ui-fg-subtle">
                   {getStylizedAmount(
                     outboundPreviewItems.reduce((acc, item) => {
-                      const action = item.actions?.find(
-                        (act) => act.action === "ITEM_ADD"
-                      )
-                      acc = acc + (action?.amount || 0)
 
-                      return acc
+                      return acc + item.total
                     }, 0),
                     order.currency_code
                   )}
