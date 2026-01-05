@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import * as zod from "zod"
 
-import { AdminFulfillment, AdminOrder } from "@medusajs/types"
+
 import { Button, Heading, Input, Switch, toast } from "@medusajs/ui"
 import { useFieldArray, useForm } from "react-hook-form"
 
@@ -14,10 +14,11 @@ import {
 import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
 import { useCreateOrderShipment } from "../../../../../hooks/api"
 import { CreateShipmentSchema } from "./constants"
+import { ExtendedAdminOrder, ExtendedAdminOrderFulfillment } from "@custom-types/order"
 
 type OrderCreateFulfillmentFormProps = {
-  order: AdminOrder
-  fulfillment: AdminFulfillment
+  order: ExtendedAdminOrder
+  fulfillment: ExtendedAdminOrderFulfillment
 }
 
 export function OrderCreateShipmentForm({
@@ -32,7 +33,7 @@ export function OrderCreateShipmentForm({
 
   const form = useForm<zod.infer<typeof CreateShipmentSchema>>({
     defaultValues: {
-      send_notification: !order.no_notification,
+      send_notification: !order?.no_notification,
     },
     resolver: zodResolver(CreateShipmentSchema),
   })

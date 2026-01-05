@@ -1,5 +1,6 @@
 import { ArrowUturnLeft, DocumentSeries, XCircle } from "@medusajs/icons"
 import { AdminOrderLineItem } from "@medusajs/types"
+import type { ExtendedAdminOrderLineItem } from "@custom-types/order"
 import { Badge, Input, Text, toast } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 
@@ -16,7 +17,7 @@ import {
 import { getErrorMessage } from "@utils/error-helper"
 
 type OrderEditItemProps = {
-  item: AdminOrderLineItem
+  item: ExtendedAdminOrderLineItem
   currencyCode: string
   orderId: string
 }

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import * as zod from "zod"
 
-import { AdminOrder, InventoryItemDTO, OrderLineItemDTO } from "@medusajs/types"
+import { InventoryItemDTO, OrderLineItemDTO } from "@medusajs/types"
 import { Alert, Button, Heading, Input, Select, toast } from "@medusajs/ui"
 import { useForm, useWatch } from "react-hook-form"
 
@@ -22,9 +22,10 @@ import { OrderAllocateItemsItem } from "./order-allocate-items-item"
 import { checkInventoryKit } from "./utils"
 import { useDocumentDirection } from "../../../../../hooks/use-document-direction"
 import { getErrorMessage } from "@utils/error-helper"
+import { ExtendedAdminOrder, ExtendedAdminOrderLineItem } from "@custom-types/order"
 
 type OrderAllocateItemsFormProps = {
-  order: AdminOrder
+  order: ExtendedAdminOrder
 }
 
 export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
@@ -42,7 +43,7 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
       order.items.filter(
         (item) =>
           item.variant?.manage_inventory &&
-          item.variant?.inventory.length &&
+          item.variant?.inventory?.length &&
           item.quantity - item.detail.fulfilled_quantity > 0
       ),
     [order.items]
@@ -325,20 +326,27 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
   )
 }
 
-function defaultAllocations(items: OrderLineItemDTO) {
-  const ret = {}
+function defaultAllocations(
+  items: ExtendedAdminOrderLineItem[]
+): Record<string, string> {
+  const ret: Record<string, string> = {}
 
   items.forEach((item) => {
     const hasInventoryKit = checkInventoryKit(item)
 
-    ret[
-      hasInventoryKit
-        ? `${item.id}-`
-        : `${item.id}-${item.variant?.inventory[0].id}`
-    ] = ""
+    const firstInventoryId = item.variant?.inventory?.[0]?.id
+    if (!firstInventoryId && !hasInventoryKit) {
+      return
+    }
+
+    const key = hasInventoryKit
+      ? `${item.id}-`
+      : `${item.id}-${firstInventoryId}`
+
+    ret[key] = ""
 
     if (hasInventoryKit) {
-      item.variant?.inventory.forEach((i) => {
+      item.variant?.inventory?.forEach((i) => {
         ret[`${item.id}-${i.id}`] = ""
       })
     }

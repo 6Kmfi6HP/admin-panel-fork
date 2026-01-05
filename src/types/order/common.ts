@@ -1,8 +1,10 @@
 import type { HttpTypes, PaginatedResponse } from "@medusajs/types";
 import type { FulfillmentSetType } from "@routes/locations/common/constants";
+import type { ExtendedAdminProductVariant } from "..";
 
-export interface ExtendedAdminOrder extends HttpTypes.AdminOrder {
+export interface ExtendedAdminOrder extends Omit<HttpTypes.AdminOrder, "items" | "fulfillments"> {
   canceled_at?: string | null;
+  items: ExtendedAdminOrderLineItem[];
   fulfillments: ExtendedAdminOrderFulfillment[];
 }
 
@@ -22,6 +24,7 @@ interface ExtendedAdminOrderFulfillmentSet extends HttpTypes.AdminFulfillmentSet
 }
 export interface ExtendedAdminOrderLineItem extends HttpTypes.AdminOrderLineItem {
   line_item_id: string
+  variant?: ExtendedAdminProductVariant
 }
 
 export interface ExtendedAdminOrderFulfillmentLabel {
