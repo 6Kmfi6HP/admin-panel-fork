@@ -1115,7 +1115,7 @@
     "edit": {
       "email": {
         "title": "Email szerkesztése",
-        "requestSuccess": "Email frissítve: {{email}}."
+        "requestSuccess": "Az e-mail sikeresen frissítve lett."
       },
       "shippingAddress": {
         "title": "Szállítási cím szerkesztése",

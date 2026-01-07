@@ -1162,7 +1162,7 @@
     "edit": {
       "email": {
         "title": "Edit email",
-        "requestSuccess": "Order email updated to {{email}}."
+        "requestSuccess": "Email was successfully updated."
       },
       "shippingAddress": {
         "title": "Edit shipping address",

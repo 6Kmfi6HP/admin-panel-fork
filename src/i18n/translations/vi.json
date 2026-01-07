@@ -1145,7 +1145,7 @@
     "edit": {
       "email": {
         "title": "Chỉnh sửa email",
-        "requestSuccess": "Email đơn hàng đã được cập nhật thành {{email}}."
+        "requestSuccess": "Email đã được cập nhật thành công."
       },
       "shippingAddress": {
         "title": "Chỉnh sửa địa chỉ giao hàng",

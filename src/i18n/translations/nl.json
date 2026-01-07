@@ -1115,7 +1115,7 @@
     "edit": {
       "email": {
         "title": "E-mail bewerken",
-        "requestSuccess": "Bestellingse-mail bijgewerkt naar {{email}}."
+        "requestSuccess": "E-mail is succesvol bijgewerkt."
       },
       "shippingAddress": {
         "title": "Verzendadres bewerken",

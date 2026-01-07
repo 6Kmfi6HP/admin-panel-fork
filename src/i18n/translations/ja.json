@@ -1026,7 +1026,7 @@
     "edit": {
       "email": {
         "title": "Eメールを編集",
-        "requestSuccess": "注文のEメールが「{{email}}」に更新されました。"
+        "requestSuccess": "メールアドレスが正常に更新されました。"
       },
       "shippingAddress": {
         "title": "配送先住所を編集",

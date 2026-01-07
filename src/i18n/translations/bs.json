@@ -1120,7 +1120,7 @@
     "edit": {
       "email": {
         "title": "Uredi e-mail",
-        "requestSuccess": "E-mail narudžbe je ažuriran na {{email}}."
+        "requestSuccess": "E-mail je uspješno ažuriran."
       },
       "shippingAddress": {
         "title": "Uredi adresu za dostavu",

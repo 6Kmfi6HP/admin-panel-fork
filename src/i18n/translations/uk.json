@@ -1026,7 +1026,7 @@
     "edit": {
       "email": {
         "title": "Редагувати email",
-        "requestSuccess": "Email замовлення оновлено на {{email}}."
+        "requestSuccess": "Email було успішно оновлено."
       },
       "shippingAddress": {
         "title": "Редагувати адресу доставки",
