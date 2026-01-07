@@ -1084,7 +1084,11 @@
       },
       "billingAddress": {
         "title": "Editați adresa de facturare",
-        "requestSuccess": "Adresa de facturare a comenzii a fost actualizată."
+        "requestSuccess": "Adresa de facturare a comenzii a fost actualizată.",
+        "validation": {
+          "addressRequired": "Vă rugăm să introduceți o adresă",
+          "countryRequired": "Vă rugăm să selectați o țară"
+        }
       }
     },
     "returns": {

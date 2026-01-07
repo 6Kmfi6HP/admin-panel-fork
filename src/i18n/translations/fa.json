@@ -1084,7 +1084,11 @@
       },
       "billingAddress": {
         "title": "ویرایش آدرس صورتحساب",
-        "requestSuccess": "آدرس صورتحساب سفارش به‌روزرسانی شد."
+        "requestSuccess": "آدرس صورتحساب سفارش به‌روزرسانی شد.",
+        "validation": {
+          "addressRequired": "لطفا آدرس را وارد کنید",
+          "countryRequired": "لطفا کشور را انتخاب کنید"
+        }
       }
     },
     "returns": {
@@ -2589,7 +2593,10 @@
         "placeholder": "wrong_size",
         "tooltip": "مقدار باید یک شناسه منحصر به فرد برای دلیل بازگشت باشد."
       },
-      "label": { "label": "برچسب", "placeholder": "سایز اشتباه" },
+      "label": {
+        "label": "برچسب",
+        "placeholder": "سایز اشتباه"
+      },
       "description": {
         "label": "توضیحات",
         "placeholder": "مشتری سایز اشتباه دریافت کرده است"

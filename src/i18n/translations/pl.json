@@ -1192,7 +1192,11 @@
       },
       "billingAddress": {
         "title": "Edytuj adres rozliczeniowy",
-        "requestSuccess": "Adres rozliczeniowy zamówienia został zaktualizowany."
+        "requestSuccess": "Adres rozliczeniowy zamówienia został zaktualizowany.",
+        "validation": {
+          "addressRequired": "Proszę wprowadzić adres",
+          "countryRequired": "Proszę wybrać kraj"
+        }
       }
     },
     "returns": {

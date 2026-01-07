@@ -1102,7 +1102,11 @@
       },
       "billingAddress": {
         "title": "تحرير عنوان الفواتير",
-        "requestSuccess": "تم تحديث عنوان الفواتير للطلب."
+        "requestSuccess": "تم تحديث عنوان الفواتير للطلب.",
+        "validation": {
+          "addressRequired": "الرجاء إدخال العنوان",
+          "countryRequired": "الرجاء تحديد البلد"
+        }
       }
     },
     "returns": {
@@ -2611,7 +2615,10 @@
         "placeholder": "خطأ في الحجم",
         "tooltip": "يجب أن تكون القيمة معرفًا فريدًا لسبب الإرجاع."
       },
-      "label": { "label": "التسمية", "placeholder": "خطأ في الحجم" },
+      "label": {
+        "label": "التسمية",
+        "placeholder": "خطأ في الحجم"
+      },
       "description": {
         "label": "الوصف",
         "placeholder": "تلقى العميل الحجم الخطأ"

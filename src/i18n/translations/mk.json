@@ -1084,7 +1084,11 @@
       },
       "billingAddress": {
         "title": "Уредете ја адресата за наплата",
-        "requestSuccess": "Адресата за наплата на нарачката е ажурирана."
+        "requestSuccess": "Адресата за наплата на нарачката е ажурирана.",
+        "validation": {
+          "addressRequired": "Ве молиме внесете адреса",
+          "countryRequired": "Ве молиме изберете држава"
+        }
       }
     },
     "returns": {

@@ -1084,7 +1084,11 @@
       },
       "billingAddress": {
         "title": "Editar dirección de facturación",
-        "requestSuccess": "Dirección de facturación del pedido actualizada."
+        "requestSuccess": "Dirección de facturación del pedido actualizada.",
+        "validation": {
+          "addressRequired": "Por favor, introduzca una dirección",
+          "countryRequired": "Por favor, seleccione un país"
+        }
       }
     },
     "domain": "Pedidos",

@@ -1128,7 +1128,11 @@
       },
       "billingAddress": {
         "title": "청구 주소 편집",
-        "requestSuccess": "주문 청구 주소가 업데이트되었습니다."
+        "requestSuccess": "주문 청구 주소가 업데이트되었습니다.",
+        "validation": {
+          "addressRequired": "주소를 입력해주세요",
+          "countryRequired": "국가를 선택해주세요"
+        }
       }
     },
     "returns": {

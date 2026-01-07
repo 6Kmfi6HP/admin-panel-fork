@@ -1418,7 +1418,11 @@
       },
       "billingAddress": {
         "title": "Fatura adresini düzenle",
-        "requestSuccess": "Sipariş fatura adresi güncellendi."
+        "requestSuccess": "Sipariş fatura adresi güncellendi.",
+        "validation": {
+          "addressRequired": "Lütfen bir adres girin",
+          "countryRequired": "Lütfen bir ülke seçin"
+        }
       }
     }
   },
