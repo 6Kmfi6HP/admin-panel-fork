@@ -249,30 +249,41 @@ export const OrderSummarySection = ({
           {showReturns && (
             <>
               {receivableReturns.length === 1 ? (
-                <Button asChild variant="secondary" size="small" data-testid="order-summary-receive-return-button">
-                  <Link
-                    to={`/orders/${order.id}/returns/${receivableReturns[0].id}/receive`}
+                <>
+                  <Button asChild variant="secondary" size="small" data-testid="order-summary-receive-return-button">
+                    <Link
+                      to={`/orders/${order.id}/returns/${receivableReturns[0].id}/receive`}
+                    >
+                      {t("orders.returns.receive.action")}
+                    </Link>
+                  </Button>
+
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    onClick={() => handleCancelReturn(receivableReturns[0].id)}
                   >
-                    {t("orders.returns.receive.action")}
-                  </Link>
-                </Button>
+                    {t("actions.cancel")}
+                  </Button>
+                </>
               ) : (
-                <ActionMenu
-                  groups={[
-                    {
-                      actions: receivableReturns.map((r) => {
-                        let id = r.id
-                        let returnType = "Return"
+                <>
+                  <ActionMenu
+                    groups={[
+                      {
+                        actions: receivableReturns.map((r) => {
+                          let id = r.id
+                          let returnType = "Return"
 
-                        if (r.exchange_id) {
-                          id = r.exchange_id
-                          returnType = "Exchange"
-                        }
+                          if (r.exchange_id) {
+                            id = r.exchange_id
+                            returnType = "Exchange"
+                          }
 
-                        if (r.claim_id) {
-                          id = r.claim_id
-                          returnType = "Claim"
-                        }
+                          if (r.claim_id) {
+                            id = r.claim_id
+                            returnType = "Claim"
+                          }
 
                       return {
                         label: t("orders.returns.receive.receiveItems", {
@@ -291,48 +302,39 @@ export const OrderSummarySection = ({
                   {t("orders.returns.receive.action")}
                 </Button>
               </ActionMenu>
-            )}
-              {receivableReturns.length === 1 ? (
-                <Button
-                  variant="secondary"
-                  size="small"
-                  onClick={() => handleCancelReturn(receivableReturns[0].id)}
-                >
-                  {t("actions.cancel")}
-                </Button>
-              ) : (
-                <ActionMenu
-                  groups={[
-                    {
-                      actions: receivableReturns.map((r) => {
-                        let id = r.id
-                        let returnType = "Return"
+                  <ActionMenu
+                    groups={[
+                      {
+                        actions: receivableReturns.map((r) => {
+                          let id = r.id
+                          let returnType = "Return"
 
-                        if (r.exchange_id) {
-                          id = r.exchange_id
-                          returnType = "Exchange"
-                        }
+                          if (r.exchange_id) {
+                            id = r.exchange_id
+                            returnType = "Exchange"
+                          }
 
-                        if (r.claim_id) {
-                          id = r.claim_id
-                          returnType = "Claim"
-                        }
+                          if (r.claim_id) {
+                            id = r.claim_id
+                            returnType = "Claim"
+                          }
 
-                        return {
-                          label: `${returnType} #${id.slice(-7)}`,
-                          icon: <ArrowLongRight />,
-                          onClick: () => handleCancelReturn(r.id),
-                        }
-                      }),
-                    },
-                  ]}
-                >
-                  <Button variant="secondary" size="small">
-                    {t("actions.cancel")}
-                  </Button>
-                </ActionMenu>
+                          return {
+                            label: `${returnType} #${id.slice(-7)}`,
+                            icon: <ArrowLongRight />,
+                            onClick: () => handleCancelReturn(r.id),
+                          }
+                        }),
+                      },
+                    ]}
+                  >
+                    <Button variant="secondary" size="small">
+                      {t("actions.cancel")}
+                    </Button>
+                  </ActionMenu>
+                </>
               )}
-            </>
+           </>
           )}
 
           {showAllocateButton && (
