@@ -16,7 +16,10 @@ import { useCreateOrderFulfillment } from '../../../../../hooks/api/orders';
 import { useComboboxData } from '../../../../../hooks/use-combobox-data';
 import { useDocumentDirection } from '../../../../../hooks/use-document-direction';
 import { sdk } from '../../../../../lib/client';
-import { getFulfillableQuantity } from '../../../../../lib/order-item';
+import {
+  filterItemsFulfillableByAdmin,
+  getFulfillableQuantity
+} from '../../../../../lib/order-item';
 import { getReservationsLimitCount } from '../../../../../lib/orders';
 import { CreateFulfillmentSchema } from './constants';
 import { OrderCreateFulfillmentItem } from './order-create-fulfillment-item';
@@ -52,11 +55,16 @@ export function OrderCreateFulfillmentForm({
       }))
   });
 
-  const [fulfillableItems, setFulfillableItems] = useState(() =>
-    (order.items || []).filter(
+  const adminLocationIds = useMemo(() => {
+    return new Set(stockLocations.options.map(opt => opt.value));
+  }, [stockLocations.options]);
+
+  const [fulfillableItems, setFulfillableItems] = useState(() => {
+    const itemsWithQuantity = (order.items || []).filter(
       item => item.requires_shipping === requiresShipping && getFulfillableQuantity(item) > 0
-    )
-  );
+    );
+    return filterItemsFulfillableByAdmin(itemsWithQuantity, adminLocationIds);
+  });
 
   const form = useForm<zod.infer<typeof CreateFulfillmentSchema>>({
     defaultValues: {
@@ -129,6 +137,11 @@ export function OrderCreateFulfillmentForm({
       items = items.filter(({ id }) => itemShippingProfileMap[id] === selectedShippingProfileId);
     }
 
+    if (items.length === 0) {
+      toast.error(t('orders.fulfillment.error.noItems'));
+      return;
+    }
+
     const payload: HttpTypes.AdminCreateOrderFulfillment = {
       location_id: selectedLocationId,
       shipping_option_id: shippingOptionId,
@@ -163,15 +176,28 @@ export function OrderCreateFulfillmentForm({
     }
   }, [shipping_options]);
 
-  const fulfilledQuantityArray = (order.items || []).map(
-    item => item.requires_shipping === requiresShipping && item.detail.fulfilled_quantity
+  const adminLocationIdsKey = useMemo(
+    () => Array.from(adminLocationIds).sort().join(','),
+    [adminLocationIds]
+  );
+
+  const fulfilledQuantitiesKey = useMemo(
+    () =>
+      (order.items || [])
+        .filter(item => item.requires_shipping === requiresShipping)
+        .map(item => `${item.id}:${item.detail.fulfilled_quantity}`)
+        .sort()
+        .join(','),
+    [order.items, requiresShipping]
   );
 
   useEffect(() => {
-    const itemsToFulfill =
+    const itemsWithQuantity =
       order?.items?.filter(
         item => item.requires_shipping === requiresShipping && getFulfillableQuantity(item) > 0
       ) || [];
+
+    const itemsToFulfill = filterItemsFulfillableByAdmin(itemsWithQuantity, adminLocationIds);
 
     setFulfillableItems(itemsToFulfill);
 
@@ -193,7 +219,7 @@ export function OrderCreateFulfillmentForm({
     );
 
     form.setValue('quantity', quantityMap);
-  }, [...fulfilledQuantityArray, requiresShipping]);
+  }, [fulfilledQuantitiesKey, requiresShipping, adminLocationIdsKey]);
 
   const differentOptionSelected =
     shippingOptionId && order.shipping_methods?.[0]?.shipping_option_id !== shippingOptionId;
@@ -233,7 +259,7 @@ export function OrderCreateFulfillmentForm({
 
         <RouteFocusModal.Body className="flex size-full justify-center overflow-y-auto">
           <div className="flex size-full w-[752px] max-w-[100%] flex-col gap-8 px-4 pt-16">
-            <Heading level="h1">{t('orders.fulfillment.create')}</Heading>
+            <Heading level="h2">{t('orders.fulfillment.create')}</Heading>
             <div className="flex w-full flex-col justify-center">
               <div className="flex flex-col divide-y divide-dashed">
                 <div className="pb-8">
@@ -386,7 +412,6 @@ export function OrderCreateFulfillmentForm({
                       variant="error"
                       dismissible={false}
                       className="flex items-center"
-                      classNameInner="flex justify-between flex-1 items-center p-3"
                     >
                       {form.formState.errors.root.message}
                     </Alert>

@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { Buildings, XCircle } from '@medusajs/icons';
 import {
   AdminOrder,
@@ -31,24 +33,39 @@ import {
 import { useStockLocation } from '../../../../../hooks/api/stock-locations';
 import { formatProvider } from '../../../../../lib/format-provider';
 import { getLocaleAmount } from '../../../../../lib/money-amount-helpers';
+import { filterItemsFulfillableByAdmin } from '../../../../../lib/order-item';
 import { FulfillmentSetType } from '../../../../locations/common/constants';
 
 type OrderFulfillmentSectionProps = {
   order: AdminOrder;
+  stockLocations: HttpTypes.AdminStockLocation[];
 };
 
-export const OrderFulfillmentSection = ({ order }: OrderFulfillmentSectionProps) => {
+export const OrderFulfillmentSection = ({
+  order,
+  stockLocations
+}: OrderFulfillmentSectionProps) => {
   const fulfillments = order.fulfillments || [];
+
+  const adminLocationIds = useMemo(() => {
+    return new Set(stockLocations.map(location => location.id));
+  }, [stockLocations]);
+
+  const canAdminFulfill = filterItemsFulfillableByAdmin(order.items, adminLocationIds).length > 0;
 
   return (
     <div className="flex flex-col gap-y-3">
-      <UnfulfilledItemBreakdown order={order} />
+      <UnfulfilledItemBreakdown
+        order={order}
+        canAdminFulfill={canAdminFulfill}
+      />
       {fulfillments.map((f, index) => (
         <Fulfillment
           key={f.id}
           index={index}
           fulfillment={f}
           order={order}
+          stockLocations={stockLocations}
         />
       ))}
     </div>
@@ -107,7 +124,13 @@ const UnfulfilledItem = ({
   );
 };
 
-const UnfulfilledItemBreakdown = ({ order }: { order: AdminOrder }) => {
+const UnfulfilledItemBreakdown = ({
+  order,
+  canAdminFulfill
+}: {
+  order: AdminOrder;
+  canAdminFulfill: boolean;
+}) => {
   // Create an array of order items that haven't been fulfilled or at least not fully fulfilled
   const unfulfilledItemsWithShipping = order.items!.filter(
     i => i.requires_shipping && i.detail.fulfilled_quantity < i.quantity
@@ -124,6 +147,7 @@ const UnfulfilledItemBreakdown = ({ order }: { order: AdminOrder }) => {
           order={order}
           unfulfilledItems={unfulfilledItemsWithShipping}
           requiresShipping={true}
+          canAdminFulfill={canAdminFulfill}
         />
       )}
 
@@ -132,6 +156,7 @@ const UnfulfilledItemBreakdown = ({ order }: { order: AdminOrder }) => {
           order={order}
           unfulfilledItems={unfulfilledItemsWithoutShipping}
           requiresShipping={false}
+          canAdminFulfill={canAdminFulfill}
         />
       )}
     </>
@@ -141,11 +166,13 @@ const UnfulfilledItemBreakdown = ({ order }: { order: AdminOrder }) => {
 const UnfulfilledItemDisplay = ({
   order,
   unfulfilledItems,
-  requiresShipping = false
+  requiresShipping = false,
+  canAdminFulfill
 }: {
   order: AdminOrder;
   unfulfilledItems: AdminOrderLineItem[];
   requiresShipping: boolean;
+  canAdminFulfill: boolean;
 }) => {
   const { t } = useTranslation();
 
@@ -182,7 +209,8 @@ const UnfulfilledItemDisplay = ({
                   {
                     label: t('orders.fulfillment.fulfillItems'),
                     icon: <Buildings />,
-                    to: `/orders/${order.id}/fulfillment?requires_shipping=${requiresShipping}`
+                    to: `/orders/${order.id}/fulfillment?requires_shipping=${requiresShipping}`,
+                    disabled: !canAdminFulfill
                   }
                 ]
               }
@@ -206,15 +234,19 @@ const UnfulfilledItemDisplay = ({
 const Fulfillment = ({
   fulfillment,
   order,
-  index
+  index,
+  stockLocations
 }: {
   fulfillment: AdminOrderFulfillment;
   order: AdminOrder;
   index: number;
+  stockLocations: HttpTypes.AdminStockLocation[];
 }) => {
   const { t } = useTranslation();
   const prompt = usePrompt();
   const navigate = useNavigate();
+
+  const canAdminFulfill = stockLocations.some(location => location.id === fulfillment.location_id);
 
   const showLocation = !!fulfillment.location_id;
 
@@ -348,7 +380,8 @@ const Fulfillment = ({
                     disabled:
                       !!fulfillment.canceled_at ||
                       !!fulfillment.shipped_at ||
-                      !!fulfillment.delivered_at
+                      !!fulfillment.delivered_at ||
+                      !canAdminFulfill
                   }
                 ]
               }
@@ -497,7 +530,7 @@ const Fulfillment = ({
         </div>
       </div>
 
-      {(showShippingButton || showDeliveryButton) && (
+      {(showShippingButton || showDeliveryButton) && canAdminFulfill && (
         <div className="flex items-center justify-end gap-x-2 rounded-b-xl bg-ui-bg-subtle px-4 py-4">
           {showDeliveryButton && (
             <Button

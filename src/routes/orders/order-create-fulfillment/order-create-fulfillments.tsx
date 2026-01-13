@@ -11,7 +11,7 @@ export function OrderCreateFulfillment() {
 
   const { order, isLoading, isError, error } = useOrder(id!, {
     fields:
-      'currency_code,*items,*items.variant,*items.variant.inventory,*items.variant.inventory.location_levels,*items.variant.inventory_items,+items.variant.product.shipping_profile.id,*shipping_address,+shipping_methods.shipping_option_id,*seller'
+      'currency_code,*items,*items.variant,*items.variant.inventory,*items.variant.inventory.location_levels,*items.variant.inventory_items,+items.variant.product.shipping_profile.id,+items.variant.product.seller.id,*shipping_address,+shipping_methods.shipping_option_id,*seller'
   });
 
   if (isError) {

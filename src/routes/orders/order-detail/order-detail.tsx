@@ -32,7 +32,7 @@ export const OrderDetail = () => {
       fields: DEFAULT_FIELDS
     },
     {
-      initialData
+      initialData: initialData.orderResponse
     }
   );
 
@@ -94,7 +94,10 @@ export const OrderDetail = () => {
           order={order}
           plugins={plugins}
         />
-        <OrderFulfillmentSection order={order} />
+        <OrderFulfillmentSection
+          order={order}
+          stockLocations={initialData.stockLocations}
+        />
       </TwoColumnPage.Main>
       <TwoColumnPage.Sidebar>
         <OrderCustomerSection order={order} />
