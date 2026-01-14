@@ -1,31 +1,28 @@
-import React from "react";
+import { useTranslation } from "react-i18next"
 
-import { ChatBubble, DocumentText, XCircle, XMark } from "@medusajs/icons";
-import type { AdminOrderLineItem, HttpTypes } from "@medusajs/types";
-import { IconButton, Input, Text } from "@medusajs/ui";
+import { IconButton, Input, Text } from "@medusajs/ui"
+import { UseFormReturn } from "react-hook-form"
+import { HttpTypes, AdminOrderLineItem } from "@medusajs/types"
+import { ChatBubble, DocumentText, XCircle, XMark } from "@medusajs/icons"
 
-import type { UseFormReturn } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { Form } from "@components/common/form";
-import { Thumbnail } from "@components/common/thumbnail";
-import { Combobox } from "@components/inputs/combobox";
-import { MoneyAmountCell } from "@components/table/table-cells/common/money-amount-cell";
-
-import { useReturnReasons } from "@hooks/api/return-reasons";
+import { Thumbnail } from "../../../../../components/common/thumbnail"
+import { MoneyAmountCell } from "../../../../../components/table/table-cells/common/money-amount-cell"
+import { Form } from "../../../../../components/common/form"
+import { ActionMenu } from "../../../../../components/common/action-menu"
+import { Combobox } from "../../../../../components/inputs/combobox"
+import { useReturnReasons } from "../../../../../hooks/api/return-reasons"
 
 type OrderEditItemProps = {
-  item: AdminOrderLineItem;
-  previewItem: AdminOrderLineItem;
-  currencyCode: string;
-  index: number;
+  item: AdminOrderLineItem
+  previewItem: AdminOrderLineItem
+  currencyCode: string
+  index: number
 
-  onRemove: () => void;
-  onUpdate: (payload: HttpTypes.AdminUpdateReturnItems) => void;
+  onRemove: () => void
+  onUpdate: (payload: HttpTypes.AdminUpdateReturnItems) => void
 
-  form: UseFormReturn<any>;
-};
+  form: UseFormReturn<any>
+}
 
 function ReturnItem({
   item,
@@ -36,17 +33,17 @@ function ReturnItem({
   onUpdate,
   index,
 }: OrderEditItemProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
-  const { return_reasons = [] } = useReturnReasons({ fields: "+label" });
+  const { return_reasons = [] } = useReturnReasons({ fields: "+label" })
 
-  const formItem = form.watch(`items.${index}`);
+  const formItem = form.watch(`items.${index}`)
 
-  const showReturnReason = typeof formItem.reason_id === "string";
-  const showNote = typeof formItem.note === "string";
+  const showReturnReason = typeof formItem.reason_id === "string"
+  const showNote = typeof formItem.note === "string"
 
   return (
-    <div className="my-2 rounded-xl bg-ui-bg-subtle shadow-elevation-card-rest">
+    <div className="bg-ui-bg-subtle shadow-elevation-card-rest my-2 rounded-xl ">
       <div className="flex flex-col items-center gap-x-2 gap-y-2 border-b p-3 text-sm md:flex-row">
         <div className="flex flex-1 items-center gap-x-3">
           <Thumbnail src={item.thumbnail} />
@@ -57,7 +54,7 @@ function ReturnItem({
               </Text>
               {item.variant_sku && <span>({item.variant_sku})</span>}
             </div>
-            <Text as="div" className="txt-small text-ui-fg-subtle">
+            <Text as="div" className="text-ui-fg-subtle txt-small">
               {item.product_title}
             </Text>
           </div>
@@ -73,27 +70,27 @@ function ReturnItem({
                   <Form.Item>
                     <Form.Control>
                       <Input
-                        className="txt-small w-[67px] rounded-lg bg-ui-bg-base"
+                        className="bg-ui-bg-base txt-small w-[67px] rounded-lg"
                         min={1}
                         max={item.quantity}
                         type="number"
                         {...field}
                         onChange={(e) => {
-                          const val = e.target.value;
-                          const payload = val === "" ? null : Number(val);
+                          const val = e.target.value
+                          const payload = val === "" ? null : Number(val)
 
-                          field.onChange(payload);
+                          field.onChange(payload)
 
                           if (payload) {
                             // todo: move on blur
-                            onUpdate({ quantity: payload });
+                            onUpdate({ quantity: payload })
                           }
                         }}
                       />
                     </Form.Control>
                     <Form.ErrorMessage />
                   </Form.Item>
-                );
+                )
               }}
             />
             <Text className="txt-small text-ui-fg-subtle">
@@ -101,7 +98,7 @@ function ReturnItem({
             </Text>
           </div>
 
-          <div className="txt-small mr-2 flex flex-shrink-0 text-ui-fg-subtle">
+          <div className="text-ui-fg-subtle txt-small mr-2 flex flex-shrink-0">
             <MoneyAmountCell
               currencyCode={currencyCode}
               amount={previewItem.return_requested_total}
@@ -150,26 +147,28 @@ function ReturnItem({
                 <Form.Field
                   control={form.control}
                   name={`items.${index}.reason_id`}
-                  render={({ field: { ref, value, onChange, ...field } }) => (
-                    <Form.Item>
-                      <Form.Control>
-                        <Combobox
-                          className="bg-ui-bg-field-component hover:bg-ui-bg-field-component-hover"
-                          value={value}
-                          onChange={(v) => {
-                            onUpdate({ reason_id: v });
-                            onChange(v);
-                          }}
-                          {...field}
-                          options={return_reasons.map((reason) => ({
-                            label: reason.label,
-                            value: reason.id,
-                          }))}
-                        />
-                      </Form.Control>
-                      <Form.ErrorMessage />
-                    </Form.Item>
-                  )}
+                  render={({ field: { ref, value, onChange, ...field } }) => {
+                    return (
+                      <Form.Item>
+                        <Form.Control>
+                          <Combobox
+                            className="bg-ui-bg-field-component hover:bg-ui-bg-field-component-hover"
+                            value={value}
+                            onChange={(v) => {
+                              onUpdate({ reason_id: v })
+                              onChange(v)
+                            }}
+                            {...field}
+                            options={return_reasons.map((reason) => ({
+                              label: reason.label,
+                              value: reason.id,
+                            }))}
+                          />
+                        </Form.Control>
+                        <Form.ErrorMessage />
+                      </Form.Item>
+                    )
+                  }}
                 />
               </div>
               <IconButton
@@ -177,8 +176,8 @@ function ReturnItem({
                 className="flex-shrink"
                 variant="transparent"
                 onClick={() => {
-                  onUpdate({ reason_id: null });
-                  form.setValue(`items.${index}.reason_id`, null);
+                  onUpdate({ reason_id: null })
+                  form.setValue(`items.${index}.reason_id`, null)
                 }}
               >
                 <XMark className="text-ui-fg-muted" />
@@ -202,21 +201,23 @@ function ReturnItem({
                 <Form.Field
                   control={form.control}
                   name={`items.${index}.note`}
-                  render={({ field: { ref, onChange, ...field } }) => (
-                    <Form.Item>
-                      <Form.Control>
-                        <Input
-                          onChange={onChange}
-                          {...field}
-                          onBlur={() =>
-                            onUpdate({ internal_note: field.value })
-                          }
-                          className="bg-ui-bg-field-component hover:bg-ui-bg-field-component-hover"
-                        />
-                      </Form.Control>
-                      <Form.ErrorMessage />
-                    </Form.Item>
-                  )}
+                  render={({ field: { ref, onChange, ...field } }) => {
+                    return (
+                      <Form.Item>
+                        <Form.Control>
+                          <Input
+                            onChange={onChange}
+                            {...field}
+                            onBlur={() =>
+                              onUpdate({ internal_note: field.value })
+                            }
+                            className="bg-ui-bg-field-component hover:bg-ui-bg-field-component-hover"
+                          />
+                        </Form.Control>
+                        <Form.ErrorMessage />
+                      </Form.Item>
+                    )
+                  }}
                 />
               </div>
               <IconButton
@@ -227,8 +228,8 @@ function ReturnItem({
                   form.setValue(`items.${index}.note`, {
                     shouldDirty: true,
                     shouldTouch: true,
-                  });
-                  onUpdate({ internal_note: null });
+                  })
+                  onUpdate({ internal_note: null })
                 }}
               >
                 <XMark className="text-ui-fg-muted" />
@@ -238,7 +239,7 @@ function ReturnItem({
         )}
       </>
     </div>
-  );
+  )
 }
 
-export { ReturnItem };
+export { ReturnItem }

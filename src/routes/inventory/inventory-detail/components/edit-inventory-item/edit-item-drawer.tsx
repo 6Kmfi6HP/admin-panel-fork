@@ -1,38 +1,33 @@
-import { Heading } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-
-import { RouteDrawer } from "@components/modals";
-
-import { useInventoryItem } from "@hooks/api";
-
-import { EditInventoryItemForm } from "@routes/inventory/inventory-detail/components/edit-inventory-item/components/edit-item-form.tsx";
+import { RouteDrawer } from "@components/modals"
+import { useInventoryItem } from "@hooks/api"
+import { Heading } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
+import { useParams } from "react-router-dom"
+import { EditInventoryItemForm } from "./components/edit-item-form"
 
 export const InventoryItemEdit = () => {
-  const { id } = useParams();
-  const { t } = useTranslation();
+  const { id } = useParams()
+  const { t } = useTranslation()
 
   const {
     inventory_item: inventoryItem,
     isPending: isLoading,
     isError,
     error,
-  } = useInventoryItem(id!);
+  } = useInventoryItem(id!)
 
-  const ready = !isLoading && inventoryItem;
+  const ready = !isLoading && inventoryItem
 
   if (isError) {
-    throw error;
+    throw error
   }
 
   return (
-    <RouteDrawer>
-      <RouteDrawer.Header>
-        <Heading>{t("inventory.editItemDetails")}</Heading>
+    <RouteDrawer data-testid="inventory-edit-item-drawer">
+      <RouteDrawer.Header data-testid="inventory-edit-item-drawer-header">
+        <Heading data-testid="inventory-edit-item-drawer-title">{t("inventory.editItemDetails")}</Heading>
       </RouteDrawer.Header>
-      {/*// @ts-expect-error @todo: fix this*/}
       {ready && <EditInventoryItemForm item={inventoryItem} />}
     </RouteDrawer>
-  );
-};
+  )
+}

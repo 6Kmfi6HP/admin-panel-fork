@@ -1,32 +1,31 @@
 const commonHiddenFields = [
   "type",
   "application_method.type",
-  "application_method.allocation",
-];
+]
 
-const amountOfOrderHiddenFields = [...commonHiddenFields];
-const amountOfProductHiddenFields = [...commonHiddenFields];
+const amountOfOrderHiddenFields = [...commonHiddenFields]
+const amountOfProductHiddenFields = [...commonHiddenFields]
 
 const percentageOfOrderHiddenFields = [
   ...commonHiddenFields,
   "is_tax_inclusive",
-];
+]
 const percentageOfProductHiddenFields = [
   ...commonHiddenFields,
   "is_tax_inclusive",
-];
+]
 
 const buyGetHiddenFields = [
   ...commonHiddenFields,
   "application_method.value",
   "is_tax_inclusive",
-];
+]
 
 const freeShippingHiddenFields = [
   ...commonHiddenFields,
   "application_method.value",
   "is_tax_inclusive",
-];
+]
 
 export const templates = [
   {
@@ -127,4 +126,4 @@ export const templates = [
       },
     },
   },
-];
+]

@@ -18,7 +18,7 @@ export const RegionCreate = () => {
   }
 
   return (
-    <RouteFocusModal>
+    <RouteFocusModal data-testid="region-create-modal">
       {!isLoading && store && <CreateRegionForm currencies={storeCurrencies} />}
     </RouteFocusModal>
   );

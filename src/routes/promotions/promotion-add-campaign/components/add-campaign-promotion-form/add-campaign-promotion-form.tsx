@@ -81,27 +81,29 @@ export const AddCampaignPromotionFields = ({
   );
 
   return (
-    <div className="flex flex-col gap-y-8">
+    <div className="flex flex-col gap-y-8" data-testid="promotion-add-campaign-fields">
       <Form.Field
         control={form.control}
         name="campaign_choice"
         render={({ field }) => {
           return (
-            <Form.Item>
-              <Form.Label>{t("promotions.fields.campaign")}</Form.Label>
+            <Form.Item data-testid="promotion-add-campaign-form-campaign-choice-item">
+              <Form.Label data-testid="promotion-add-campaign-form-campaign-choice-label">{t("promotions.fields.campaign")}</Form.Label>
 
-              <Form.Control>
+              <Form.Control data-testid="promotion-add-campaign-form-campaign-choice-control">
                 <RadioGroup
                   dir={direction}
                   className="grid grid-cols-1 gap-3"
                   {...field}
                   value={field.value}
                   onValueChange={field.onChange}
+                  data-testid="promotion-add-campaign-form-campaign-choice-radio-group"
                 >
                   <RadioGroup.ChoiceBox
                     value="none"
                     label={t("promotions.form.campaign.none.title")}
                     description={t("promotions.form.campaign.none.description")}
+                    data-testid="promotion-add-campaign-form-campaign-choice-option-none"
                   />
 
                   <RadioGroup.ChoiceBox
@@ -110,6 +112,7 @@ export const AddCampaignPromotionFields = ({
                     description={t(
                       "promotions.form.campaign.existing.description",
                     )}
+                    data-testid="promotion-add-campaign-form-campaign-choice-option-existing"
                   />
 
                   {withNewCampaign && (
@@ -119,12 +122,13 @@ export const AddCampaignPromotionFields = ({
                       description={t(
                         "promotions.form.campaign.new.description",
                       )}
+                      data-testid="promotion-add-campaign-form-campaign-choice-option-new"
                     />
                   )}
                 </RadioGroup>
               </Form.Control>
 
-              <Form.ErrorMessage />
+              <Form.ErrorMessage data-testid="promotion-add-campaign-form-campaign-choice-error" />
             </Form.Item>
           );
         }}
@@ -136,12 +140,12 @@ export const AddCampaignPromotionFields = ({
           name="campaign_id"
           render={({ field: { onChange, ...field } }) => {
             return (
-              <Form.Item>
-                <Form.Label tooltip={t("campaigns.fields.campaign_id.hint")}>
+              <Form.Item data-testid="promotion-add-campaign-form-campaign-id-item">
+                <Form.Label tooltip={t("campaigns.fields.campaign_id.hint")} data-testid="promotion-add-campaign-form-campaign-id-label">
                   {t("promotions.form.campaign.existing.title")}
                 </Form.Label>
 
-                <Form.Control>
+                <Form.Control data-testid="promotion-add-campaign-form-campaign-id-control">
                   <Combobox
                     dir={direction}
                     options={campaignsCombobox.options}
@@ -149,10 +153,11 @@ export const AddCampaignPromotionFields = ({
                     onSearchValueChange={campaignsCombobox.onSearchValueChange}
                     onChange={onChange}
                     {...field}
+                    data-testid="promotion-add-campaign-form-campaign-id-combobox"
                   ></Combobox>
                 </Form.Control>
 
-                <Form.ErrorMessage />
+                <Form.ErrorMessage data-testid="promotion-add-campaign-form-campaign-id-error" />
               </Form.Item>
             );
           }}
@@ -219,12 +224,12 @@ export const AddCampaignPromotionForm = ({
   }, [watchCampaignChoice, setValue, originalId]);
 
   return (
-    <RouteDrawer.Form form={form}>
+    <RouteDrawer.Form form={form} data-testid="promotion-add-campaign-form">
       <KeyboundForm
         onSubmit={handleSubmit}
         className="flex size-full flex-col overflow-hidden"
       >
-        <RouteDrawer.Body className="size-full overflow-auto">
+        <RouteDrawer.Body className="size-full overflow-auto" data-testid="promotion-add-campaign-form-body">
           <AddCampaignPromotionFields
             form={form}
             withNewCampaign={false}
@@ -232,15 +237,15 @@ export const AddCampaignPromotionForm = ({
           />
         </RouteDrawer.Body>
 
-        <RouteDrawer.Footer>
+        <RouteDrawer.Footer data-testid="promotion-add-campaign-form-footer">
           <div className="flex items-center justify-end gap-x-2">
             <RouteDrawer.Close asChild>
-              <Button size="small" variant="secondary">
+              <Button size="small" variant="secondary" data-testid="promotion-add-campaign-form-cancel-button">
                 {t("actions.cancel")}
               </Button>
             </RouteDrawer.Close>
 
-            <Button size="small" type="submit" isLoading={isPending}>
+            <Button size="small" type="submit" isLoading={isPending} data-testid="promotion-add-campaign-form-save-button">
               {t("actions.save")}
             </Button>
           </div>

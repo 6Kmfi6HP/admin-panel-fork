@@ -61,6 +61,7 @@ export const ShippingOptionsRowActions = ({
           ],
         },
       ]}
+      data-testid={`shipping-profile-list-table-action-menu-${profile.id}`}
     />
   );
 };

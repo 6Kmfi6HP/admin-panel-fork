@@ -75,7 +75,7 @@ export const StringFilter = ({
   };
 
   return (
-    <RadixPopover.Root modal open={open} onOpenChange={handleOpenChange}>
+    <RadixPopover.Root modal open={open} onOpenChange={handleOpenChange} data-testid={`data-table-string-filter-${key}`}>
       <FilterChip
         hasOperator
         hadPreviousValue={!!previousValue}
@@ -83,6 +83,7 @@ export const StringFilter = ({
         value={query?.[0]}
         onRemove={handleRemove}
         readonly={readonly}
+        data-testid={`data-table-string-filter-chip-${key}`}
       />
       {!readonly && (
         <RadixPopover.Portal>
@@ -94,6 +95,7 @@ export const StringFilter = ({
             className={clx(
               "z-[1] h-full max-h-[200px] w-[300px] overflow-hidden rounded-lg bg-ui-bg-base text-ui-fg-base shadow-elevation-flyout outline-none",
             )}
+            data-testid={`data-table-string-filter-content-${key}`}
             onInteractOutside={(e) => {
               if (e.target instanceof HTMLElement) {
                 if (
@@ -106,9 +108,9 @@ export const StringFilter = ({
               }
             }}
           >
-            <div className="px-1 pb-3 pt-1">
+            <div className="px-1 pb-3 pt-1" data-testid={`data-table-string-filter-form-${key}`}>
               <div className="px-2 py-1.5">
-                <Label size="xsmall" weight="plus" htmlFor={key}>
+                <Label size="xsmall" weight="plus" htmlFor={key} data-testid={`data-table-string-filter-label-${key}`}>
                   {label}
                 </Label>
               </div>
@@ -118,6 +120,7 @@ export const StringFilter = ({
                   size="small"
                   defaultValue={query?.[0] || undefined}
                   onChange={debouncedOnChange}
+                  data-testid={`data-table-string-filter-input-${key}`}
                 />
               </div>
             </div>

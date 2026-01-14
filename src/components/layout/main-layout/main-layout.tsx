@@ -23,48 +23,58 @@ import { Collapsible as RadixCollapsible } from "radix-ui";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import { Skeleton } from "@components/common/skeleton";
-import type { INavItem } from "@components/layout/nav-item";
-import { NavItem } from "@components/layout/nav-item";
-import { Shell } from "@components/layout/shell";
-import { UserMenu } from "@components/layout/user-menu";
+import { useLogout } from "../../../hooks/api";
+import { useStore } from "../../../hooks/api/store";
+import { useDocumentDirection } from "../../../hooks/use-document-direction";
+import { queryClient } from "../../../lib/query-client";
+import { useExtension } from "../../../providers/extension-provider";
+import { useSearch } from "../../../providers/search-provider";
+import { Skeleton } from "../../common/skeleton";
+import { INavItem, NavItem } from "../../layout/nav-item";
+import { Shell } from "../../layout/shell";
+import { UserMenu } from "../user-menu";
 
-import { useLogout, useStore } from "@hooks/api";
-import { useDocumentDirection } from "@hooks/use-document-direction.tsx";
+export const MainLayout = () => {
+  return (
+    <Shell>
+      <MainSidebar />
+    </Shell>
+  );
+};
 
-import { queryClient } from "@lib/query-client";
-
-import { useExtension } from "@providers/extension-provider";
-import { useSearch } from "@providers/search-provider";
-
-export const MainLayout = () => (
-  <Shell>
-    <MainSidebar />
-  </Shell>
-);
-
-const MainSidebar = () => (
-  <aside className="flex flex-1 flex-col justify-between overflow-y-auto">
-    <div className="flex flex-1 flex-col">
-      <div className="sticky top-0 bg-ui-bg-subtle">
-        <Header />
-        <div className="px-3">
-          <Divider variant="dashed" />
+const MainSidebar = () => {
+  return (
+    <aside
+      className="flex flex-1 flex-col justify-between overflow-y-auto"
+      data-testid="sidebar"
+    >
+      <div className="flex flex-1 flex-col">
+        <div
+          className="sticky top-0 bg-ui-bg-subtle"
+          data-testid="sidebar-header-section"
+        >
+          <Header />
+          <div className="px-3">
+            <Divider variant="dashed" />
+          </div>
+        </div>
+        <div className="flex flex-1 flex-col justify-between">
+          <div className="flex flex-1 flex-col">
+            <CoreRouteSection />
+            <ExtensionRouteSection />
+          </div>
+          <UtilitySection />
+        </div>
+        <div
+          className="sticky bottom-0 bg-ui-bg-subtle"
+          data-testid="sidebar-user-section"
+        >
+          <UserSection />
         </div>
       </div>
-      <div className="flex flex-1 flex-col justify-between">
-        <div className="flex flex-1 flex-col">
-          <CoreRouteSection />
-          <ExtensionRouteSection />
-        </div>
-        <UtilitySection />
-      </div>
-      <div className="sticky bottom-0 bg-ui-bg-subtle">
-        <UserSection />
-      </div>
-    </div>
-  </aside>
-);
+    </aside>
+  );
+};
 
 const Logout = () => {
   const { t } = useTranslation();
@@ -85,7 +95,7 @@ const Logout = () => {
   };
 
   return (
-    <DropdownMenu.Item onClick={handleLogout}>
+    <DropdownMenu.Item onClick={handleLogout} data-testid="sidebar-header-dropdown-logout">
       <div className="flex items-center gap-x-2">
         <OpenRectArrowOut className="text-ui-fg-subtle" />
         <span>{t("app.menus.actions.logout")}</span>
@@ -108,8 +118,8 @@ const Header = () => {
   }
 
   return (
-    <div className="w-full p-3">
-      <DropdownMenu dir={direction}>
+    <div className="w-full p-3" data-testid="sidebar-header-dropdown">
+      <DropdownMenu dir={direction} data-testid="sidebar-header-dropdown-menu">
         <DropdownMenu.Trigger
           disabled={!isLoaded}
           className={clx(
@@ -118,13 +128,14 @@ const Header = () => {
             "data-[state=open]:bg-ui-bg-subtle-hover",
             "focus-visible:shadow-borders-focus",
           )}
+          data-testid="sidebar-header-dropdown-trigger"
         >
           {fallback ? (
-            <Avatar variant="squared" size="xsmall" fallback={fallback} />
+            <Avatar variant="squared" size="xsmall" fallback={fallback} data-testid="sidebar-header-dropdown-avatar" />
           ) : (
             <Skeleton className="h-6 w-6 rounded-md" />
           )}
-          <div className="block overflow-hidden text-start">
+          <div className="block overflow-hidden text-start" data-testid="sidebar-header-dropdown-store-name">
             {name ? (
               <Text
                 size="small"
@@ -141,15 +152,16 @@ const Header = () => {
           <EllipsisHorizontal className="text-ui-fg-muted" />
         </DropdownMenu.Trigger>
         {isLoaded && (
-          <DropdownMenu.Content className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0">
-            <div className="flex items-center gap-x-3 px-2 py-1">
-              <Avatar variant="squared" size="small" fallback={fallback} />
-              <div className="flex flex-col overflow-hidden">
+          <DropdownMenu.Content className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0" data-testid="sidebar-header-dropdown-content">
+            <div className="flex items-center gap-x-3 px-2 py-1" data-testid="sidebar-header-dropdown-user-info">
+              <Avatar variant="squared" size="small" fallback={fallback} data-testid="sidebar-header-dropdown-user-avatar" />
+              <div className="flex flex-col overflow-hidden" data-testid="sidebar-header-dropdown-user-details">
                 <Text
                   size="small"
                   weight="plus"
                   leading="compact"
                   className="truncate"
+                  data-testid="sidebar-header-dropdown-user-name"
                 >
                   {name}
                 </Text>
@@ -157,19 +169,20 @@ const Header = () => {
                   size="xsmall"
                   leading="compact"
                   className="text-ui-fg-subtle"
+                  data-testid="sidebar-header-dropdown-store-label"
                 >
                   {t("app.nav.main.store")}
                 </Text>
               </div>
             </div>
-            <DropdownMenu.Separator />
-            <DropdownMenu.Item className="gap-x-2" asChild>
+            <DropdownMenu.Separator data-testid="sidebar-header-dropdown-separator-1" />
+            <DropdownMenu.Item className="gap-x-2" asChild data-testid="sidebar-header-dropdown-store-settings">
               <Link to="/settings/store">
                 <BuildingStorefront className="text-ui-fg-subtle" />
                 {t("app.nav.main.storeSettings")}
               </Link>
             </DropdownMenu.Item>
-            <DropdownMenu.Separator />
+            <DropdownMenu.Separator data-testid="sidebar-header-dropdown-separator-2" />
             <Logout />
           </DropdownMenu.Content>
         )}
@@ -187,7 +200,7 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
       label: t("orders.domain"),
       to: "/orders",
       items: [
-        // TODO: Enable when domain is introduced
+        // TODO: Enable when domin is introduced
         // {
         //   label: t("draftOrders.domain"),
         //   to: "/draft-orders",
@@ -207,7 +220,7 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
           label: t("categories.domain"),
           to: "/categories",
         },
-        // TODO: Enable when domain is introduced
+        // TODO: Enable when domin is introduced
         // {
         //   label: t("giftCards.domain"),
         //   to: "/gift-cards",
@@ -313,7 +326,7 @@ const Searchbar = () => {
   const { toggleSearch } = useSearch();
 
   return (
-    <div className="px-3">
+    <div className="px-3" data-testid="sidebar-search">
       <button
         onClick={toggleSearch}
         className={clx(
@@ -321,6 +334,7 @@ const Searchbar = () => {
           "hover:bg-ui-bg-subtle-hover",
           "focus-visible:shadow-borders-focus",
         )}
+        data-testid="sidebar-search-button"
       >
         <MagnifyingGlass />
         <div className="flex-1 text-start">
@@ -353,7 +367,10 @@ const CoreRouteSection = () => {
   });
 
   return (
-    <nav className="flex flex-col gap-y-1 py-3">
+    <nav
+      className="flex flex-col gap-y-1 py-3"
+      data-testid="sidebar-core-routes"
+    >
       <Searchbar />
       {coreRoutes.map((route) => {
         return <NavItem key={route.to} {...route} />;
@@ -430,11 +447,13 @@ const UtilitySection = () => {
   );
 };
 
-const UserSection = () => (
-  <div>
-    <div className="px-3">
-      <Divider variant="dashed" />
+const UserSection = () => {
+  return (
+    <div>
+      <div className="px-3">
+        <Divider variant="dashed" />
+      </div>
+      <UserMenu />
     </div>
-    <UserMenu />
-  </div>
-);
+  );
+};

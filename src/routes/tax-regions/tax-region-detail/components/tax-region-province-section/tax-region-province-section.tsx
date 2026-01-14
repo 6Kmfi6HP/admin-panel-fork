@@ -62,7 +62,7 @@ export const TaxRegionProvinceSection = ({
   }
 
   return (
-    <Container className="divide-y p-0">
+    <Container className="divide-y p-0" data-testid="tax-region-province-section-container">
       <TaxRegionTable
         variant="province"
         action={{ to: `provinces/create`, label: t("actions.create") }}
@@ -70,8 +70,9 @@ export const TaxRegionProvinceSection = ({
         isPending={isPending}
         queryObject={raw}
         count={count}
+        data-testid="tax-region-province-section-table"
       >
-        <Heading level="h2">{t(`taxRegions.${type}.header`)}</Heading>
+        <Heading level="h2" data-testid="tax-region-province-section-heading">{t(`taxRegions.${type}.header`)}</Heading>
       </TaxRegionTable>
     </Container>
   );

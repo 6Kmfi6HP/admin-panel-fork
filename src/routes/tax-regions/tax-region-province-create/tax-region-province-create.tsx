@@ -18,7 +18,7 @@ export const TaxProvinceCreate = () => {
   }
 
   return (
-    <RouteFocusModal>
+    <RouteFocusModal data-testid="tax-region-province-create-modal">
       {ready && <TaxRegionProvinceCreateForm parent={tax_region} />}
     </RouteFocusModal>
   );

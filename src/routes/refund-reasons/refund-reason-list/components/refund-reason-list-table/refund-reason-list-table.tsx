@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 
 import { PencilSquare, Trash } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
+import { HttpTypes } from "@medusajs/types";
 import {
   Container,
   createDataTableColumnHelper,
@@ -13,11 +13,13 @@ import { keepPreviousData } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import { DataTable } from "@components/data-table";
-
-import { useDeleteRefundReasonLazy, useRefundReasons } from "@hooks/api";
-import { useRefundReasonTableColumns } from "@hooks/table/columns";
-import { useRefundReasonTableQuery } from "@hooks/table/query";
+import { DataTable } from "../../../../../components/data-table";
+import {
+  useDeleteRefundReasonLazy,
+  useRefundReasons,
+} from "../../../../../hooks/api";
+import { useRefundReasonTableColumns } from "../../../../../hooks/table/columns";
+import { useRefundReasonTableQuery } from "../../../../../hooks/table/query";
 
 const PAGE_SIZE = 20;
 
@@ -41,7 +43,7 @@ export const RefundReasonListTable = () => {
   }
 
   return (
-    <Container className="divide-y px-0 py-0">
+    <Container className="divide-y px-0 py-0" data-testid="refund-reason-list-table-container">
       <DataTable
         data={refund_reasons}
         columns={columns}

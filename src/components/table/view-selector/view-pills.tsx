@@ -1,76 +1,74 @@
-import type { FC } from "react";
-import { useEffect, useState } from "react";
-
-import { ArrowUturnLeft, PencilSquare, Trash } from "@medusajs/icons";
-import { Badge, DropdownMenu, toast, usePrompt } from "@medusajs/ui";
-
-import { SaveViewDialog } from "@components/table/save-view-dialog";
-
+import React, { useEffect, useState } from "react"
 import {
-  useViewConfiguration,
-  useViewConfigurations,
-} from "@hooks/use-view-configurations";
-
-//@todo update ViewConfiguration
-import type { ViewConfiguration } from "../../../hooks/use-view-configurations";
+  Badge,
+  usePrompt,
+  toast,
+  DropdownMenu,
+} from "@medusajs/ui"
+import {
+  Trash,
+  PencilSquare,
+  ArrowUturnLeft,
+} from "@medusajs/icons"
+import { useViewConfigurations, useViewConfiguration } from "../../../hooks/use-view-configurations"
+import type { ViewConfiguration } from "../../../hooks/use-view-configurations"
+import { SaveViewDialog } from "../save-view-dialog"
 
 interface ViewPillsProps {
-  entity: string;
+  entity: string
   currentColumns?: {
-    visible: string[];
-    order: string[];
-  };
+    visible: string[]
+    order: string[]
+  }
   currentConfiguration?: {
-    filters?: Record<string, unknown>;
-    sorting?: { id: string; desc: boolean } | null;
-    search?: string;
-  };
+    filters?: Record<string, unknown>
+    sorting?: { id: string; desc: boolean } | null
+    search?: string
+  }
 }
 
-export const ViewPills: FC<ViewPillsProps> = ({
+export const ViewPills: React.FC<ViewPillsProps> = ({
   entity,
   currentColumns,
   currentConfiguration,
 }) => {
-  const { listViews, activeView, setActiveView, isDefaultViewActive } =
-    useViewConfigurations(entity);
+  const {
+    listViews,
+    activeView,
+    setActiveView,
+    isDefaultViewActive,
+  } = useViewConfigurations(entity)
 
-  const views = listViews?.view_configurations || [];
+  const views = listViews?.view_configurations || []
 
-  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
-  const [editingView, setEditingView] = useState<ViewConfiguration | null>(
-    null,
-  );
-  const [contextMenuOpen, setContextMenuOpen] = useState<string | null>(null);
-  const [contextMenuPosition, setContextMenuPosition] = useState({
-    x: 0,
-    y: 0,
-  });
-  const [deletingViewId, setDeletingViewId] = useState<string | null>(null);
-  const prompt = usePrompt();
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false)
+  const [editingView, setEditingView] = useState<ViewConfiguration | null>(null)
+  const [contextMenuOpen, setContextMenuOpen] = useState<string | null>(null)
+  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 })
+  const [deletingViewId, setDeletingViewId] = useState<string | null>(null)
+  const prompt = usePrompt()
 
-  const currentActiveView = activeView?.view_configuration || null;
+  const currentActiveView = activeView?.view_configuration || null
 
   // Get delete mutation for the current deleting view
-  const { deleteView } = useViewConfiguration(entity, deletingViewId || "");
+  const { deleteView } = useViewConfiguration(entity, deletingViewId || '')
 
   const handleViewSelect = async (viewId: string | null) => {
     try {
       if (viewId === null) {
         // Select default view - clear the active view
-        await setActiveView.mutateAsync(null);
-
-        return;
+        await setActiveView.mutateAsync(null)
+        return
       }
 
-      const view = views.find((v) => v.id === viewId);
+      const view = views.find(v => v.id === viewId)
       if (view) {
-        await setActiveView.mutateAsync(viewId);
+        await setActiveView.mutateAsync(viewId)
       }
     } catch (error) {
-      console.error("Error in handleViewSelect:", error);
+      console.error("Error in handleViewSelect:", error)
     }
-  };
+  }
 
   const handleDeleteView = async (view: ViewConfiguration) => {
     const result = await prompt({
@@ -78,57 +76,51 @@ export const ViewPills: FC<ViewPillsProps> = ({
       description: `Are you sure you want to delete "${view.name}"? This action cannot be undone.`,
       confirmText: "Delete",
       cancelText: "Cancel",
-    });
+    })
 
     if (result) {
-      setDeletingViewId(view.id);
+      setDeletingViewId(view.id)
       // The actual deletion will happen in the effect below
     }
-  };
+  }
 
   // Handle deletion when deletingViewId is set
   useEffect(() => {
     if (deletingViewId && deleteView.mutateAsync) {
-      deleteView
-        .mutateAsync()
-        .then(() => {
-          setDeletingViewId(null);
-        })
-        .catch(() => {
-          setDeletingViewId(null);
-          // Error is handled by the hook
-        });
+      deleteView.mutateAsync().then(() => {
+        setDeletingViewId(null)
+      }).catch(() => {
+        setDeletingViewId(null)
+        // Error is handled by the hook
+      })
     }
-  }, [deletingViewId, deleteView.mutateAsync]);
+  }, [deletingViewId, deleteView.mutateAsync])
 
   const handleEditView = (view: ViewConfiguration) => {
-    setEditingView(view);
-    setSaveDialogOpen(true);
-  };
+    setEditingView(view)
+    setSaveDialogOpen(true)
+  }
 
-  const handleResetSystemDefault = async (
-    systemDefaultView: ViewConfiguration,
-  ) => {
+  const handleResetSystemDefault = async (systemDefaultView: ViewConfiguration) => {
     const result = await prompt({
       title: "Reset system default",
-      description:
-        "This will delete the saved system default and revert to the original code-level defaults. All users will be affected. Are you sure?",
+      description: "This will delete the saved system default and revert to the original code-level defaults. All users will be affected. Are you sure?",
       confirmText: "Reset",
       cancelText: "Cancel",
-    });
+    })
 
     if (result) {
-      setDeletingViewId(systemDefaultView.id);
+      setDeletingViewId(systemDefaultView.id)
       // The actual deletion will happen in the effect above
     }
-  };
+  }
 
-  const systemDefaultView = views.find((v) => v.is_system_default);
-  const personalViews = views.filter((v) => !v.is_system_default);
+  const systemDefaultView = views.find(v => v.is_system_default)
+  const personalViews = views.filter(v => !v.is_system_default)
 
   // Determine if we're showing default
-  const isDefaultActive = isDefaultViewActive;
-  const defaultLabel = "Default";
+  const isDefaultActive = isDefaultViewActive
+  const defaultLabel = "Default"
 
   return (
     <>
@@ -141,38 +133,38 @@ export const ViewPills: FC<ViewPillsProps> = ({
             className="cursor-pointer"
             onClick={() => handleViewSelect(null)}
             onContextMenu={(e) => {
-              e.preventDefault();
+              e.preventDefault()
               if (systemDefaultView) {
-                setContextMenuPosition({ x: e.clientX, y: e.clientY });
-                setContextMenuOpen("default");
+                setContextMenuPosition({ x: e.clientX, y: e.clientY })
+                setContextMenuOpen('default')
               }
             }}
           >
             {defaultLabel}
           </Badge>
-          {systemDefaultView && contextMenuOpen === "default" && (
+          {systemDefaultView && contextMenuOpen === 'default' && (
             <DropdownMenu
               open={true}
               onOpenChange={(open) => {
-                if (!open) setContextMenuOpen(null);
+                if (!open) setContextMenuOpen(null)
               }}
             >
               <DropdownMenu.Trigger asChild>
                 <div
                   style={{
-                    position: "fixed",
+                    position: 'fixed',
                     left: contextMenuPosition.x,
                     top: contextMenuPosition.y,
                     width: 0,
-                    height: 0,
+                    height: 0
                   }}
                 />
               </DropdownMenu.Trigger>
               <DropdownMenu.Content align="start" sideOffset={0}>
                 <DropdownMenu.Item
                   onClick={() => {
-                    handleResetSystemDefault(systemDefaultView);
-                    setContextMenuOpen(null);
+                    handleResetSystemDefault(systemDefaultView)
+                    setContextMenuOpen(null)
                   }}
                   className="flex items-center gap-x-2"
                 >
@@ -196,9 +188,9 @@ export const ViewPills: FC<ViewPillsProps> = ({
               className="cursor-pointer"
               onClick={() => handleViewSelect(view.id)}
               onContextMenu={(e) => {
-                e.preventDefault();
-                setContextMenuPosition({ x: e.clientX, y: e.clientY });
-                setContextMenuOpen(view.id);
+                e.preventDefault()
+                setContextMenuPosition({ x: e.clientX, y: e.clientY })
+                setContextMenuOpen(view.id)
               }}
             >
               {view.name}
@@ -207,25 +199,25 @@ export const ViewPills: FC<ViewPillsProps> = ({
               <DropdownMenu
                 open={true}
                 onOpenChange={(open) => {
-                  if (!open) setContextMenuOpen(null);
+                  if (!open) setContextMenuOpen(null)
                 }}
               >
                 <DropdownMenu.Trigger asChild>
                   <div
                     style={{
-                      position: "fixed",
+                      position: 'fixed',
                       left: contextMenuPosition.x,
                       top: contextMenuPosition.y,
                       width: 0,
-                      height: 0,
+                      height: 0
                     }}
                   />
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content align="start" sideOffset={0}>
                   <DropdownMenu.Item
                     onClick={() => {
-                      handleEditView(view);
-                      setContextMenuOpen(null);
+                      handleEditView(view)
+                      setContextMenuOpen(null)
                     }}
                     className="flex items-center gap-x-2"
                   >
@@ -234,8 +226,8 @@ export const ViewPills: FC<ViewPillsProps> = ({
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
                     onClick={() => {
-                      handleDeleteView(view);
-                      setContextMenuOpen(null);
+                      handleDeleteView(view)
+                      setContextMenuOpen(null)
                     }}
                     className="flex items-center gap-x-2 text-ui-fg-error"
                   >
@@ -247,6 +239,7 @@ export const ViewPills: FC<ViewPillsProps> = ({
             )}
           </div>
         ))}
+
       </div>
 
       {saveDialogOpen && (
@@ -256,17 +249,17 @@ export const ViewPills: FC<ViewPillsProps> = ({
           currentConfiguration={currentConfiguration}
           editingView={editingView}
           onClose={() => {
-            setSaveDialogOpen(false);
-            setEditingView(null);
+            setSaveDialogOpen(false)
+            setEditingView(null)
           }}
           onSaved={async (newView) => {
-            setSaveDialogOpen(false);
-            setEditingView(null);
-            toast.success(`View "${newView.name}" saved successfully`);
+            setSaveDialogOpen(false)
+            setEditingView(null)
+            toast.success(`View "${newView.name}" saved successfully`)
             // The view is already set as active in SaveViewDialog
           }}
         />
       )}
     </>
-  );
-};
+  )
+}

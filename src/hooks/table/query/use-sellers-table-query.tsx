@@ -1,27 +1,32 @@
-import { useQueryParams } from "@hooks/use-query-params";
+import { useQueryParams } from "@hooks/use-query-params"
 
-// @todo fix any type
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useSellersTableQuery = ({ prefix, pageSize = 20 }: any) => {
+type UseSellersTableQueryProps = {
+  prefix?: string
+  pageSize?: number
+}
+
+export const useSellersTableQuery = ({
+  prefix,
+  pageSize = 20,
+}: UseSellersTableQueryProps) => {
   const queryObject = useQueryParams(
-    ["offset", "q", "created_at", "status", "id", "order"],
-    prefix,
-  );
+    ["offset", "q", "created_at", "store_status", "order"],
+    prefix
+  )
 
-  const { offset, created_at, status, q, order } = queryObject;
+  const { offset, created_at, store_status, q, order } = queryObject
 
-  const searchParams: any = {
+  const searchParams: Record<string, string | number | string[] | undefined> = {
     limit: pageSize,
     offset: offset ? Number(offset) : 0,
     created_at: created_at ? JSON.parse(created_at) : undefined,
-    status: status?.split(","),
+    store_status: store_status?.split(","),
     q,
-    fields: "id,email,name,created_at,status",
     order: order ? order : undefined,
-  };
+  }
 
   return {
     searchParams,
     raw: queryObject,
-  };
-};
+  }
+}

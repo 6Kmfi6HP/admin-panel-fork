@@ -1,50 +1,53 @@
-import type { HttpTypes } from "@medusajs/types";
-import { Checkbox, Text, clx } from "@medusajs/ui";
+import { Checkbox, Text, clx } from "@medusajs/ui"
+
+import { HttpTypes } from "@medusajs/types"
 
 type LocationItemProps = {
-  selected: boolean;
-  onSelect: (selected: boolean) => void;
-  location: HttpTypes.AdminStockLocation;
-};
+  selected: boolean
+  onSelect: (selected: boolean) => void
+  location: HttpTypes.AdminStockLocation
+}
 
 export const LocationItem = ({
   selected,
   onSelect,
   location,
-}: LocationItemProps) => (
-  //@todo fix a11y issue
-  // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-  <div
-    className={clx(
-      "flex w-full cursor-pointer gap-x-2 rounded-lg border px-2 py-2",
-      {
-        "border-ui-border-interactive": selected,
-      },
-    )}
-    onClick={() => onSelect(!selected)}
-  >
-    <div className="h-5 w-5">
-      <Checkbox
-        onClick={(e) => {
-          e.stopPropagation();
-          onSelect(!selected);
-        }}
-        checked={selected}
-      />
+}: LocationItemProps) => {
+  return (
+    <div
+      className={clx(
+        "flex w-full cursor-pointer gap-x-2 rounded-lg border px-2 py-2",
+        {
+          "border-ui-border-interactive ": selected,
+        }
+      )}
+      onClick={() => onSelect(!selected)}
+      data-testid={`inventory-manage-locations-form-location-item-${location.id}`}
+    >
+      <div className="h-5 w-5" data-testid={`inventory-manage-locations-form-location-item-${location.id}-checkbox-container`}>
+        <Checkbox
+          onClick={(e) => {
+            e.stopPropagation()
+            onSelect(!selected)
+          }}
+          checked={selected}
+          data-testid={`inventory-manage-locations-form-location-item-${location.id}-checkbox`}
+        />
+      </div>
+      <div className="flex w-full flex-col" data-testid={`inventory-manage-locations-form-location-item-${location.id}-details`}>
+        <Text size="small" leading="compact" weight="plus" data-testid={`inventory-manage-locations-form-location-item-${location.id}-name`}>
+          {location.name}
+        </Text>
+        <Text size="small" leading="compact" className="text-ui-fg-subtle" data-testid={`inventory-manage-locations-form-location-item-${location.id}-address`}>
+          {[
+            location.address?.address_1,
+            location.address?.city,
+            location.address?.country_code,
+          ]
+            .filter((el) => !!el)
+            .join(", ")}
+        </Text>
+      </div>
     </div>
-    <div className="flex w-full flex-col">
-      <Text size="small" leading="compact" weight="plus">
-        {location.name}
-      </Text>
-      <Text size="small" leading="compact" className="text-ui-fg-subtle">
-        {[
-          location.address?.address_1,
-          location.address?.city,
-          location.address?.country_code,
-        ]
-          .filter((el) => !!el)
-          .join(", ")}
-      </Text>
-    </div>
-  </div>
-);
+  )
+}

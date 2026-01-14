@@ -6,22 +6,26 @@ import {
   Container,
   Heading,
   Label,
-  Table,
   Tooltip,
   toast,
 } from "@medusajs/ui";
+import { Drawer } from "@medusajs/ui";
 
 import { FormProvider, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 
-import { ActionMenu } from "@components/common/action-menu";
-import { RouteDrawer } from "@components/modals";
-
-import { useProduct, useProductAttributes, useUpdateProduct } from "@hooks/api";
-
-import { FormComponents } from "@routes/products/product-detail/components/product-additional-attribute-section/components/form-components.tsx";
+import { ActionMenu } from "../../../../../components/common/action-menu";
+import { SectionRow } from "../../../../../components/common/section";
+import {
+  useProduct,
+  useProductAttributes,
+  useUpdateProduct,
+} from "../../../../../hooks/api";
+import { FormComponents } from "./components/form-components";
 
 export const ProductAdditionalAttributeSection = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [open, setOpen] = useState(false);
   const { product, isLoading: isProductLoading } = useProduct(id!, {
@@ -34,8 +38,6 @@ export const ProductAdditionalAttributeSection = () => {
 
   const { mutate: updateProduct } = useUpdateProduct(id!);
 
-  // @todo fix any type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const form = useForm<any>({
     defaultValues: {},
   });
@@ -43,25 +45,25 @@ export const ProductAdditionalAttributeSection = () => {
   // Reset form when product data is loaded
   useEffect(() => {
     if (product?.attribute_values) {
-      // @todo fix any type
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      product.attribute_values.forEach((curr: any) => {
-        form.setValue(curr.attribute_id, curr.value);
-      });
+      const defaultValues = product.attribute_values.reduce(
+        (acc: any, curr: any) => {
+          if (curr) {
+            acc[curr.attribute_id] = curr.value;
+          }
+          return acc;
+        },
+        {},
+      );
+      form.reset(defaultValues);
     }
   }, [product?.attribute_values, form]);
-  // @todo fix any type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const onSubmit = (data: any) => {
     const formattedData = Object.keys(data).map((key) => {
       const attribute = attributes.find(
-        // @todo fix any type
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (a: any) => a.id === key && a.ui_component === "select",
       );
       const value = attribute?.possible_values?.find(
-        // @todo fix any type
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (pv: any) => pv.id === data[key],
       )?.value;
 
@@ -79,7 +81,6 @@ export const ProductAdditionalAttributeSection = () => {
     const values = Object.keys(payload).reduce(
       (acc: Array<Record<string, string>>, key) => {
         acc.push({ attribute_id: key, value: payload[key] });
-
         return acc;
       },
       [],
@@ -103,88 +104,144 @@ export const ProductAdditionalAttributeSection = () => {
   return (
     <>
       <div>
-        <Container className="divide-y p-0 pb-2">
-          <div className="flex items-center justify-between px-6 py-4">
-            <Heading level="h2">Additional Attributes</Heading>
+        <Container
+          className="divide-y p-0"
+          data-testid="product-additional-attributes-section"
+        >
+          <div
+            className="flex items-center justify-between px-6 py-4"
+            data-testid="product-additional-attributes-header"
+          >
+            <Heading
+              level="h2"
+              data-testid="product-additional-attributes-title"
+            >
+              {t("products.additionalAttributes")}
+            </Heading>
             <ActionMenu
               groups={[
                 {
                   actions: [
                     {
-                      label: "Edit",
+                      label: t("actions.edit"),
                       onClick: () => setOpen(true),
                       icon: <PencilSquare />,
                     },
                   ],
                 },
               ]}
+              data-testid="product-additional-attributes-action-menu"
             />
           </div>
 
-          <div className="mb-6">
-            <Table>
-              <Table.Body>
-                {// @todo fix any type
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                product?.attribute_values?.map((attribute: any) => (
-                  <Table.Row key={attribute?.id}>
-                    <Table.Cell>{attribute?.attribute?.name}</Table.Cell>
-                    <Table.Cell>{attribute?.value}</Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
-          </div>
+          {product?.attribute_values?.map(
+            (attribute: any) =>
+              attribute && (
+                <SectionRow
+                  key={attribute.id}
+                  title={attribute.attribute.name}
+                  value={attribute.value}
+                  data-testid={`product-additional-attribute-row-${attribute.attribute.name}`}
+                />
+              ),
+          )}
         </Container>
       </div>
-      {open && (
-        <RouteDrawer>
-          <RouteDrawer.Header>
-            <Heading level="h2">Additional Attributes</Heading>
-          </RouteDrawer.Header>
-          <RouteDrawer.Body className="m-4 max-h-[calc(86vh)] overflow-y-auto py-2">
+      <Drawer
+        open={open}
+        onOpenChange={setOpen}
+        data-testid="product-additional-attributes-drawer"
+      >
+        <Drawer.Content data-testid="product-additional-attributes-drawer-content">
+          <Drawer.Header data-testid="product-additional-attributes-drawer-header">
+            <Heading
+              level="h2"
+              data-testid="product-additional-attributes-drawer-title"
+            >
+              {t("products.additionalAttributes")}
+            </Heading>
+          </Drawer.Header>
+          <Drawer.Body
+            className="m-4 max-h-[calc(86vh)] overflow-y-auto py-2"
+            data-testid="product-additional-attributes-drawer-body"
+          >
             <FormProvider {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="p-0">
-                {
-                  // @todo fix any type
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  attributes.map((a: any) => (
-                    <div
-                      key={`form-field-${a.handle}-${a.id}`}
-                      className="-mx-4 mb-4"
+              <form
+                id="product-additional-attributes-form"
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="p-0"
+                data-testid="product-additional-attributes-form"
+              >
+                {attributes.map((a: any) => (
+                  <div
+                    key={`form-field-${a.handle}-${a.id}`}
+                    className="-mx-4 mb-4"
+                    data-testid={`product-additional-attribute-field-${a.id}`}
+                  >
+                    <Label
+                      className="mb-2 flex items-center gap-x-2"
+                      data-testid={`product-additional-attribute-label-${a.id}`}
                     >
-                      <Label className="mb-2 flex items-center gap-x-2">
-                        {a.name}
-                        {a.description && (
-                          <Tooltip content={a.description}>
-                            <InformationCircleSolid />
-                          </Tooltip>
-                        )}
-                      </Label>
+                      {a.name}
+                      {a.description && (
+                        <Tooltip
+                          content={a.description}
+                          data-testid={`product-additional-attribute-tooltip-${a.id}`}
+                        >
+                          <InformationCircleSolid />
+                        </Tooltip>
+                      )}
+                    </Label>
+                    <div
+                      data-testid={`product-additional-attribute-input-${a.id}`}
+                    >
                       <FormComponents
                         attribute={a}
                         field={{
                           name: a.id,
                           value: form.watch(a.id),
                           defaultValue: form.getValues(a.id),
-                          // @todo fix any type
-                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           onChange: (e: any) => {
                             form.setValue(a.id, e.target.value);
                           },
                         }}
+                        data-testid={`product-additional-attribute-input-${a.id}-component`}
                       />
                     </div>
-                  ))
-                }
-                <div className="-mx-4 mt-4 flex justify-end">
-                  <Button>Save</Button>
-                </div>
+                  </div>
+                ))}
               </form>
             </FormProvider>
-          </RouteDrawer.Body>
-        </RouteDrawer>
-      )}
+          </Drawer.Body>
+          <Drawer.Footer data-testid="product-additional-attributes-drawer-footer">
+            <div
+              className="flex items-center justify-end gap-x-2"
+              data-testid="product-additional-attributes-form-actions"
+            >
+              <Drawer.Close
+                asChild
+                data-testid="product-additional-attributes-cancel-button-wrapper"
+              >
+                <Button
+                  variant="secondary"
+                  size="small"
+                  data-testid="product-additional-attributes-cancel-button"
+                >
+                  {t("actions.cancel")}
+                </Button>
+              </Drawer.Close>
+              <Button
+                size="small"
+                type="submit"
+                form="product-additional-attributes-form"
+                data-testid="product-additional-attributes-save-button"
+              >
+                {t("actions.save")}
+              </Button>
+            </div>
+          </Drawer.Footer>
+        </Drawer.Content>
+      </Drawer>
     </>
   );
 };

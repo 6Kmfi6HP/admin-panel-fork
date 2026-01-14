@@ -154,9 +154,9 @@ export const StoreCurrencySection = ({ store }: StoreCurrencySectionProps) => {
   const isLoading = isCurrenciesPending || isPricePreferencesPending;
 
   return (
-    <Container className="divide-y p-0">
-      <div className="flex items-center justify-between px-6 py-4">
-        <Heading level="h2">{t("store.currencies")}</Heading>
+    <Container className="divide-y p-0" data-testid="store-currency-section-container">
+      <div className="flex items-center justify-between px-6 py-4" data-testid="store-currency-section-header">
+        <Heading level="h2" data-testid="store-currency-section-heading">{t("store.currencies")}</Heading>
         <ActionMenu
           groups={[
             {
@@ -169,6 +169,7 @@ export const StoreCurrencySection = ({ store }: StoreCurrencySectionProps) => {
               ],
             },
           ]}
+          data-testid="store-currency-section-action-menu"
         />
       </div>
       <_DataTable
@@ -184,10 +185,11 @@ export const StoreCurrencySection = ({ store }: StoreCurrencySectionProps) => {
         count={!store.supported_currencies?.length ? 0 : count}
         isLoading={!store.supported_currencies?.length ? false : isLoading}
         queryObject={raw}
+        data-testid="store-currency-section-table"
       />
-      <CommandBar open={!!Object.keys(rowSelection).length}>
-        <CommandBar.Bar>
-          <CommandBar.Value>
+      <CommandBar open={!!Object.keys(rowSelection).length} data-testid="store-currency-section-command-bar">
+        <CommandBar.Bar data-testid="store-currency-section-command-bar-bar">
+          <CommandBar.Value data-testid="store-currency-section-command-bar-value">
             {t("general.countSelected", {
               count: Object.keys(rowSelection).length,
             })}
@@ -197,6 +199,7 @@ export const StoreCurrencySection = ({ store }: StoreCurrencySectionProps) => {
             action={handleDeleteCurrencies}
             shortcut="r"
             label={t("actions.remove")}
+            data-testid="store-currency-section-command-bar-remove"
           />
         </CommandBar.Bar>
       </CommandBar>
@@ -309,6 +312,7 @@ const CurrencyActions = ({
           ],
         },
       ]}
+      data-testid={`store-currency-section-action-menu-${currency.code}`}
     />
   );
 };
@@ -336,6 +340,7 @@ const useColumns = () => {
               onCheckedChange={(value) =>
                 table.toggleAllPageRowsSelected(!!value)
               }
+              data-testid="store-currency-section-select-all-checkbox"
             />
           );
         },
@@ -347,6 +352,7 @@ const useColumns = () => {
               onClick={(e) => {
                 e.stopPropagation();
               }}
+              data-testid={`store-currency-section-select-checkbox-${row.original.code}`}
             />
           );
         },

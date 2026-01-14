@@ -1,3 +1,5 @@
+import type { MemberDTO, SellerDTO } from "@custom-types/seller";
+
 export type RequestDTO = {
   id: string;
   type: string;
@@ -74,4 +76,12 @@ export interface AdminReviewRequest {
 export interface AdminUpdateOrderReturnRequest {
   status: string;
   admin_reviewer_note: string;
+}
+
+export interface AdminSellerRequest extends RequestDTO {
+  data: {
+    member: MemberDTO;
+    seller: SellerDTO;
+    provider_identity_id?: string;
+  };
 }

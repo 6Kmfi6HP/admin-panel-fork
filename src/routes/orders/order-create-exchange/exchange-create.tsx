@@ -74,7 +74,7 @@ export const ExchangeCreate = () => {
   }, [preview]);
 
   return (
-    <RouteFocusModal>
+    <RouteFocusModal data-testid="order-create-exchange-modal">
       {exchange && preview && order && (
         <ExchangeCreateForm
           order={order}

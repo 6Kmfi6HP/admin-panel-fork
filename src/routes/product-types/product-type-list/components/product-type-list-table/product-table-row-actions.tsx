@@ -42,6 +42,7 @@ export const ProductTypeRowActions = ({
           ],
         },
       ]}
+      data-testid={`product-type-list-table-action-menu-${productType.id}`}
     />
   );
 };

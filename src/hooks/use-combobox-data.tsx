@@ -1,5 +1,5 @@
-import type { QueryKey } from "@tanstack/react-query";
 import {
+  QueryKey,
   keepPreviousData,
   useInfiniteQuery,
   useQuery,
@@ -18,6 +18,7 @@ type ComboboxQueryParams = {
   q?: string;
   offset?: number;
   limit?: number;
+  value?: string | string[];
 };
 
 export const useComboboxData = <
@@ -81,7 +82,6 @@ export const useComboboxData = <
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
       const moreItemsExist = lastPage.count > lastPage.offset + lastPage.limit;
-
       return moreItemsExist ? lastPage.offset + lastPage.limit : undefined;
     },
     placeholderData: keepPreviousData,
@@ -91,6 +91,7 @@ export const useComboboxData = <
   const options = data?.pages.flatMap((page) => getOptions(page)) ?? [];
   const defaultOptions = initialData ? getOptions(initialData) : [];
   const selectedOptions = selectedData ? getOptions(selectedData) : [];
+
   /**
    * If there are no options and the query is empty, then the combobox should be disabled,
    * as there is no data to search for.

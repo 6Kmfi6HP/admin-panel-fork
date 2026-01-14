@@ -19,7 +19,7 @@ export const TaxRegionDetailSection = ({
   const showBadge = defaultRates.length === 0;
 
   return (
-    <Container className="divide-y p-0">
+    <Container className="divide-y p-0" data-testid="tax-region-detail-section-container">
       <TaxRegionCard
         taxRegion={taxRegion}
         type="header"
@@ -27,7 +27,7 @@ export const TaxRegionDetailSection = ({
         badge={
           showBadge && (
             <Tooltip content={t("taxRegions.fields.noDefaultRate.tooltip")}>
-              <Badge color="orange" size="2xsmall" className="cursor-default">
+              <Badge color="orange" size="2xsmall" className="cursor-default" data-testid="tax-region-detail-section-no-default-rate-badge">
                 {t("taxRegions.fields.noDefaultRate.label")}
               </Badge>
             </Tooltip>

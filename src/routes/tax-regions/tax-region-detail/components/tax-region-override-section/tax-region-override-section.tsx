@@ -49,7 +49,7 @@ export const TaxRegionOverrideSection = ({
   }
 
   return (
-    <Container className="p-0">
+    <Container className="p-0" data-testid="tax-region-override-section-container">
       <TaxOverrideTable
         isPending={isPending}
         table={table}
@@ -60,8 +60,9 @@ export const TaxRegionOverrideSection = ({
         }}
         queryObject={raw}
         prefix={PREFIX}
+        data-testid="tax-region-override-section-table"
       >
-        <Heading level="h2">{t("taxRegions.taxOverrides.header")}</Heading>
+        <Heading level="h2" data-testid="tax-region-override-section-heading">{t("taxRegions.taxOverrides.header")}</Heading>
       </TaxOverrideTable>
     </Container>
   );

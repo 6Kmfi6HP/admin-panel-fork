@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState } from "react";
 
 import { ThumbnailBadge } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
+import { HttpTypes } from "@medusajs/types";
 import {
   Button,
   Checkbox,
@@ -11,17 +11,15 @@ import {
   toast,
 } from "@medusajs/ui";
 
-import type {
-  DragEndEvent,
-  DragStartEvent,
-  DropAnimation,
-  UniqueIdentifier,
-} from "@dnd-kit/core";
 import {
   DndContext,
+  DragEndEvent,
   DragOverlay,
+  DragStartEvent,
+  DropAnimation,
   KeyboardSensor,
   PointerSensor,
+  UniqueIdentifier,
   defaultDropAnimationSideEffects,
   useSensor,
   useSensors,
@@ -38,19 +36,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import type { z } from "zod";
+import { z } from "zod";
 
-import { RouteFocusModal, useRouteModal } from "@components/modals";
-import { KeyboundForm } from "@components/utilities/keybound-form";
-
-import { useUpdateProduct } from "@hooks/api";
-
-import { sdk } from "@lib/client";
-
-import { UploadMediaFormItem } from "@routes/products/common/components/upload-media-form-item";
-import type { MediaSchema } from "@routes/products/product-create/constants";
-import { EditProductMediaSchema } from "@routes/products/product-create/constants";
-import type { EditProductMediaSchemaType } from "@routes/products/product-create/types";
+import {
+  RouteFocusModal,
+  useRouteModal,
+} from "../../../../../components/modals";
+import { KeyboundForm } from "../../../../../components/utilities/keybound-form";
+import { useUpdateProduct } from "../../../../../hooks/api/products";
+import { sdk } from "../../../../../lib/client";
+import { UploadMediaFormItem } from "../../../common/components/upload-media-form-item";
+import {
+  EditProductMediaSchema,
+  MediaSchema,
+} from "../../../product-create/constants";
+import { EditProductMediaSchemaType } from "../../../product-create/types";
 
 type ProductMediaViewProps = {
   product: HttpTypes.AdminProduct;
@@ -125,7 +125,6 @@ export const EditProductMediaForm = ({ product }: ProductMediaViewProps) => {
             type: "invalid_file",
             message: t("products.media.failedToUpload"),
           });
-
           return { files: [] };
         });
       uploaded = uploads;
@@ -136,7 +135,6 @@ export const EditProductMediaForm = ({ product }: ProductMediaViewProps) => {
       if (toUploadIndex > -1) {
         return { ...entry, url: uploaded[toUploadIndex]?.url };
       }
-
       return entry;
     });
     const thumbnail = withUpdatedUrls.find((m) => m.isThumbnail)?.url;
@@ -209,44 +207,80 @@ export const EditProductMediaForm = ({ product }: ProductMediaViewProps) => {
   const selectionCount = Object.keys(selection).length;
 
   return (
-    <RouteFocusModal.Form blockSearchParams form={form}>
+    <RouteFocusModal.Form
+      blockSearchParams
+      form={form}
+      data-testid="product-edit-media-form"
+    >
       <KeyboundForm
         className="flex size-full flex-col overflow-hidden"
         onSubmit={handleSubmit}
+        data-testid="product-edit-media-keybound-form"
       >
-        <RouteFocusModal.Header>
-          <div className="flex items-center justify-end gap-x-2">
-            <Button variant="secondary" size="small" asChild>
-              <Link to={{ pathname: ".", search: undefined }}>
+        <RouteFocusModal.Header data-testid="product-edit-media-form-header">
+          <div
+            className="flex items-center justify-end gap-x-2"
+            data-testid="product-edit-media-form-header-actions"
+          >
+            <Button
+              variant="secondary"
+              size="small"
+              asChild
+              data-testid="product-edit-media-form-gallery-button"
+            >
+              <Link
+                to={{ pathname: ".", search: undefined }}
+                data-testid="product-edit-media-form-gallery-link"
+              >
                 {t("products.media.galleryLabel")}
               </Link>
             </Button>
           </div>
         </RouteFocusModal.Header>
-        <RouteFocusModal.Body className="flex flex-col overflow-hidden">
-          <div className="flex size-full flex-col-reverse lg:grid lg:grid-cols-[1fr_560px]">
+        <RouteFocusModal.Body
+          className="flex flex-col overflow-hidden"
+          data-testid="product-edit-media-form-body"
+        >
+          <div
+            className="flex size-full flex-col-reverse lg:grid lg:grid-cols-[1fr_560px]"
+            data-testid="product-edit-media-form-content"
+          >
             <DndContext
               sensors={sensors}
               onDragEnd={handleDragEnd}
               onDragStart={handleDragStart}
               onDragCancel={handleDragCancel}
+              data-testid="product-edit-media-form-dnd-context"
             >
-              <div className="size-full overflow-auto bg-ui-bg-subtle">
-                <div className="grid h-fit auto-rows-auto grid-cols-4 gap-6 p-6">
+              <div
+                className="size-full overflow-auto bg-ui-bg-subtle"
+                data-testid="product-edit-media-form-media-grid-container"
+              >
+                <div
+                  className="grid h-fit auto-rows-auto grid-cols-4 gap-6 p-6"
+                  data-testid="product-edit-media-form-media-grid"
+                >
                   <SortableContext
                     items={fields.map((m) => m.field_id)}
                     strategy={rectSortingStrategy}
+                    data-testid="product-edit-media-form-sortable-context"
                   >
-                    {fields.map((m) => (
-                      <MediaGridItem
-                        onCheckedChange={handleCheckedChange(m.id!)}
-                        checked={!!selection[m.id!]}
-                        key={m.field_id}
-                        media={m}
-                      />
-                    ))}
+                    {fields.map((m) => {
+                      return (
+                        <MediaGridItem
+                          onCheckedChange={handleCheckedChange(m.id!)}
+                          checked={!!selection[m.id!]}
+                          key={m.field_id}
+                          media={m}
+                          data-testid={`product-edit-media-form-media-item-${m.id}`}
+                        />
+                      );
+                    })}
                   </SortableContext>
-                  <DragOverlay dropAnimation={dropAnimationConfig}>
+                  <DragOverlay
+                    dropAnimation={dropAnimationConfig}
+                    data-testid="product-edit-media-form-drag-overlay"
+                  >
                     {activeId ? (
                       <MediaGridItemOverlay
                         media={fields.find((m) => m.field_id === activeId)!}
@@ -255,50 +289,78 @@ export const EditProductMediaForm = ({ product }: ProductMediaViewProps) => {
                             fields.find((m) => m.field_id === activeId)!.id!
                           ]
                         }
+                        data-testid={`product-edit-media-form-media-item-overlay-${activeId}`}
                       />
                     ) : null}
                   </DragOverlay>
                 </div>
               </div>
             </DndContext>
-            <div className="overflow-auto border-b bg-ui-bg-base px-6 py-4 lg:border-b-0 lg:border-l">
-              <UploadMediaFormItem form={form} append={append} />
+            <div
+              className="overflow-auto border-b bg-ui-bg-base px-6 py-4 lg:border-b-0 lg:border-l"
+              data-testid="product-edit-media-form-upload-section"
+            >
+              <UploadMediaFormItem
+                form={form}
+                append={append}
+                data-testid="product-edit-media-form-upload-item"
+              />
             </div>
           </div>
         </RouteFocusModal.Body>
-        <CommandBar open={!!selectionCount}>
-          <CommandBar.Bar>
-            <CommandBar.Value>
+        <CommandBar
+          open={!!selectionCount}
+          data-testid="product-edit-media-form-command-bar"
+        >
+          <CommandBar.Bar data-testid="product-edit-media-form-command-bar-bar">
+            <CommandBar.Value data-testid="product-edit-media-form-command-bar-value">
               {t("general.countSelected", {
                 count: selectionCount,
               })}
             </CommandBar.Value>
-            <CommandBar.Seperator />
+            <CommandBar.Seperator data-testid="product-edit-media-form-command-bar-separator-1" />
             {selectionCount === 1 && (
               <Fragment>
                 <CommandBar.Command
                   action={handlePromoteToThumbnail}
                   label={t("products.media.makeThumbnail")}
                   shortcut="t"
+                  data-testid="product-edit-media-form-command-bar-make-thumbnail"
                 />
-                <CommandBar.Seperator />
+                <CommandBar.Seperator data-testid="product-edit-media-form-command-bar-separator-2" />
               </Fragment>
             )}
             <CommandBar.Command
               action={handleDelete}
               label={t("actions.delete")}
               shortcut="d"
+              data-testid="product-edit-media-form-command-bar-delete"
             />
           </CommandBar.Bar>
         </CommandBar>
-        <RouteFocusModal.Footer>
-          <div className="flex items-center justify-end gap-x-2">
-            <RouteFocusModal.Close asChild>
-              <Button variant="secondary" size="small">
+        <RouteFocusModal.Footer data-testid="product-edit-media-form-footer">
+          <div
+            className="flex items-center justify-end gap-x-2"
+            data-testid="product-edit-media-form-footer-actions"
+          >
+            <RouteFocusModal.Close
+              asChild
+              data-testid="product-edit-media-form-cancel-button-wrapper"
+            >
+              <Button
+                variant="secondary"
+                size="small"
+                data-testid="product-edit-media-form-cancel-button"
+              >
                 {t("actions.cancel")}
               </Button>
             </RouteFocusModal.Close>
-            <Button size="small" type="submit" isLoading={isPending}>
+            <Button
+              size="small"
+              type="submit"
+              isLoading={isPending}
+              data-testid="product-edit-media-form-save-button"
+            >
               {t("actions.save")}
             </Button>
           </div>
@@ -355,13 +417,15 @@ interface MediaGridItemProps {
   media: MediaView;
   checked: boolean;
   onCheckedChange: (value: boolean) => void;
+  "data-testid"?: string;
 }
 
 const MediaGridItem = ({
   media,
   checked,
   onCheckedChange,
-}: MediaGridItemProps) => {
+  "data-testid": dataTestId,
+}: MediaGridItemProps & { "data-testid"?: string }) => {
   const { t } = useTranslation();
 
   const handleToggle = useCallback(
@@ -394,11 +458,26 @@ const MediaGridItem = ({
       )}
       style={style}
       ref={setNodeRef}
+      data-testid={dataTestId}
     >
       {media.isThumbnail && (
-        <div className="absolute left-2 top-2">
-          <Tooltip content={t("products.media.thumbnailTooltip")}>
-            <ThumbnailBadge />
+        <div
+          className="absolute left-2 top-2"
+          data-testid={
+            dataTestId ? `${dataTestId}-thumbnail-badge-container` : undefined
+          }
+        >
+          <Tooltip
+            content={t("products.media.thumbnailTooltip")}
+            data-testid={
+              dataTestId ? `${dataTestId}-thumbnail-tooltip` : undefined
+            }
+          >
+            <ThumbnailBadge
+              data-testid={
+                dataTestId ? `${dataTestId}-thumbnail-badge` : undefined
+              }
+            />
           </Tooltip>
         </div>
       )}
@@ -409,6 +488,7 @@ const MediaGridItem = ({
         ref={setActivatorNodeRef}
         {...attributes}
         {...listeners}
+        data-testid={dataTestId ? `${dataTestId}-drag-handle` : undefined}
       />
       <div
         className={clx("absolute right-2 top-2 opacity-0 transition-fg", {
@@ -416,6 +496,9 @@ const MediaGridItem = ({
             !isDragging && !checked,
           "opacity-100": checked,
         })}
+        data-testid={
+          dataTestId ? `${dataTestId}-checkbox-container` : undefined
+        }
       >
         <Checkbox
           onClick={(e) => {
@@ -423,12 +506,14 @@ const MediaGridItem = ({
           }}
           checked={checked}
           onCheckedChange={handleToggle}
+          data-testid={dataTestId ? `${dataTestId}-checkbox` : undefined}
         />
       </div>
       <img
         src={media.url}
         alt=""
         className="size-full object-cover object-center"
+        data-testid={dataTestId ? `${dataTestId}-image` : undefined}
       />
     </div>
   );
@@ -437,28 +522,49 @@ const MediaGridItem = ({
 export const MediaGridItemOverlay = ({
   media,
   checked,
+  "data-testid": dataTestId,
 }: {
   media: MediaView;
   checked: boolean;
+  "data-testid"?: string;
 }) => {
   return (
-    <div className="group relative aspect-square h-auto max-w-full cursor-grabbing overflow-hidden rounded-lg bg-ui-bg-subtle-hover shadow-elevation-card-rest outline-none hover:shadow-elevation-card-hover focus-visible:shadow-borders-focus">
+    <div
+      className="group relative aspect-square h-auto max-w-full cursor-grabbing overflow-hidden rounded-lg bg-ui-bg-subtle-hover shadow-elevation-card-rest outline-none hover:shadow-elevation-card-hover focus-visible:shadow-borders-focus"
+      data-testid={dataTestId}
+    >
       {media.isThumbnail && (
-        <div className="absolute left-2 top-2">
-          <ThumbnailBadge />
+        <div
+          className="absolute left-2 top-2"
+          data-testid={
+            dataTestId ? `${dataTestId}-thumbnail-badge-container` : undefined
+          }
+        >
+          <ThumbnailBadge
+            data-testid={
+              dataTestId ? `${dataTestId}-thumbnail-badge` : undefined
+            }
+          />
         </div>
       )}
       <div
         className={clx("absolute right-2 top-2 opacity-0 transition-fg", {
           "opacity-100": checked,
         })}
+        data-testid={
+          dataTestId ? `${dataTestId}-checkbox-container` : undefined
+        }
       >
-        <Checkbox checked={checked} />
+        <Checkbox
+          checked={checked}
+          data-testid={dataTestId ? `${dataTestId}-checkbox` : undefined}
+        />
       </div>
       <img
         src={media.url}
         alt=""
         className="size-full object-cover object-center"
+        data-testid={dataTestId ? `${dataTestId}-image` : undefined}
       />
     </div>
   );

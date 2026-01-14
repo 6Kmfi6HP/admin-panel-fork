@@ -1,19 +1,16 @@
-import { useParams, useSearchParams } from "react-router-dom";
-
-import { RouteFocusModal } from "@components/modals";
-
-import { usePriceList, useProducts } from "@hooks/api";
-
-import { usePriceListCurrencyData } from "@routes/price-lists/common/hooks/use-price-list-currency-data";
-import { PriceListPricesEditForm } from "@routes/price-lists/price-list-prices-edit/components/price-list-prices-edit-form";
+import { useParams, useSearchParams } from "react-router-dom"
+import { PriceListPricesEditForm } from "./components/price-list-prices-edit-form"
+import { usePriceList, useProducts } from "@hooks/api"
+import { RouteFocusModal } from "@components/modals"
+import { usePriceListCurrencyData } from "../common/hooks/use-price-list-currency-data"
 
 export const PriceListPricesEdit = () => {
-  const { id } = useParams();
-  const [searchParams] = useSearchParams();
-  const ids = searchParams.get("ids[]");
+  const { id } = useParams()
+  const [searchParams] = useSearchParams()
+  const ids = searchParams.get("ids[]")
 
-  const { price_list, isLoading, isError, error } = usePriceList(id!);
-  const productIds = ids?.split(",");
+  const { price_list, isLoading, isError, error } = usePriceList(id!)
+  const productIds = ids?.split(",")
 
   const {
     products,
@@ -25,20 +22,19 @@ export const PriceListPricesEdit = () => {
     limit: productIds?.length || 9999, // Temporary until we support lazy loading in the DataGrid
     price_list_id: [id!],
     fields: "title,thumbnail,*variants",
-  });
+  })
 
-  const { isReady, regions, currencies, pricePreferences } =
-    usePriceListCurrencyData();
+  const currencyData = usePriceListCurrencyData()
 
-  const ready =
-    !isLoading && !!price_list && !isProductsLoading && !!products && isReady;
+  const ready = currencyData.isReady &&
+    !isLoading && !!price_list && !isProductsLoading && !!products
 
   if (isError) {
-    throw error;
+    throw error
   }
 
   if (isProductsError) {
-    throw productError;
+    throw productError
   }
 
   return (
@@ -53,11 +49,9 @@ export const PriceListPricesEdit = () => {
         <PriceListPricesEditForm
           priceList={price_list}
           products={products}
-          regions={regions}
-          currencies={currencies}
-          pricePreferences={pricePreferences}
+          {...currencyData}
         />
       )}
     </RouteFocusModal>
-  );
-};
+  )
+}

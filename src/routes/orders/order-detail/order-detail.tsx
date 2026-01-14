@@ -83,8 +83,9 @@ export const OrderDetail = () => {
       showJSON
       showMetadata
       hasOutlet
+      data-testid="order-detail-page"
     >
-      <TwoColumnPage.Main>
+      <TwoColumnPage.Main data-testid="order-detail-main">
         <OrderActiveEditSection order={order} />
         <ActiveOrderClaimSection orderPreview={orderPreview!} />
         <ActiveOrderExchangeSection orderPreview={orderPreview!} />
@@ -94,7 +95,7 @@ export const OrderDetail = () => {
         <OrderPaymentSection order={order} plugins={plugins} />
         <OrderFulfillmentSection order={order} />
       </TwoColumnPage.Main>
-      <TwoColumnPage.Sidebar>
+      <TwoColumnPage.Sidebar data-testid="order-detail-sidebar">
         <OrderCustomerSection order={order} />
         <OrderActivitySection order={order} />
         <OrderRemainingOrdersGroupSection />

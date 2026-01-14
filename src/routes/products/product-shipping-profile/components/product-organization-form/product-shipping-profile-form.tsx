@@ -1,38 +1,34 @@
-import { useEffect } from "react";
+import { HttpTypes } from "@medusajs/types"
+import { Button, toast } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
+import * as zod from "zod"
 
-import type { HttpTypes } from "@medusajs/types";
-import { Button, toast } from "@medusajs/ui";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import * as zod from "zod";
-
-import { Form } from "@components/common/form";
-import { Combobox } from "@components/inputs/combobox";
-import { RouteDrawer, useRouteModal } from "@components/modals";
-import { KeyboundForm } from "@components/utilities/keybound-form";
-
-import { useUpdateProduct } from "@hooks/api";
-import { useComboboxData } from "@hooks/use-combobox-data";
-
-import { sdk } from "@lib/client";
+import { Form } from "../../../../../components/common/form"
+import { Combobox } from "../../../../../components/inputs/combobox"
+import { RouteDrawer, useRouteModal } from "../../../../../components/modals"
+import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
+import { useUpdateProduct } from "../../../../../hooks/api/products"
+import { useComboboxData } from "../../../../../hooks/use-combobox-data"
+import { sdk } from "../../../../../lib/client"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect } from "react"
 
 type ProductShippingProfileFormProps = {
   product: HttpTypes.AdminProduct & {
-    shipping_profile?: HttpTypes.AdminShippingProfile;
-  };
-};
+    shipping_profile?: HttpTypes.AdminShippingProfile
+  }
+}
 
 const ProductShippingProfileSchema = zod.object({
   shipping_profile_id: zod.string(),
-});
+})
 
 export const ProductShippingProfileForm = ({
   product,
 }: ProductShippingProfileFormProps) => {
-  const { t } = useTranslation();
-  const { handleSuccess } = useRouteModal();
+  const { t } = useTranslation()
+  const { handleSuccess } = useRouteModal()
 
   const shippingProfiles = useComboboxData({
     queryKey: ["shipping_profiles"],
@@ -42,18 +38,18 @@ export const ProductShippingProfileForm = ({
         label: shippingProfile.name,
         value: shippingProfile.id,
       })),
-  });
+  })
 
   const form = useForm({
     defaultValues: {
       shipping_profile_id: product.shipping_profile?.id ?? "",
     },
     resolver: zodResolver(ProductShippingProfileSchema),
-  });
+  })
 
-  const selectedShippingProfile = form.watch("shipping_profile_id");
+  const selectedShippingProfile = form.watch("shipping_profile_id")
 
-  const { mutateAsync, isPending } = useUpdateProduct(product.id);
+  const { mutateAsync, isPending } = useUpdateProduct(product.id)
 
   const handleSubmit = form.handleSubmit(async (data) => {
     await mutateAsync(
@@ -66,38 +62,38 @@ export const ProductShippingProfileForm = ({
           toast.success(
             t("products.shippingProfile.edit.toasts.success", {
               title: product.title,
-            }),
-          );
-          handleSuccess();
+            })
+          )
+          handleSuccess()
         },
         onError: (error) => {
-          toast.error(error.message);
+          toast.error(error.message)
         },
-      },
-    );
-  });
+      }
+    )
+  })
 
   useEffect(() => {
     if (typeof selectedShippingProfile === "undefined") {
-      form.setValue("shipping_profile_id", "");
+      form.setValue("shipping_profile_id", "")
     }
-  }, [selectedShippingProfile]);
+  }, [selectedShippingProfile])
 
   return (
-    <RouteDrawer.Form form={form}>
-      <KeyboundForm onSubmit={handleSubmit} className="flex h-full flex-col">
-        <RouteDrawer.Body>
-          <div className="flex h-full flex-col gap-y-4">
+    <RouteDrawer.Form form={form} data-testid="product-shipping-profile-form">
+      <KeyboundForm onSubmit={handleSubmit} className="flex h-full flex-col" data-testid="product-shipping-profile-keybound-form">
+        <RouteDrawer.Body data-testid="product-shipping-profile-form-body">
+          <div className="flex h-full flex-col gap-y-4" data-testid="product-shipping-profile-form-fields">
             <Form.Field
               control={form.control}
               name="shipping_profile_id"
               render={({ field }) => {
                 return (
-                  <Form.Item>
-                    <Form.Label>
+                  <Form.Item data-testid="product-shipping-profile-form-shipping-profile-item">
+                    <Form.Label data-testid="product-shipping-profile-form-shipping-profile-label">
                       {t("products.fields.shipping_profile.label")}
                     </Form.Label>
-                    <Form.Control>
+                    <Form.Control data-testid="product-shipping-profile-form-shipping-profile-control">
                       <Combobox
                         {...field}
                         allowClear
@@ -107,30 +103,31 @@ export const ProductShippingProfileForm = ({
                           shippingProfiles.onSearchValueChange
                         }
                         fetchNextPage={shippingProfiles.fetchNextPage}
+                        data-testid="product-shipping-profile-form-shipping-profile-combobox"
                       />
                     </Form.Control>
-                    <Form.ErrorMessage />
+                    <Form.ErrorMessage data-testid="product-shipping-profile-form-shipping-profile-error" />
                   </Form.Item>
-                );
+                )
               }}
             />
 
             {/* <FormExtensionZone fields={fields} form={form} /> */}
           </div>
         </RouteDrawer.Body>
-        <RouteDrawer.Footer>
-          <div className="flex items-center justify-end gap-x-2">
-            <RouteDrawer.Close asChild>
-              <Button size="small" variant="secondary">
+        <RouteDrawer.Footer data-testid="product-shipping-profile-form-footer">
+          <div className="flex items-center justify-end gap-x-2" data-testid="product-shipping-profile-form-footer-actions">
+            <RouteDrawer.Close asChild data-testid="product-shipping-profile-form-cancel-button-wrapper">
+              <Button size="small" variant="secondary" data-testid="product-shipping-profile-form-cancel-button">
                 {t("actions.cancel")}
               </Button>
             </RouteDrawer.Close>
-            <Button size="small" type="submit" isLoading={isPending}>
+            <Button size="small" type="submit" isLoading={isPending} data-testid="product-shipping-profile-form-save-button">
               {t("actions.save")}
             </Button>
           </div>
         </RouteDrawer.Footer>
       </KeyboundForm>
     </RouteDrawer.Form>
-  );
-};
+  )
+}

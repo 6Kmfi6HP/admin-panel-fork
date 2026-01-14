@@ -1,28 +1,28 @@
-import type { FetchError } from "@medusajs/js-sdk";
-import type { HttpTypes } from "@medusajs/types";
+import type { FetchError } from "@medusajs/js-sdk"
+import type { HttpTypes } from "@medusajs/types"
+import {
+  type QueryKey,
+  type UseMutationOptions,
+  type UseQueryOptions,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query"
 
-import type {
-  QueryKey,
-  UseMutationOptions,
-  UseQueryOptions,
-} from "@tanstack/react-query";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { sdk } from "@lib/client"
+import { queryClient } from "@lib/query-client"
+import { queryKeysFactory } from "@lib/query-key-factory"
+import { variantsQueryKeys } from "./products"
+import type { ExtendedAdminInventoryItemResponse, ExtendedInventoryItemLevelsResponse } from "@custom-types/inventory"
 
-import { sdk } from "@lib/client";
-import { queryClient } from "@lib/query-client";
-import { queryKeysFactory } from "@lib/query-key-factory";
-
-import { variantsQueryKeys } from "./products";
-
-const INVENTORY_ITEMS_QUERY_KEY = "inventory_items" as const;
+const INVENTORY_ITEMS_QUERY_KEY = "inventory_items" as const
 export const inventoryItemsQueryKeys = queryKeysFactory(
-  INVENTORY_ITEMS_QUERY_KEY,
-);
+  INVENTORY_ITEMS_QUERY_KEY
+)
 
-const INVENTORY_ITEM_LEVELS_QUERY_KEY = "inventory_item_levels" as const;
+const INVENTORY_ITEM_LEVELS_QUERY_KEY = "inventory_item_levels" as const
 export const inventoryItemLevelsQueryKeys = queryKeysFactory(
-  INVENTORY_ITEM_LEVELS_QUERY_KEY,
-);
+  INVENTORY_ITEM_LEVELS_QUERY_KEY
+)
 
 export const useInventoryItems = (
   query?: HttpTypes.AdminInventoryItemParams,
@@ -34,47 +34,45 @@ export const useInventoryItems = (
       QueryKey
     >,
     "queryKey" | "queryFn"
-  >,
+  >
 ) => {
   const { data, ...rest } = useQuery({
     queryFn: () => sdk.admin.inventoryItem.list(query),
     queryKey: inventoryItemsQueryKeys.list(query),
     ...options,
-  });
+  })
 
-  return { ...data, ...rest };
-};
+  return { ...data, ...rest }
+}
 
 export const useInventoryItem = (
   id: string,
-  // @todo fix any type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  query?: Record<string, any>,
+  query?: Record<string, unknown>,
   options?: Omit<
     UseQueryOptions<
-      HttpTypes.AdminInventoryItemResponse,
+      ExtendedAdminInventoryItemResponse,
       FetchError,
-      HttpTypes.AdminInventoryItemResponse,
+      ExtendedAdminInventoryItemResponse,
       QueryKey
     >,
     "queryKey" | "queryFn"
-  >,
+  >
 ) => {
   const { data, ...rest } = useQuery({
-    queryFn: () => sdk.admin.inventoryItem.retrieve(id, query),
+    queryFn: () => sdk.admin.inventoryItem.retrieve(id, query) as Promise<ExtendedAdminInventoryItemResponse>,
     queryKey: inventoryItemsQueryKeys.detail(id),
     ...options,
-  });
+  })
 
-  return { ...data, ...rest };
-};
+  return { ...data, ...rest }
+}
 
 export const useCreateInventoryItem = (
   options?: UseMutationOptions<
     HttpTypes.AdminInventoryItemResponse,
     FetchError,
     HttpTypes.AdminCreateInventoryItem
-  >,
+  >
 ) => {
   return useMutation({
     mutationFn: (payload: HttpTypes.AdminCreateInventoryItem) =>
@@ -82,12 +80,12 @@ export const useCreateInventoryItem = (
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.lists(),
-      });
-      options?.onSuccess?.(data, variables, context);
+      })
+      options?.onSuccess?.(data, variables, context)
     },
     ...options,
-  });
-};
+  })
+}
 
 export const useUpdateInventoryItem = (
   id: string,
@@ -95,7 +93,7 @@ export const useUpdateInventoryItem = (
     HttpTypes.AdminInventoryItemResponse,
     FetchError,
     HttpTypes.AdminUpdateInventoryItem
-  >,
+  >
 ) => {
   return useMutation({
     mutationFn: (payload: HttpTypes.AdminUpdateInventoryItem) =>
@@ -103,15 +101,15 @@ export const useUpdateInventoryItem = (
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.lists(),
-      });
+      })
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.detail(id),
-      });
-      options?.onSuccess?.(data, variables, context);
+      })
+      options?.onSuccess?.(data, variables, context)
     },
     ...options,
-  });
-};
+  })
+}
 
 export const useDeleteInventoryItem = (
   id: string,
@@ -119,22 +117,22 @@ export const useDeleteInventoryItem = (
     HttpTypes.AdminInventoryItemDeleteResponse,
     FetchError,
     void
-  >,
+  >
 ) => {
   return useMutation({
     mutationFn: () => sdk.admin.inventoryItem.delete(id),
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.lists(),
-      });
+      })
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.detail(id),
-      });
-      options?.onSuccess?.(data, variables, context);
+      })
+      options?.onSuccess?.(data, variables, context)
     },
     ...options,
-  });
-};
+  })
+}
 
 export const useDeleteInventoryItemLevel = (
   inventoryItemId: string,
@@ -143,7 +141,7 @@ export const useDeleteInventoryItemLevel = (
     HttpTypes.AdminInventoryLevelDeleteResponse,
     FetchError,
     void
-  >,
+  >
 ) => {
   return useMutation({
     mutationFn: () =>
@@ -151,45 +149,43 @@ export const useDeleteInventoryItemLevel = (
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.lists(),
-      });
+      })
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.detail(inventoryItemId),
-      });
+      })
       queryClient.invalidateQueries({
         queryKey: inventoryItemLevelsQueryKeys.detail(inventoryItemId),
-      });
-      options?.onSuccess?.(data, variables, context);
+      })
+      options?.onSuccess?.(data, variables, context)
     },
     ...options,
-  });
-};
+  })
+}
 
 export const useInventoryItemLevels = (
   inventoryItemId: string,
-  // @todo fix any type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  query?: Record<string, any>,
+  query?: Record<string, unknown>,
   options?: Omit<
     UseQueryOptions<
-      HttpTypes.AdminInventoryLevelListResponse,
+      ExtendedInventoryItemLevelsResponse,
       FetchError,
-      HttpTypes.AdminInventoryLevelListResponse,
+      ExtendedInventoryItemLevelsResponse,
       QueryKey
     >,
     "queryKey" | "queryFn"
-  >,
+  >
 ) => {
   const { data, ...rest } = useQuery({
-    queryFn: () => sdk.admin.inventoryItem.listLevels(inventoryItemId, query),
+    queryFn: () => sdk.admin.inventoryItem.listLevels(inventoryItemId, query) as Promise<ExtendedInventoryItemLevelsResponse>,
     queryKey: inventoryItemLevelsQueryKeys.list({
       ...(query || {}),
       inventoryItemId,
     }),
     ...options,
-  });
+  })
 
-  return { ...data, ...rest };
-};
+  return { ...data, ...rest }
+}
 
 export const useUpdateInventoryLevel = (
   inventoryItemId: string,
@@ -198,7 +194,7 @@ export const useUpdateInventoryLevel = (
     HttpTypes.AdminInventoryItemResponse,
     FetchError,
     HttpTypes.AdminUpdateInventoryLevel
-  >,
+  >
 ) => {
   return useMutation({
     mutationFn: (payload: HttpTypes.AdminUpdateInventoryLevel) =>
@@ -206,21 +202,24 @@ export const useUpdateInventoryLevel = (
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.lists(),
-      });
+      })
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.detail(inventoryItemId),
-      });
+      })
       queryClient.invalidateQueries({
         queryKey: inventoryItemLevelsQueryKeys.detail(inventoryItemId),
-      });
+      })
+      queryClient.invalidateQueries({
+        queryKey: inventoryItemLevelsQueryKeys.list({ inventoryItemId }),
+      })
       queryClient.invalidateQueries({
         queryKey: variantsQueryKeys.details(),
-      });
-      options?.onSuccess?.(data, variables, context);
+      })
+      options?.onSuccess?.(data, variables, context)
     },
     ...options,
-  });
-};
+  })
+}
 
 export const useBatchInventoryItemLocationLevels = (
   inventoryItemId: string,
@@ -228,39 +227,39 @@ export const useBatchInventoryItemLocationLevels = (
     HttpTypes.AdminBatchInventoryItemLocationLevelsResponse,
     FetchError,
     HttpTypes.AdminBatchInventoryItemLocationLevels
-  >,
+  >
 ) => {
   return useMutation({
     mutationFn: (payload) =>
       sdk.admin.inventoryItem.batchInventoryItemLocationLevels(
         inventoryItemId,
-        payload,
+        payload
       ),
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.lists(),
-      });
+      })
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.detail(inventoryItemId),
-      });
+      })
       queryClient.invalidateQueries({
         queryKey: inventoryItemLevelsQueryKeys.detail(inventoryItemId),
-      });
+      })
       queryClient.invalidateQueries({
         queryKey: inventoryItemLevelsQueryKeys.list({ inventoryItemId }),
-      });
-      options?.onSuccess?.(data, variables, context);
+      })
+      options?.onSuccess?.(data, variables, context)
     },
     ...options,
-  });
-};
+  })
+}
 
 export const useBatchInventoryItemsLocationLevels = (
   options?: UseMutationOptions<
     HttpTypes.AdminBatchInventoryItemsLocationLevelsResponse,
     FetchError,
     HttpTypes.AdminBatchInventoryItemsLocationLevels
-  >,
+  >
 ) => {
   return useMutation({
     mutationFn: (payload) =>
@@ -268,12 +267,12 @@ export const useBatchInventoryItemsLocationLevels = (
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({
         queryKey: inventoryItemsQueryKeys.all,
-      });
+      })
       queryClient.invalidateQueries({
         queryKey: variantsQueryKeys.lists(),
-      });
-      options?.onSuccess?.(data, variables, context);
+      })
+      options?.onSuccess?.(data, variables, context)
     },
     ...options,
-  });
-};
+  })
+}

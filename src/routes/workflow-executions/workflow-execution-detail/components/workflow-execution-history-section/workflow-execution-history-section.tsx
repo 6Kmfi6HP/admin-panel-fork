@@ -1,80 +1,73 @@
-import { useEffect, useRef, useState } from "react";
-
-import { Spinner, TriangleDownMini } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
+import { Spinner, TriangleDownMini } from "@medusajs/icons"
+import { HttpTypes } from "@medusajs/types"
 import {
+  clx,
   CodeBlock,
   Container,
   Heading,
   IconButton,
   Text,
-  clx,
-} from "@medusajs/ui";
-
-import { format } from "date-fns";
-import { Collapsible as RadixCollapsible } from "radix-ui";
-import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
-
+} from "@medusajs/ui"
+import { format } from "date-fns"
+import { Collapsible as RadixCollapsible } from "radix-ui"
+import { useEffect, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { useLocation } from "react-router-dom"
 import {
   STEP_ERROR_STATES,
-  STEP_INACTIVE_STATES,
   STEP_IN_PROGRESS_STATES,
+  STEP_INACTIVE_STATES,
   STEP_OK_STATES,
   STEP_SKIPPED_STATES,
-} from "@routes/workflow-executions/constants";
-import {
-  TransactionStepState,
-  TransactionStepStatus,
-} from "@routes/workflow-executions/types";
+} from "../../../constants"
+import { TransactionStepState, TransactionStepStatus } from "../../../types"
 
 type WorkflowExecutionHistorySectionProps = {
-  execution: HttpTypes.AdminWorkflowExecution;
-};
+  execution: HttpTypes.AdminWorkflowExecution
+}
 
 export const WorkflowExecutionHistorySection = ({
   execution,
 }: WorkflowExecutionHistorySectionProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
-  const map = Object.values(execution.execution?.steps || {});
-  const steps = map.filter((step) => step.id !== "_root");
+  const map = Object.values(execution.execution?.steps || {})
+  const steps = map.filter((step) => step.id !== "_root")
 
   // check if any of the steps have a .invoke.state of "permanent_failure" and if that is the case then return its id
   const unreachableStepId = steps.find(
-    (step) => step.invoke.status === TransactionStepStatus.PERMANENT_FAILURE,
-  )?.id;
+    (step) => step.invoke.status === TransactionStepStatus.PERMANENT_FAILURE
+  )?.id
 
   // return an array of step ids of all steps that come after the unreachable step if there is one
   const unreachableSteps = unreachableStepId
     ? steps
         .filter(
           (step) =>
-            step.id !== unreachableStepId &&
-            step.id.includes(unreachableStepId),
+            step.id !== unreachableStepId && step.id.includes(unreachableStepId)
         )
         .map((step) => step.id)
-    : [];
+    : []
 
   return (
-    <Container className="divide-y p-0">
-      <div className="flex items-center justify-between px-6 py-4">
-        <Heading level="h2">
+    <Container className="divide-y p-0" data-testid="workflow-execution-history-section">
+      <div className="flex items-center justify-between px-6 py-4" data-testid="workflow-execution-history-section-header">
+        <Heading level="h2" data-testid="workflow-execution-history-section-heading">
           {t("workflowExecutions.history.sectionTitle")}
         </Heading>
       </div>
-      <div className="flex flex-col gap-y-0.5 px-6 py-4">
+      <div className="flex flex-col gap-y-0.5 px-6 py-4" data-testid="workflow-execution-history-section-events">
         {steps.map((step, index) => {
-          const stepId = step.id.split(".").pop();
+          const stepId = step.id.split(".").pop()
 
           if (!stepId) {
-            return null;
+            return null
           }
 
-          const context = execution.context?.data.invoke[stepId];
+          const context = execution.context?.data.invoke[stepId]
           const error = execution.context?.errors.find(
-            (e) => e.action === stepId,
-          );
+            (e) => e.action === stepId
+          )
 
           return (
             <Event
@@ -85,12 +78,12 @@ export const WorkflowExecutionHistorySection = ({
               isLast={index === steps.length - 1}
               isUnreachable={unreachableSteps.includes(step.id)}
             />
-          );
+          )
         })}
       </div>
     </Container>
-  );
-};
+  )
+}
 
 const Event = ({
   step,
@@ -99,55 +92,57 @@ const Event = ({
   isLast,
   isUnreachable,
 }: {
-  step: HttpTypes.AdminWorkflowExecutionStep;
-  stepInvokeContext: HttpTypes.StepInvokeResult | undefined;
-  stepError?: HttpTypes.StepError | undefined;
-  isLast: boolean;
-  isUnreachable?: boolean;
+  step: HttpTypes.AdminWorkflowExecutionStep
+  stepInvokeContext: HttpTypes.StepInvokeResult | undefined
+  stepError?: HttpTypes.StepError | undefined
+  isLast: boolean
+  isUnreachable?: boolean
 }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
-  const ref = useRef<HTMLDivElement>(null);
-  const { hash } = useLocation();
+  const ref = useRef<HTMLDivElement>(null)
+  const { hash } = useLocation()
 
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
-  const stepId = step.id.split(".").pop()!;
+  const stepId = step.id.split(".").pop()!
 
   useEffect(() => {
     if (hash === `#${stepId}`) {
-      setOpen(true);
+      setOpen(true)
     }
-  }, [hash, stepId]);
+  }, [hash, stepId])
 
-  const identifier = step.id.split(".").pop();
+  const identifier = step.id.split(".").pop()
 
   return (
     <div
       className="grid grid-cols-[20px_1fr] items-start gap-x-2 px-2"
       id={stepId}
+      data-testid={`workflow-execution-history-event-${stepId}`}
     >
-      <div className="grid h-full grid-rows-[20px_1fr] items-center justify-center gap-y-0.5">
+      <div className="grid h-full grid-rows-[20px_1fr] items-center justify-center gap-y-0.5" data-testid={`workflow-execution-history-event-${stepId}-indicator`}>
         <div className="flex size-5 items-center justify-center">
-          <div className="flex size-2.5 items-center justify-center rounded-full bg-ui-bg-base shadow-borders-base">
+          <div className="bg-ui-bg-base shadow-borders-base flex size-2.5 items-center justify-center rounded-full">
             <div
               className={clx("size-1.5 rounded-full", {
                 "bg-ui-tag-neutral-bg": STEP_SKIPPED_STATES.includes(
-                  step.invoke.state,
+                  step.invoke.state
                 ),
                 "bg-ui-tag-green-icon": STEP_OK_STATES.includes(
-                  step.invoke.state,
+                  step.invoke.state
                 ),
                 "bg-ui-tag-orange-icon": STEP_IN_PROGRESS_STATES.includes(
-                  step.invoke.state,
+                  step.invoke.state
                 ),
                 "bg-ui-tag-red-icon": STEP_ERROR_STATES.includes(
-                  step.invoke.state,
+                  step.invoke.state
                 ),
                 "bg-ui-tag-neutral-icon": STEP_INACTIVE_STATES.includes(
-                  step.invoke.state,
+                  step.invoke.state
                 ),
               })}
+              data-testid={`workflow-execution-history-event-${stepId}-indicator-dot`}
             />
           </div>
         </div>
@@ -156,15 +151,16 @@ const Event = ({
             aria-hidden
             role="presentation"
             className={clx({
-              "h-full min-h-[14px] w-px bg-ui-border-base": !isLast,
+              "bg-ui-border-base h-full min-h-[14px] w-px": !isLast,
             })}
+            data-testid={`workflow-execution-history-event-${stepId}-line`}
           />
         </div>
       </div>
-      <RadixCollapsible.Root open={open} onOpenChange={setOpen}>
+      <RadixCollapsible.Root open={open} onOpenChange={setOpen} data-testid={`workflow-execution-history-event-${stepId}-collapsible`}>
         <RadixCollapsible.Trigger asChild>
-          <div className="group flex cursor-pointer items-start justify-between outline-none">
-            <Text size="small" leading="compact" weight="plus">
+          <div className="group flex cursor-pointer items-start justify-between outline-none" data-testid={`workflow-execution-history-event-${stepId}-trigger`}>
+            <Text size="small" leading="compact" weight="plus" data-testid={`workflow-execution-history-event-${stepId}-name`}>
               {identifier}
             </Text>
             <div className="flex items-center gap-x-2">
@@ -172,17 +168,18 @@ const Event = ({
                 state={step.invoke.state}
                 startedAt={step.startedAt}
                 isUnreachable={isUnreachable}
+                data-testid={`workflow-execution-history-event-${stepId}-state`}
               />
-              <IconButton size="2xsmall" variant="transparent">
+              <IconButton size="2xsmall" variant="transparent" data-testid={`workflow-execution-history-event-${stepId}-toggle`}>
                 <TriangleDownMini className="text-ui-fg-muted transition-transform group-data-[state=open]:rotate-180" />
               </IconButton>
             </div>
           </div>
         </RadixCollapsible.Trigger>
-        <RadixCollapsible.Content ref={ref}>
+        <RadixCollapsible.Content ref={ref} data-testid={`workflow-execution-history-event-${stepId}-content`}>
           <div className="flex flex-col gap-y-2 pb-4 pt-2">
-            <div className="flex flex-col gap-y-2 text-ui-fg-subtle">
-              <Text size="small" leading="compact">
+            <div className="text-ui-fg-subtle flex flex-col gap-y-2" data-testid={`workflow-execution-history-event-${stepId}-definition`}>
+              <Text size="small" leading="compact" data-testid={`workflow-execution-history-event-${stepId}-definition-label`}>
                 {t("workflowExecutions.history.definitionLabel")}
               </Text>
               <CodeBlock
@@ -194,13 +191,14 @@ const Event = ({
                     hideLineNumbers: true,
                   },
                 ]}
+                data-testid={`workflow-execution-history-event-${stepId}-definition-code`}
               >
                 <CodeBlock.Body />
               </CodeBlock>
             </div>
             {stepInvokeContext && (
-              <div className="flex flex-col gap-y-2 text-ui-fg-subtle">
-                <Text size="small" leading="compact">
+              <div className="text-ui-fg-subtle flex flex-col gap-y-2" data-testid={`workflow-execution-history-event-${stepId}-output`}>
+                <Text size="small" leading="compact" data-testid={`workflow-execution-history-event-${stepId}-output-label`}>
                   {t("workflowExecutions.history.outputLabel")}
                 </Text>
                 <CodeBlock
@@ -210,13 +208,14 @@ const Event = ({
                         // TODO: Apply resolve value: packages/core/workflows-sdk/src/utils/composer/helpers/resolve-value.ts
                         stepInvokeContext?.output?.output ?? {},
                         null,
-                        2,
+                        2
                       ),
                       label: t("workflowExecutions.history.outputLabel"),
                       language: "json",
                       hideLineNumbers: true,
                     },
                   ]}
+                  data-testid={`workflow-execution-history-event-${stepId}-output-code`}
                 >
                   <CodeBlock.Body />
                 </CodeBlock>
@@ -224,8 +223,8 @@ const Event = ({
             )}
             {!!stepInvokeContext?.output?.compensateInput &&
               step.compensate.state === TransactionStepState.REVERTED && (
-                <div className="flex flex-col gap-y-2 text-ui-fg-subtle">
-                  <Text size="small" leading="compact">
+                <div className="text-ui-fg-subtle flex flex-col gap-y-2" data-testid={`workflow-execution-history-event-${stepId}-compensate`}>
+                  <Text size="small" leading="compact" data-testid={`workflow-execution-history-event-${stepId}-compensate-label`}>
                     {t("workflowExecutions.history.compensateInputLabel")}
                   </Text>
                   <CodeBlock
@@ -235,23 +234,24 @@ const Event = ({
                         code: JSON.stringify(
                           stepInvokeContext?.output?.compensateInput ?? {},
                           null,
-                          2,
+                          2
                         ),
                         label: t(
-                          "workflowExecutions.history.compensateInputLabel",
+                          "workflowExecutions.history.compensateInputLabel"
                         ),
                         language: "json",
                         hideLineNumbers: true,
                       },
                     ]}
+                    data-testid={`workflow-execution-history-event-${stepId}-compensate-code`}
                   >
                     <CodeBlock.Body />
                   </CodeBlock>
                 </div>
               )}
             {stepError && (
-              <div className="flex flex-col gap-y-2 text-ui-fg-subtle">
-                <Text size="small" leading="compact">
+              <div className="text-ui-fg-subtle flex flex-col gap-y-2" data-testid={`workflow-execution-history-event-${stepId}-error`}>
+                <Text size="small" leading="compact" data-testid={`workflow-execution-history-event-${stepId}-error-label`}>
                   {t("workflowExecutions.history.errorLabel")}
                 </Text>
                 <CodeBlock
@@ -263,13 +263,14 @@ const Event = ({
                           handlerType: stepError.handlerType,
                         },
                         null,
-                        2,
+                        2
                       ),
                       label: t("workflowExecutions.history.errorLabel"),
                       language: "json",
                       hideLineNumbers: true,
                     },
                   ]}
+                  data-testid={`workflow-execution-history-event-${stepId}-error-code`}
                 >
                   <CodeBlock.Body />
                 </CodeBlock>
@@ -279,63 +280,65 @@ const Event = ({
         </RadixCollapsible.Content>
       </RadixCollapsible.Root>
     </div>
-  );
-};
+  )
+}
 
 const StepState = ({
   state,
   startedAt,
   isUnreachable,
+  "data-testid": dataTestId,
 }: {
-  state: HttpTypes.TransactionStepState;
-  startedAt?: number | null;
-  isUnreachable?: boolean;
+  state: HttpTypes.TransactionStepState
+  startedAt?: number | null
+  isUnreachable?: boolean
+  "data-testid"?: string
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
-  const isFailed = state === TransactionStepState.FAILED;
-  const isRunning = state === TransactionStepState.INVOKING;
-  const isSkipped = state === TransactionStepState.SKIPPED;
-  const isSkippedFailure = state === TransactionStepState.SKIPPED_FAILURE;
+  const isFailed = state === TransactionStepState.FAILED
+  const isRunning = state === TransactionStepState.INVOKING
+  const isSkipped = state === TransactionStepState.SKIPPED
+  const isSkippedFailure = state === TransactionStepState.SKIPPED_FAILURE
 
   if (isUnreachable) {
-    return null;
+    return null
   }
 
   if (isRunning) {
     return (
-      <div className="flex items-center gap-x-1">
+      <div className="flex items-center gap-x-1" data-testid={dataTestId}>
         <Text size="small" leading="compact" className="text-ui-fg-subtle">
           {t("workflowExecutions.history.runningState")}
         </Text>
-        <Spinner className="animate-spin text-ui-fg-interactive" />
+        <Spinner className="text-ui-fg-interactive animate-spin" />
       </div>
-    );
+    )
   }
 
-  let stateText: string | undefined;
+  let stateText: string | undefined
 
   if (isSkipped) {
-    stateText = t("workflowExecutions.history.skippedState");
+    stateText = t("workflowExecutions.history.skippedState")
   } else if (isSkippedFailure) {
-    stateText = t("workflowExecutions.history.skippedFailureState");
+    stateText = t("workflowExecutions.history.skippedFailureState")
   } else if (isFailed) {
-    stateText = t("workflowExecutions.history.failedState");
+    stateText = t("workflowExecutions.history.failedState")
   }
 
   if (stateText !== null) {
     return (
-      <Text size="small" leading="compact" className="text-ui-fg-subtle">
+      <Text size="small" leading="compact" className="text-ui-fg-subtle" data-testid={dataTestId}>
         {stateText}
       </Text>
-    );
+    )
   }
 
   if (startedAt) {
     return (
-      <Text size="small" leading="compact" className="text-ui-fg-muted">
+      <Text size="small" leading="compact" className="text-ui-fg-muted" data-testid={dataTestId}>
         {format(startedAt, "dd MMM yyyy HH:mm:ss")}
       </Text>
-    );
+    )
   }
-};
+}

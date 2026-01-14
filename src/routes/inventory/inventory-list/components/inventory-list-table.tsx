@@ -1,34 +1,29 @@
-import { useState } from "react";
+import { InventoryTypes } from "@medusajs/types"
+import { Button, Container, Heading, Text } from "@medusajs/ui"
 
-import type { InventoryTypes } from "@medusajs/types";
-import { Button, Container, Heading, Text } from "@medusajs/ui";
+import { RowSelectionState } from "@tanstack/react-table"
+import { useState } from "react"
+import { useTranslation } from "react-i18next"
+import { Link, useNavigate } from "react-router-dom"
+import { _DataTable } from "../../../../components/table/data-table"
+import { useInventoryItems } from "../../../../hooks/api/inventory"
+import { useDataTable } from "../../../../hooks/use-data-table"
+import { INVENTORY_ITEM_IDS_KEY } from "../../common/constants"
+import { useInventoryTableColumns } from "./use-inventory-table-columns"
+import { useInventoryTableFilters } from "./use-inventory-table-filters"
+import { useInventoryTableQuery } from "./use-inventory-table-query"
 
-import type { RowSelectionState } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
-
-import { _DataTable } from "@components/table/data-table";
-
-import { useInventoryItems } from "@hooks/api";
-import { useDataTable } from "@hooks/use-data-table";
-
-import { INVENTORY_ITEM_IDS_KEY } from "@routes/inventory/common/constants";
-
-import { useInventoryTableColumns } from "./use-inventory-table-columns";
-import { useInventoryTableFilters } from "./use-inventory-table-filters";
-import { useInventoryTableQuery } from "./use-inventory-table-query";
-
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 20
 
 export const InventoryListTable = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const { t } = useTranslation()
+  const navigate = useNavigate()
 
-  const [selection, setSelection] = useState<RowSelectionState>({});
+  const [selection, setSelection] = useState<RowSelectionState>({})
 
   const { searchParams, raw } = useInventoryTableQuery({
     pageSize: PAGE_SIZE,
-  });
+  })
 
   const {
     inventory_items,
@@ -38,10 +33,10 @@ export const InventoryListTable = () => {
     error,
   } = useInventoryItems({
     ...searchParams,
-  });
+  })
 
-  const filters = useInventoryTableFilters();
-  const columns = useInventoryTableColumns();
+  const filters = useInventoryTableFilters()
+  const columns = useInventoryTableColumns()
 
   const { table } = useDataTable({
     data: (inventory_items ?? []) as InventoryTypes.InventoryItemDTO[],
@@ -55,56 +50,58 @@ export const InventoryListTable = () => {
       state: selection,
       updater: setSelection,
     },
-  });
+  })
 
   if (isError) {
-    throw error;
+    throw error
   }
 
   return (
-    <Container className="divide-y p-0">
-      <div className="flex items-center justify-between px-6 py-4">
+    <Container className="divide-y p-0" data-testid="inventory-list-table">
+      <div className="flex items-center justify-between px-6 py-4" data-testid="inventory-list-header">
         <div>
-          <Heading>{t("inventory.domain")}</Heading>
-          <Text className="text-ui-fg-subtle" size="small">
+          <Heading data-testid="inventory-list-title">{t("inventory.domain")}</Heading>
+          <Text className="text-ui-fg-subtle" size="small" data-testid="inventory-list-subtitle">
             {t("inventory.subtitle")}
           </Text>
         </div>
-        <Button size="small" variant="secondary" asChild>
-          <Link to="create">{t("actions.create")}</Link>
+        <Button size="small" variant="secondary" asChild data-testid="inventory-create-button">
+          <Link to="create" data-testid="inventory-create-link">{t("actions.create")}</Link>
         </Button>
       </div>
-      <_DataTable
-        table={table}
-        columns={columns}
-        pageSize={PAGE_SIZE}
-        count={count}
-        isLoading={isLoading}
-        pagination
-        search
-        filters={filters}
-        queryObject={raw}
-        orderBy={[
-          { key: "title", label: t("fields.title") },
-          { key: "sku", label: t("fields.sku") },
-          { key: "stocked_quantity", label: t("fields.inStock") },
-          { key: "reserved_quantity", label: t("inventory.reserved") },
-        ]}
-        navigateTo={(row) => `${row.id}`}
-        commands={[
-          {
-            action: async (selection) => {
-              navigate(
-                `stock?${INVENTORY_ITEM_IDS_KEY}=${Object.keys(selection).join(
-                  ",",
-                )}`,
-              );
+      <div data-testid="inventory-data-table">
+        <_DataTable
+          table={table}
+          columns={columns}
+          pageSize={PAGE_SIZE}
+          count={count}
+          isLoading={isLoading}
+          pagination
+          search
+          filters={filters}
+          queryObject={raw}
+          orderBy={[
+            { key: "title", label: t("fields.title") },
+            { key: "sku", label: t("fields.sku") },
+            { key: "stocked_quantity", label: t("fields.inStock") },
+            { key: "reserved_quantity", label: t("inventory.reserved") },
+          ]}
+          navigateTo={(row) => `${row.id}`}
+          commands={[
+            {
+              action: async (selection) => {
+                navigate(
+                  `stock?${INVENTORY_ITEM_IDS_KEY}=${Object.keys(selection).join(
+                    ","
+                  )}`
+                )
+              },
+              label: t("inventory.stock.action"),
+              shortcut: "i",
             },
-            label: t("inventory.stock.action"),
-            shortcut: "i",
-          },
-        ]}
-      />
+          ]}
+        />
+      </div>
     </Container>
-  );
-};
+  )
+}

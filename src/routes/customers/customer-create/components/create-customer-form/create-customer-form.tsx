@@ -1,15 +1,16 @@
-import { Button, Heading, Input, Text, toast } from "@medusajs/ui";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Button, Heading, Input, Text, toast } from "@medusajs/ui"
+import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
+import * as zod from "zod"
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import * as zod from "zod";
-
-import { Form } from "@components/common/form";
-import { RouteFocusModal, useRouteModal } from "@components/modals";
-import { KeyboundForm } from "@components/utilities/keybound-form";
-
-import { useCreateCustomer } from "@hooks/api";
+import { Form } from "../../../../../components/common/form"
+import {
+  RouteFocusModal,
+  useRouteModal,
+} from "../../../../../components/modals"
+import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
+import { useCreateCustomer } from "../../../../../hooks/api/customers"
 
 const CreateCustomerSchema = zod.object({
   email: zod.string().email(),
@@ -17,13 +18,13 @@ const CreateCustomerSchema = zod.object({
   last_name: zod.string().optional(),
   company_name: zod.string().optional(),
   phone: zod.string().optional(),
-});
+})
 
 export const CreateCustomerForm = () => {
-  const { t } = useTranslation();
-  const { handleSuccess } = useRouteModal();
+  const { t } = useTranslation()
+  const { handleSuccess } = useRouteModal()
 
-  const { mutateAsync, isPending } = useCreateCustomer();
+  const { mutateAsync, isPending } = useCreateCustomer()
 
   const form = useForm<zod.infer<typeof CreateCustomerSchema>>({
     defaultValues: {
@@ -34,7 +35,7 @@ export const CreateCustomerForm = () => {
       company_name: "",
     },
     resolver: zodResolver(CreateCustomerSchema),
-  });
+  })
 
   const handleSubmit = form.handleSubmit(async (data) => {
     await mutateAsync(
@@ -50,105 +51,116 @@ export const CreateCustomerForm = () => {
           toast.success(
             t("customers.create.successToast", {
               email: customer.email,
-            }),
-          );
-          handleSuccess(`/customers/${customer.id}`);
+            })
+          )
+          handleSuccess(`/customers/${customer.id}`)
         },
         onError: (error) => {
-          toast.error(error.message);
+          toast.error(error.message)
         },
-      },
-    );
-  });
+      }
+    )
+  })
 
   return (
-    <RouteFocusModal.Form form={form}>
+    <RouteFocusModal.Form form={form} data-testid="create-customer-form">
       <KeyboundForm
         onSubmit={handleSubmit}
         className="flex flex-1 flex-col overflow-hidden"
+        data-testid="create-customer-form-keybound"
       >
-        <RouteFocusModal.Header />
-        <RouteFocusModal.Body className="flex flex-1 flex-col items-center overflow-y-auto py-16">
-          <div className="flex w-full max-w-[720px] flex-col gap-y-8">
-            <div>
-              <Heading>{t("customers.create.header")}</Heading>
-              <Text size="small" className="text-ui-fg-subtle">
+        <RouteFocusModal.Header data-testid="create-customer-form-header" />
+        <RouteFocusModal.Body className="flex flex-1 flex-col items-center overflow-y-auto py-16" data-testid="create-customer-form-body">
+          <div className="flex w-full max-w-[720px] flex-col gap-y-8" data-testid="create-customer-form-content">
+            <div data-testid="create-customer-form-header-section">
+              <Heading data-testid="create-customer-form-title">{t("customers.create.header")}</Heading>
+              <Text size="small" className="text-ui-fg-subtle" data-testid="create-customer-form-hint">
                 {t("customers.create.hint")}
               </Text>
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2" data-testid="create-customer-form-fields">
               <Form.Field
                 control={form.control}
                 name="first_name"
-                render={({ field }) => (
-                  <Form.Item>
-                    <Form.Label optional>{t("fields.firstName")}</Form.Label>
-                    <Form.Control>
-                      <Input autoComplete="off" {...field} />
-                    </Form.Control>
-                    <Form.ErrorMessage />
-                  </Form.Item>
-                )}
+                render={({ field }) => {
+                  return (
+                    <Form.Item data-testid="create-customer-form-first-name-item">
+                      <Form.Label optional data-testid="create-customer-form-first-name-label">{t("fields.firstName")}</Form.Label>
+                      <Form.Control data-testid="create-customer-form-first-name-control">
+                        <Input autoComplete="off" {...field} data-testid="create-customer-form-first-name-input" />
+                      </Form.Control>
+                      <Form.ErrorMessage data-testid="create-customer-form-first-name-error" />
+                    </Form.Item>
+                  )
+                }}
               />
               <Form.Field
                 control={form.control}
                 name="last_name"
-                render={({ field }) => (
-                  <Form.Item>
-                    <Form.Label optional>{t("fields.lastName")}</Form.Label>
-                    <Form.Control>
-                      <Input autoComplete="off" {...field} />
-                    </Form.Control>
-                    <Form.ErrorMessage />
-                  </Form.Item>
-                )}
+                render={({ field }) => {
+                  return (
+                    <Form.Item data-testid="create-customer-form-last-name-item">
+                      <Form.Label optional data-testid="create-customer-form-last-name-label">{t("fields.lastName")}</Form.Label>
+                      <Form.Control data-testid="create-customer-form-last-name-control">
+                        <Input autoComplete="off" {...field} data-testid="create-customer-form-last-name-input" />
+                      </Form.Control>
+                      <Form.ErrorMessage data-testid="create-customer-form-last-name-error" />
+                    </Form.Item>
+                  )
+                }}
               />
               <Form.Field
                 control={form.control}
                 name="email"
-                render={({ field }) => (
-                  <Form.Item>
-                    <Form.Label>{t("fields.email")}</Form.Label>
-                    <Form.Control>
-                      <Input autoComplete="off" {...field} />
-                    </Form.Control>
-                    <Form.ErrorMessage />
-                  </Form.Item>
-                )}
+                render={({ field }) => {
+                  return (
+                    <Form.Item data-testid="create-customer-form-email-item">
+                      <Form.Label data-testid="create-customer-form-email-label">{t("fields.email")}</Form.Label>
+                      <Form.Control data-testid="create-customer-form-email-control">
+                        <Input autoComplete="off" {...field} data-testid="create-customer-form-email-input" />
+                      </Form.Control>
+                      <Form.ErrorMessage data-testid="create-customer-form-email-error" />
+                    </Form.Item>
+                  )
+                }}
               />
               <Form.Field
                 control={form.control}
                 name="company_name"
-                render={({ field }) => (
-                  <Form.Item>
-                    <Form.Label optional>{t("fields.company")}</Form.Label>
-                    <Form.Control>
-                      <Input autoComplete="off" {...field} />
-                    </Form.Control>
-                    <Form.ErrorMessage />
-                  </Form.Item>
-                )}
+                render={({ field }) => {
+                  return (
+                    <Form.Item data-testid="create-customer-form-company-name-item">
+                      <Form.Label optional data-testid="create-customer-form-company-name-label">{t("fields.company")}</Form.Label>
+                      <Form.Control data-testid="create-customer-form-company-name-control">
+                        <Input autoComplete="off" {...field} data-testid="create-customer-form-company-name-input" />
+                      </Form.Control>
+                      <Form.ErrorMessage data-testid="create-customer-form-company-name-error" />
+                    </Form.Item>
+                  )
+                }}
               />
               <Form.Field
                 control={form.control}
                 name="phone"
-                render={({ field }) => (
-                  <Form.Item>
-                    <Form.Label optional>{t("fields.phone")}</Form.Label>
-                    <Form.Control>
-                      <Input autoComplete="off" {...field} />
-                    </Form.Control>
-                    <Form.ErrorMessage />
-                  </Form.Item>
-                )}
+                render={({ field }) => {
+                  return (
+                    <Form.Item data-testid="create-customer-form-phone-item">
+                      <Form.Label optional data-testid="create-customer-form-phone-label">{t("fields.phone")}</Form.Label>
+                      <Form.Control data-testid="create-customer-form-phone-control">
+                        <Input autoComplete="off" {...field} data-testid="create-customer-form-phone-input" />
+                      </Form.Control>
+                      <Form.ErrorMessage data-testid="create-customer-form-phone-error" />
+                    </Form.Item>
+                  )
+                }}
               />
             </div>
           </div>
         </RouteFocusModal.Body>
-        <RouteFocusModal.Footer>
-          <div className="flex items-center justify-end gap-x-2">
+        <RouteFocusModal.Footer data-testid="create-customer-form-footer">
+          <div className="flex items-center justify-end gap-x-2" data-testid="create-customer-form-footer-actions">
             <RouteFocusModal.Close asChild>
-              <Button size="small" variant="secondary">
+              <Button size="small" variant="secondary" data-testid="create-customer-form-cancel-button">
                 {t("actions.cancel")}
               </Button>
             </RouteFocusModal.Close>
@@ -157,6 +169,7 @@ export const CreateCustomerForm = () => {
               variant="primary"
               type="submit"
               isLoading={isPending}
+              data-testid="create-customer-form-submit-button"
             >
               {t("actions.create")}
             </Button>
@@ -164,5 +177,5 @@ export const CreateCustomerForm = () => {
         </RouteFocusModal.Footer>
       </KeyboundForm>
     </RouteFocusModal.Form>
-  );
-};
+  )
+}

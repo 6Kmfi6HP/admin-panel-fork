@@ -1,5 +1,11 @@
-import type { FocusEvent, KeyboardEvent } from "react";
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import {
+  FocusEvent,
+  KeyboardEvent,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
 import { XMarkMini } from "@medusajs/icons";
 import { Badge, clx } from "@medusajs/ui";
@@ -17,6 +23,7 @@ type ChipInputProps = {
   variant?: "base" | "contrast";
   placeholder?: string;
   className?: string;
+  "data-testid"?: string;
 };
 
 export const ChipInput = forwardRef<HTMLInputElement, ChipInputProps>(
@@ -32,6 +39,7 @@ export const ChipInput = forwardRef<HTMLInputElement, ChipInputProps>(
       allowDuplicates = false,
       placeholder,
       className,
+      "data-testid": dataTestId,
     },
     ref,
   ) => {
@@ -117,8 +125,6 @@ export const ChipInput = forwardRef<HTMLInputElement, ChipInputProps>(
     };
 
     return (
-      //@todo fix a11y issue
-      // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
       <div
         className={clx(
           "flex min-h-8 flex-wrap items-center gap-1 rounded-md px-2 py-1.5 shadow-borders-base",
@@ -133,37 +139,40 @@ export const ChipInput = forwardRef<HTMLInputElement, ChipInputProps>(
         )}
         tabIndex={-1}
         onClick={() => innerRef.current?.focus()}
+        data-testid={dataTestId}
       >
-        {chips.map((v, index) => (
-          <AnimatePresence key={`${v}-${index}`}>
-            <Badge
-              size="2xsmall"
-              className={clx("gap-x-0.5 pl-1.5 pr-1.5", {
-                "pr-1 transition-fg": showRemove,
-                "shadow-borders-focus": index === duplicateIndex,
-              })}
-              asChild
-            >
-              <motion.div
-                animate={index === duplicateIndex ? shake : undefined}
+        {chips.map((v, index) => {
+          return (
+            <AnimatePresence key={`${v}-${index}`}>
+              <Badge
+                size="2xsmall"
+                className={clx("gap-x-0.5 pl-1.5 pr-1.5", {
+                  "pr-1 transition-fg": showRemove,
+                  "shadow-borders-focus": index === duplicateIndex,
+                })}
+                asChild
               >
-                {v}
-                {showRemove && (
-                  <button
-                    tabIndex={-1}
-                    type="button"
-                    onClick={() => handleRemoveChip(v)}
-                    className={clx(
-                      "text-ui-fg-subtle outline-none transition-fg",
-                    )}
-                  >
-                    <XMarkMini />
-                  </button>
-                )}
-              </motion.div>
-            </Badge>
-          </AnimatePresence>
-        ))}
+                <motion.div
+                  animate={index === duplicateIndex ? shake : undefined}
+                >
+                  {v}
+                  {showRemove && (
+                    <button
+                      tabIndex={-1}
+                      type="button"
+                      onClick={() => handleRemoveChip(v)}
+                      className={clx(
+                        "text-ui-fg-subtle outline-none transition-fg",
+                      )}
+                    >
+                      <XMarkMini />
+                    </button>
+                  )}
+                </motion.div>
+              </Badge>
+            </AnimatePresence>
+          );
+        })}
         <input
           className={clx(
             "txt-compact-small flex-1 appearance-none bg-transparent text-ui-fg-base caret-ui-fg-base",
@@ -178,6 +187,7 @@ export const ChipInput = forwardRef<HTMLInputElement, ChipInputProps>(
           ref={innerRef}
           placeholder={chips.length === 0 ? placeholder : undefined}
           autoComplete="off"
+          data-testid={dataTestId ? `${dataTestId}-input` : undefined}
         />
       </div>
     );

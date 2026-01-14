@@ -22,7 +22,7 @@ export const LocationSalesChannels = () => {
   }
 
   return (
-    <RouteFocusModal>
+    <RouteFocusModal data-testid="location-sales-channels-modal">
       {ready && <LocationEditSalesChannelsForm location={stock_location} />}
     </RouteFocusModal>
   );

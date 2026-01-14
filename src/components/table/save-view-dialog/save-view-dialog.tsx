@@ -1,36 +1,35 @@
-import type React from "react";
-import { useState } from "react";
-
-import type { HttpTypes } from "@medusajs/types";
-import { Button, Drawer, Heading, Input, Label, Text } from "@medusajs/ui";
-
-import { useForm } from "react-hook-form";
-
+import type React from 'react'
+import { useState } from "react"
 import {
-  useViewConfiguration,
-  useViewConfigurations,
-} from "@hooks/use-view-configurations.tsx";
+  Button,
+  Input,
+  Label,
+  Drawer,
+  Heading,
+  Text,
+} from "@medusajs/ui"
+import { useForm } from "react-hook-form"
+import { useViewConfigurations, useViewConfiguration } from "../../../hooks/use-view-configurations"
+import type { ViewConfiguration } from "../../../hooks/use-view-configurations"
 
 type SaveViewFormData = {
-  name: string;
-};
-type ViewConfiguration =
-  HttpTypes.AdminViewConfigurationResponse["view_configuration"];
+  name: string
+}
 
 interface SaveViewDialogProps {
-  entity: string;
+  entity: string
   currentColumns?: {
-    visible: string[];
-    order: string[];
-  };
+    visible: string[]
+    order: string[]
+  }
   currentConfiguration?: {
-    filters?: Record<string, unknown>;
-    sorting?: { id: string; desc: boolean } | null;
-    search?: string;
-  };
-  editingView?: ViewConfiguration | null;
-  onClose: () => void;
-  onSaved: (view: ViewConfiguration) => void;
+    filters?: Record<string, unknown>
+    sorting?: { id: string; desc: boolean } | null
+    search?: string
+  }
+  editingView?: ViewConfiguration | null
+  onClose: () => void
+  onSaved: (view: ViewConfiguration) => void
 }
 
 export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
@@ -41,9 +40,9 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
   onClose,
   onSaved,
 }) => {
-  const { createView } = useViewConfigurations(entity);
-  const { updateView } = useViewConfiguration(entity, editingView?.id || "");
-  const [isLoading, setIsLoading] = useState(false);
+  const { createView } = useViewConfigurations(entity)
+  const { updateView } = useViewConfiguration(entity, editingView?.id || '')
+  const [isLoading, setIsLoading] = useState(false)
 
   const {
     register,
@@ -53,40 +52,28 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
     defaultValues: {
       name: editingView?.name || "",
     },
-  });
+  })
 
   const onSubmit = async (data: SaveViewFormData) => {
     if (!data.name.trim()) {
-      return;
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       if (editingView) {
         // Update existing view
         const result = await updateView.mutateAsync({
           name: data.name.trim(),
           configuration: {
-            visible_columns:
-              currentColumns?.visible ||
-              editingView.configuration.visible_columns,
-            column_order:
-              currentColumns?.order || editingView.configuration.column_order,
-            filters:
-              currentConfiguration?.filters ||
-              editingView.configuration.filters ||
-              {},
-            sorting:
-              currentConfiguration?.sorting ||
-              editingView.configuration.sorting ||
-              null,
-            search:
-              currentConfiguration?.search ||
-              editingView.configuration.search ||
-              "",
+            visible_columns: currentColumns?.visible || editingView.configuration.visible_columns,
+            column_order: currentColumns?.order || editingView.configuration.column_order,
+            filters: currentConfiguration?.filters || editingView.configuration.filters || {},
+            sorting: currentConfiguration?.sorting || editingView.configuration.sorting || null,
+            search: currentConfiguration?.search || editingView.configuration.search || "",
           },
-        });
-        onSaved(result.view_configuration);
+        })
+        onSaved(result.view_configuration)
       } else {
         // Create new view
         const result = await createView.mutateAsync({
@@ -99,17 +86,15 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
             sorting: currentConfiguration?.sorting || null,
             search: currentConfiguration?.search || "",
           },
-        });
-        onSaved(result.view_configuration);
+        })
+        onSaved(result.view_configuration)
       }
-      //@todo ts error
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // Error is handled by the hook
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <Drawer open onOpenChange={onClose}>
@@ -129,10 +114,7 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
           </Drawer.Description>
         </Drawer.Header>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-1 flex-col"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-1 flex-col">
           <Drawer.Body className="flex-1">
             <div className="flex flex-col gap-y-2">
               <Label htmlFor="name" weight="plus">
@@ -141,13 +123,10 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
               <Input
                 {...register("name", {
                   required: "Name is required",
-                  validate: (value) =>
-                    value.trim().length > 0 || "Name cannot be empty",
+                  validate: value => value.trim().length > 0 || "Name cannot be empty"
                 })}
                 type="text"
                 placeholder="Enter view name"
-                //@todo fix a11y error
-                /* eslint-disable-next-line jsx-a11y/no-autofocus */
                 autoFocus
               />
               {errors.name && (
@@ -160,7 +139,11 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
 
           <Drawer.Footer>
             <Drawer.Close asChild>
-              <Button variant="secondary" size="small" type="button">
+              <Button
+                variant="secondary"
+                size="small"
+                type="button"
+              >
                 Cancel
               </Button>
             </Drawer.Close>
@@ -176,5 +159,5 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
         </form>
       </Drawer.Content>
     </Drawer>
-  );
-};
+  )
+}

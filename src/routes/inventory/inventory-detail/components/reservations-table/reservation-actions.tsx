@@ -61,6 +61,7 @@ export const ReservationActions = ({
           ],
         },
       ]}
+      data-testid={`reservation-actions-${reservation.id}`}
     />
   );
 };

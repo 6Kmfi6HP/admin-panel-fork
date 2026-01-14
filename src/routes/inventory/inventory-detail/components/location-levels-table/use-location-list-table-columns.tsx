@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 
 import { PencilSquare, Trash } from "@medusajs/icons";
-import type { InventoryTypes, StockLocationDTO } from "@medusajs/types";
 import { createDataTableColumnHelper, toast, usePrompt } from "@medusajs/ui";
 
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+
+import type { ExtendedInventoryItemLevel } from "@custom-types/inventory";
 
 import { PlaceholderCell } from "@components/table/table-cells/common/placeholder-cell";
 
@@ -17,17 +18,7 @@ import {
 import { sdk } from "@lib/client";
 import { queryClient } from "@lib/query-client";
 
-/**
- * Adds missing properties to the InventoryLevelDTO type.
- */
-interface ExtendedLocationLevel extends InventoryTypes.InventoryLevelDTO {
-  stock_locations: StockLocationDTO[];
-  reserved_quantity: number;
-  stocked_quantity: number;
-  available_quantity: number;
-}
-
-const columnHelper = createDataTableColumnHelper<ExtendedLocationLevel>();
+const columnHelper = createDataTableColumnHelper<ExtendedInventoryItemLevel>();
 
 export const useLocationListTableColumns = () => {
   const { t } = useTranslation();
@@ -35,7 +26,7 @@ export const useLocationListTableColumns = () => {
 
   const prompt = usePrompt();
 
-  const handleDelete = async (level: ExtendedLocationLevel) => {
+  const handleDelete = async (level: ExtendedInventoryItemLevel) => {
     const res = await prompt({
       title: t("general.areYouSure"),
       description: t("inventory.deleteWarning"),
@@ -70,16 +61,19 @@ export const useLocationListTableColumns = () => {
         queryKey: inventoryItemLevelsQueryKeys.detail(level.inventory_item_id),
       });
     } catch (e) {
-      toast.error(e.message);
+      toast.error(e instanceof Error ? e.message : "An error occurred");
     }
   };
 
   return useMemo(
     () => [
-      columnHelper.accessor("stock_locations.0.name", {
+      columnHelper.display({
+        id: "location",
         header: t("fields.location"),
-        cell: ({ getValue }) => {
-          const locationName = getValue();
+        cell: ({ row }) => {
+          const locationName = row.original.stock_locations
+            ?.map((location) => location.name)
+            .join(", ");
 
           if (!locationName) {
             return <PlaceholderCell />;
@@ -145,14 +139,13 @@ export const useLocationListTableColumns = () => {
       columnHelper.action({
         actions: (ctx) => {
           const level = ctx.row.original;
-
           return [
             [
               {
                 icon: <PencilSquare />,
                 label: t("actions.edit"),
 
-                onClick: (row) => {
+                onClick: () => {
                   navigate(`locations/${level.location_id}`);
                 },
               },

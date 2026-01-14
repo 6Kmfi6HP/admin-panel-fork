@@ -1,5 +1,3 @@
-import type { HttpTypes } from "@medusajs/types";
-
 import { useQueryParams } from "@hooks/use-query-params";
 
 export const useLocationLevelTableQuery = ({
@@ -9,7 +7,7 @@ export const useLocationLevelTableQuery = ({
   pageSize?: number;
   prefix?: string;
 }) => {
-  const queryObject = useQueryParams(
+  const raw = useQueryParams(
     [
       "order",
       "offset",
@@ -21,13 +19,19 @@ export const useLocationLevelTableQuery = ({
     prefix,
   );
 
-  const { offset, ...rest } = queryObject;
+  const { offset, stocked_quantity, reserved_quantity, ...rest } = raw;
 
-  const searchParams: HttpTypes.AdminInventoryLevelFilters = {
+  const searchParams = {
     limit: pageSize,
     offset: offset ? Number(offset) : 0,
+    stocked_quantity: stocked_quantity
+      ? JSON.parse(stocked_quantity)
+      : undefined,
+    reserved_quantity: reserved_quantity
+      ? JSON.parse(reserved_quantity)
+      : undefined,
     ...rest,
   };
 
-  return searchParams;
+  return { searchParams, raw };
 };

@@ -14,6 +14,7 @@ export const WorkflowExcecutionList = () => {
         before: getWidgets("workflow.list.before"),
       }}
       hasOutlet={false}
+      data-testid="workflows-list-page"
     >
       <WorkflowExecutionListTable />
     </SingleColumnPage>

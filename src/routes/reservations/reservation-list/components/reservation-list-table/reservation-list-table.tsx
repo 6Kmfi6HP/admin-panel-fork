@@ -3,10 +3,9 @@ import { Button, Container, Heading, Text } from "@medusajs/ui";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-import { _DataTable } from "@components/table/data-table";
-
-import { useReservationItems } from "@hooks/api";
-import { useDataTable } from "@hooks/use-data-table";
+import { _DataTable } from "@/components/table/data-table";
+import { useReservationItems } from "@/hooks/api/reservations";
+import { useDataTable } from "@/hooks/use-data-table";
 
 import { useReservationTableColumns } from "./use-reservation-table-columns";
 import { useReservationTableFilters } from "./use-reservation-table-filters";
@@ -17,7 +16,7 @@ const PAGE_SIZE = 20;
 export const ReservationListTable = () => {
   const { t } = useTranslation();
 
-  const { searchParams } = useReservationTableQuery({
+  const { searchParams, raw } = useReservationTableQuery({
     pageSize: PAGE_SIZE,
   });
   const { reservations, count, isPending, isError, error } =
@@ -61,6 +60,7 @@ export const ReservationListTable = () => {
         count={count}
         isLoading={isPending}
         filters={filters}
+        queryObject={raw}
         pagination
         navigateTo={(row) => row.id}
         search={false}

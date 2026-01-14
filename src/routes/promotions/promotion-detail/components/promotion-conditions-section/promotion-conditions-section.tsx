@@ -1,29 +1,24 @@
-import { PencilSquare } from "@medusajs/icons";
-import type {
-  ApplicationMethodTargetTypeValues,
-  HttpTypes,
-  PromotionRuleTypes,
-} from "@medusajs/types";
-import { Badge, Container, Heading } from "@medusajs/ui";
+import { PencilSquare } from "@medusajs/icons"
+import { ApplicationMethodTargetTypeValues, HttpTypes, PromotionRuleTypes, } from "@medusajs/types"
+import { Badge, Container, Heading } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 
-import { useTranslation } from "react-i18next";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { BadgeListSummary } from "@components/common/badge-list-summary";
-import { NoRecords } from "@components/common/empty-table-content";
+import { ActionMenu } from "../../../../../components/common/action-menu"
+import { BadgeListSummary } from "../../../../../components/common/badge-list-summary"
+import { NoRecords } from "../../../../../components/common/empty-table-content"
 
 type RuleProps = {
-  rule: HttpTypes.AdminPromotionRule;
-};
+  rule: HttpTypes.AdminPromotionRule
+}
 
 function RuleBlock({ rule }: RuleProps) {
   return (
-    <div className="align-center flex justify-around rounded-md bg-ui-bg-subtle p-2 shadow-borders-base">
-      <div className="txt-compact-xsmall flex items-center whitespace-nowrap text-ui-fg-subtle">
+    <div className="bg-ui-bg-subtle shadow-borders-base align-center flex justify-around rounded-md p-2">
+      <div className="text-ui-fg-subtle txt-compact-xsmall flex items-center whitespace-nowrap">
         <Badge
           size="2xsmall"
           key="rule-attribute"
-          className="tag-neutral-text txt-compact-xsmall-plus mx-1 inline-block truncate"
+          className="txt-compact-xsmall-plus tag-neutral-text mx-1 inline-block truncate"
         >
           {rule.attribute_label}
         </Badge>
@@ -43,31 +38,31 @@ function RuleBlock({ rule }: RuleProps) {
         />
       </div>
     </div>
-  );
+  )
 }
 
 type PromotionConditionsSectionProps = {
-  rules: HttpTypes.AdminPromotionRule[];
-  ruleType: PromotionRuleTypes;
-  applicationMethodTargetType: ApplicationMethodTargetTypeValues;
-};
+  rules: HttpTypes.AdminPromotionRule[]
+  ruleType: PromotionRuleTypes
+  applicationMethodTargetType: ApplicationMethodTargetTypeValues
+}
 
 export const PromotionConditionsSection = ({
   rules,
   ruleType,
   applicationMethodTargetType,
 }: PromotionConditionsSectionProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
-    <Container className="p-0">
-      <div className="flex items-center justify-between px-6 py-4">
+    <Container className="p-0" data-testid={`promotion-conditions-section-container-${ruleType}`}>
+      <div className="flex items-center justify-between px-6 py-4" data-testid={`promotion-conditions-section-header-${ruleType}`}>
         <div className="flex flex-col">
-          <Heading>
+          <Heading data-testid={`promotion-conditions-section-heading-${ruleType}`}>
             {t(
               ruleType === "target-rules"
                 ? `promotions.fields.conditions.${ruleType}.${applicationMethodTargetType}.title`
-                : `promotions.fields.conditions.${ruleType}.title`,
+                : `promotions.fields.conditions.${ruleType}.title`
             )}
           </Heading>
         </div>
@@ -84,27 +79,33 @@ export const PromotionConditionsSection = ({
               ],
             },
           ]}
+          data-testid={`promotion-conditions-section-action-menu-${ruleType}`}
         />
       </div>
 
-      <div className="flex flex-col gap-2 px-6 pb-4 pt-2 text-ui-fg-subtle">
+      <div className="text-ui-fg-subtle flex flex-col gap-2 px-6 pb-4 pt-2" data-testid={`promotion-conditions-section-content-${ruleType}`}>
         {!rules.length && (
-          <NoRecords
-            className="h-[180px]"
-            title={t("general.noRecordsTitle")}
-            message={t("promotions.conditions.list.noRecordsMessage")}
-            action={{
-              to: `${ruleType}/edit`,
-              label: t("promotions.conditions.add"),
-            }}
-            buttonVariant="transparentIconLeft"
-          />
+          <div data-testid={`promotion-conditions-section-no-records-${ruleType}`}>
+            <NoRecords
+              className="h-[180px]"
+              title={t("general.noRecordsTitle")}
+              message={t("promotions.conditions.list.noRecordsMessage")}
+              action={{
+                to: `${ruleType}/edit`,
+                label: t("promotions.conditions.add"),
+              }}
+              buttonVariant="transparentIconLeft"
+              dataTestId={`promotion-conditions-section-add-condition-button-${ruleType}`}
+            />
+          </div>
         )}
 
         {rules.map((rule) => (
-          <RuleBlock key={`${rule.id}-${rule.attribute}`} rule={rule} />
+          <div key={`${rule.id}-${rule.attribute}`} data-testid={`promotion-conditions-section-rule-${rule.id}`}>
+            <RuleBlock rule={rule} />
+          </div>
         ))}
       </div>
     </Container>
-  );
-};
+  )
+}

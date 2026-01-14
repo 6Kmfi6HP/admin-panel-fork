@@ -7,11 +7,10 @@ import { Command } from "cmdk";
 import { Popover as RadixPopover } from "radix-ui";
 import { useTranslation } from "react-i18next";
 
-import { useSelectedParams } from "@components/table/data-table/hooks";
-
+import { useSelectedParams } from "../hooks";
 import { useDataTableFilterContext } from "./context";
 import FilterChip from "./filter-chip";
-import type { IFilter } from "./types";
+import { IFilter } from "./types";
 
 interface SelectFilterProps extends IFilter {
   options: { label: string; value: unknown }[];
@@ -101,7 +100,12 @@ export const SelectFilter = ({
     : null;
 
   return (
-    <RadixPopover.Root modal open={open} onOpenChange={handleOpenChange}>
+    <RadixPopover.Root
+      modal
+      open={open}
+      onOpenChange={handleOpenChange}
+      data-testid={`data-table-select-filter-${key}`}
+    >
       <FilterChip
         hasOperator
         hadPreviousValue={!!normalizedPrev?.length}
@@ -109,6 +113,7 @@ export const SelectFilter = ({
         label={label}
         value={normalizedValues?.join(", ")}
         onRemove={handleRemove}
+        data-testid={`data-table-select-filter-chip-${key}`}
       />
       {!readonly && (
         <RadixPopover.Portal>
@@ -120,6 +125,7 @@ export const SelectFilter = ({
             className={clx(
               "z-[1] h-full max-h-[200px] w-[300px] overflow-hidden rounded-lg bg-ui-bg-base text-ui-fg-base shadow-elevation-flyout outline-none",
             )}
+            data-testid={`data-table-select-filter-content-${key}`}
             onInteractOutside={(e) => {
               if (e.target instanceof HTMLElement) {
                 if (
@@ -132,9 +138,15 @@ export const SelectFilter = ({
               }
             }}
           >
-            <Command className="h-full">
+            <Command
+              className="h-full"
+              data-testid={`data-table-select-filter-command-${key}`}
+            >
               {searchable && (
-                <div className="border-b p-1">
+                <div
+                  className="border-b p-1"
+                  data-testid={`data-table-select-filter-search-${key}`}
+                >
                   <div className="grid grid-cols-[1fr_20px] gap-x-2 rounded-md px-2 py-1">
                     <Command.Input
                       ref={setSearchRef}
@@ -142,6 +154,7 @@ export const SelectFilter = ({
                       onValueChange={setSearch}
                       className="txt-compact-small bg-transparent outline-none placeholder:text-ui-fg-muted"
                       placeholder="Search"
+                      data-testid={`data-table-select-filter-search-input-${key}`}
                     />
                     <div className="flex h-5 w-5 items-center justify-center">
                       <button
@@ -153,6 +166,7 @@ export const SelectFilter = ({
                             invisible: !search,
                           },
                         )}
+                        data-testid={`data-table-select-filter-clear-search-${key}`}
                       >
                         <XMarkMini />
                       </button>
@@ -160,12 +174,18 @@ export const SelectFilter = ({
                   </div>
                 </div>
               )}
-              <Command.Empty className="txt-compact-small flex items-center justify-center p-1">
+              <Command.Empty
+                className="txt-compact-small flex items-center justify-center p-1"
+                data-testid={`data-table-select-filter-empty-${key}`}
+              >
                 <span className="w-full px-2 py-1 text-center">
                   {t("general.noResultsTitle")}
                 </span>
               </Command.Empty>
-              <Command.List className="h-full max-h-[163px] min-h-[0] overflow-auto p-1 outline-none">
+              <Command.List
+                className="h-full max-h-[163px] min-h-[0] overflow-auto p-1 outline-none"
+                data-testid={`data-table-select-filter-list-${key}`}
+              >
                 {options.map((option) => {
                   const isSelected = selectedParams
                     .get()
@@ -179,6 +199,7 @@ export const SelectFilter = ({
                       onSelect={() => {
                         handleSelect(option.value);
                       }}
+                      data-testid={`data-table-select-filter-option-${key}-${String(option.value)}`}
                     >
                       <div
                         className={clx(
@@ -187,6 +208,7 @@ export const SelectFilter = ({
                             "[&_svg]:invisible": !isSelected,
                           },
                         )}
+                        data-testid={`data-table-select-filter-option-checkbox-${key}-${String(option.value)}`}
                       >
                         {multiple ? <CheckMini /> : <EllipseMiniSolid />}
                       </div>

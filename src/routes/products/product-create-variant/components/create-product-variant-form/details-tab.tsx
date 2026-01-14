@@ -1,28 +1,26 @@
-import type { HttpTypes } from "@medusajs/types";
-import { Heading, Input, Switch } from "@medusajs/ui";
+import { Heading, Input, Switch } from "@medusajs/ui"
+import { UseFormReturn, useWatch } from "react-hook-form"
+import { useTranslation } from "react-i18next"
+import { z } from "zod"
 
-import type { UseFormReturn } from "react-hook-form";
-import { useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import type { z } from "zod";
+import { HttpTypes } from "@medusajs/types"
 
-import { Form } from "@components/common/form";
-import { Combobox } from "@components/inputs/combobox";
-
-import type { CreateProductVariantSchema } from "./constants";
+import { Form } from "../../../../../components/common/form"
+import { Combobox } from "../../../../../components/inputs/combobox"
+import { CreateProductVariantSchema } from "./constants"
 
 type DetailsTabProps = {
-  product: HttpTypes.AdminProduct;
-  form: UseFormReturn<z.infer<typeof CreateProductVariantSchema>>;
-};
+  product: HttpTypes.AdminProduct
+  form: UseFormReturn<z.infer<typeof CreateProductVariantSchema>>
+}
 
 function DetailsTab({ form, product }: DetailsTabProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const manageInventoryEnabled = useWatch({
     control: form.control,
     name: "manage_inventory",
-  });
+  })
 
   return (
     <div className="flex flex-1 flex-col items-center overflow-y-auto">
@@ -33,50 +31,51 @@ function DetailsTab({ form, product }: DetailsTabProps) {
           <Form.Field
             control={form.control}
             name="title"
-            render={({ field }) => (
-              <Form.Item>
-                <Form.Label>{t("fields.title")}</Form.Label>
-                <Form.Control>
-                  <Input {...field} />
-                </Form.Control>
-                <Form.ErrorMessage />
-              </Form.Item>
-            )}
+            render={({ field }) => {
+              return (
+                <Form.Item>
+                  <Form.Label>{t("fields.title")}</Form.Label>
+                  <Form.Control>
+                    <Input {...field} />
+                  </Form.Control>
+                  <Form.ErrorMessage />
+                </Form.Item>
+              )
+            }}
           />
 
           <Form.Field
             control={form.control}
             name="sku"
-            render={({ field }) => (
-              <Form.Item>
-                <Form.Label optional>{t("fields.sku")}</Form.Label>
-                <Form.Control>
-                  <Input {...field} />
-                </Form.Control>
-                <Form.ErrorMessage />
-              </Form.Item>
-            )}
+            render={({ field }) => {
+              return (
+                <Form.Item>
+                  <Form.Label optional>{t("fields.sku")}</Form.Label>
+                  <Form.Control>
+                    <Input {...field} />
+                  </Form.Control>
+                  <Form.ErrorMessage />
+                </Form.Item>
+              )
+            }}
           />
-          {
-            // @todo fix any type
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            product.options.map((option: any) => (
-              <Form.Field
-                key={option.id}
-                control={form.control}
-                name={`options.${option.title}`}
-                render={({ field: { value, onChange, ...field } }) => (
+
+          {product.options?.map((option: any) => (
+            <Form.Field
+              key={option.id}
+              control={form.control}
+              name={`options.${option.title}`}
+              render={({ field: { value, onChange, ...field } }) => {
+                return (
                   <Form.Item>
                     <Form.Label>{option.title}</Form.Label>
                     <Form.Control>
                       <Combobox
                         value={value}
                         onChange={(v) => {
-                          onChange(v);
+                          onChange(v)
                         }}
                         {...field}
-                        // @todo fix any type
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         options={option.values.map((v: any) => ({
                           label: v.value,
                           value: v.value,
@@ -84,104 +83,110 @@ function DetailsTab({ form, product }: DetailsTabProps) {
                       />
                     </Form.Control>
                   </Form.Item>
-                )}
-              />
-            ))
-          }
+                )
+              }}
+            />
+          ))}
         </div>
         <div className="flex flex-col gap-y-4">
           <Form.Field
             control={form.control}
             name="manage_inventory"
-            render={({ field: { value, onChange, ...field } }) => (
-              <Form.Item>
-                <div className="flex gap-x-3 rounded-lg bg-ui-bg-component p-4 shadow-elevation-card-rest">
-                  <Form.Control>
-                    <Switch
-                      dir="ltr"
-                      className="mt-[2px] rtl:rotate-180"
-                      checked={value}
-                      onCheckedChange={(checked) => onChange(checked)}
-                      {...field}
-                    />
-                  </Form.Control>
+            render={({ field: { value, onChange, ...field } }) => {
+              return (
+                <Form.Item>
+                  <div className="bg-ui-bg-component shadow-elevation-card-rest flex gap-x-3 rounded-lg p-4">
+                    <Form.Control>
+                      <Switch
+                        dir="ltr"
+                        className="mt-[2px] rtl:rotate-180"
+                        checked={value}
+                        onCheckedChange={(checked) => onChange(!!checked)}
+                        {...field}
+                      />
+                    </Form.Control>
 
-                  <div className="flex flex-col">
-                    <Form.Label>
-                      {t("products.variant.inventory.manageInventoryLabel")}
-                    </Form.Label>
-                    <Form.Hint>
-                      {t("products.variant.inventory.manageInventoryHint")}
-                    </Form.Hint>
+                    <div className="flex flex-col">
+                      <Form.Label>
+                        {t("products.variant.inventory.manageInventoryLabel")}
+                      </Form.Label>
+                      <Form.Hint>
+                        {t("products.variant.inventory.manageInventoryHint")}
+                      </Form.Hint>
+                    </div>
                   </div>
-                </div>
-                <Form.ErrorMessage />
-              </Form.Item>
-            )}
+                  <Form.ErrorMessage />
+                </Form.Item>
+              )
+            }}
           />
           <Form.Field
             control={form.control}
             name="allow_backorder"
             disabled={!manageInventoryEnabled}
-            render={({ field: { value, onChange, ...field } }) => (
-              <Form.Item>
-                <div className="flex gap-x-3 rounded-lg bg-ui-bg-component p-4 shadow-elevation-card-rest">
-                  <Form.Control>
-                    <Switch
-                      dir="ltr"
-                      className="rtl:rotate-180"
-                      checked={value}
-                      onCheckedChange={(checked) => onChange(!!checked)}
-                      {...field}
-                      disabled={!manageInventoryEnabled}
-                    />
-                  </Form.Control>
-                  <div className="flex flex-col">
-                    <Form.Label>
-                      {t("products.variant.inventory.allowBackordersLabel")}
-                    </Form.Label>
-                    <Form.Hint>
-                      {t("products.variant.inventory.allowBackordersHint")}
-                    </Form.Hint>
+            render={({ field: { value, onChange, ...field } }) => {
+              return (
+                <Form.Item>
+                  <div className="bg-ui-bg-component shadow-elevation-card-rest flex gap-x-3 rounded-lg p-4">
+                    <Form.Control>
+                      <Switch
+                        dir="ltr"
+                        className="rtl:rotate-180"
+                        checked={value}
+                        onCheckedChange={(checked) => onChange(!!checked)}
+                        {...field}
+                        disabled={!manageInventoryEnabled}
+                      />
+                    </Form.Control>
+                    <div className="flex flex-col">
+                      <Form.Label>
+                        {t("products.variant.inventory.allowBackordersLabel")}
+                      </Form.Label>
+                      <Form.Hint>
+                        {t("products.variant.inventory.allowBackordersHint")}
+                      </Form.Hint>
+                    </div>
                   </div>
-                </div>
-                <Form.ErrorMessage />
-              </Form.Item>
-            )}
+                  <Form.ErrorMessage />
+                </Form.Item>
+              )
+            }}
           />
           <Form.Field
             control={form.control}
             name="inventory_kit"
-            render={({ field: { value, onChange, ...field } }) => (
-              <Form.Item>
-                <div className="flex gap-x-3 rounded-lg bg-ui-bg-component p-4 shadow-elevation-card-rest">
-                  <Form.Control>
-                    <Switch
-                      dir="ltr"
-                      className="rtl:rotate-180"
-                      checked={value}
-                      onCheckedChange={(checked) => onChange(checked)}
-                      {...field}
-                      disabled={!manageInventoryEnabled}
-                    />
-                  </Form.Control>
-                  <div className="flex flex-col">
-                    <Form.Label>
-                      {t("products.variant.inventory.inventoryKit")}
-                    </Form.Label>
-                    <Form.Hint>
-                      {t("products.variant.inventory.inventoryKitHint")}
-                    </Form.Hint>
+            render={({ field: { value, onChange, ...field } }) => {
+              return (
+                <Form.Item>
+                  <div className="bg-ui-bg-component shadow-elevation-card-rest flex gap-x-3 rounded-lg p-4">
+                    <Form.Control>
+                      <Switch
+                        dir="ltr"
+                        className="rtl:rotate-180"
+                        checked={value}
+                        onCheckedChange={(checked) => onChange(!!checked)}
+                        {...field}
+                        disabled={!manageInventoryEnabled}
+                      />
+                    </Form.Control>
+                    <div className="flex flex-col">
+                      <Form.Label>
+                        {t("products.variant.inventory.inventoryKit")}
+                      </Form.Label>
+                      <Form.Hint>
+                        {t("products.variant.inventory.inventoryKitHint")}
+                      </Form.Hint>
+                    </div>
                   </div>
-                </div>
-                <Form.ErrorMessage />
-              </Form.Item>
-            )}
+                  <Form.ErrorMessage />
+                </Form.Item>
+              )
+            }}
           />
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default DetailsTab;
+export default DetailsTab

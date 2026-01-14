@@ -1,53 +1,46 @@
-import type React from "react";
+import React from "react";
 
-import type { HttpTypes } from "@medusajs/types";
+import { HttpTypes } from "@medusajs/types";
 import { Badge, StatusBadge, Tooltip } from "@medusajs/ui";
 
-import type { TFunction } from "i18next";
+import { TFunction } from "i18next";
 import ReactCountryFlag from "react-country-flag";
 
-import { DateCell } from "@components/table/table-cells/common/date-cell";
-import { MoneyAmountCell } from "@components/table/table-cells/common/money-amount-cell";
-import { DisplayIdCell } from "@components/table/table-cells/order/display-id-cell";
-import { TotalCell } from "@components/table/table-cells/order/total-cell";
-import { CollectionCell } from "@components/table/table-cells/product/collection-cell";
-import { ProductCell } from "@components/table/table-cells/product/product-cell";
-import { ProductStatusCell } from "@components/table/table-cells/product/product-status-cell";
-import { SalesChannelsCell } from "@components/table/table-cells/product/sales-channels-cell";
-import { VariantCell } from "@components/table/table-cells/product/variant-cell";
+import { DateCell } from "../../components/table/table-cells/common/date-cell";
+import { MoneyAmountCell } from "../../components/table/table-cells/common/money-amount-cell";
+import { DisplayIdCell } from "../../components/table/table-cells/order/display-id-cell";
+import { TotalCell } from "../../components/table/table-cells/order/total-cell";
+import { CollectionCell } from "../../components/table/table-cells/product/collection-cell";
+import { ProductCell } from "../../components/table/table-cells/product/product-cell";
+import { ProductStatusCell } from "../../components/table/table-cells/product/product-status-cell";
+import { SalesChannelsCell } from "../../components/table/table-cells/product/sales-channels-cell";
+import { VariantCell } from "../../components/table/table-cells/product/variant-cell";
+import { getCountryByIso2 } from "../data/countries";
 
-import { getCountryByIso2 } from "@lib/data/countries";
-
-// @todo fix any type
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CellRenderer<TData = any> = (
-  // @todo fix any type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   row: TData,
   column: HttpTypes.AdminColumn,
   t: TFunction,
+  dataTestId?: string,
 ) => React.ReactNode;
 
 export type RendererRegistry = Map<string, CellRenderer>;
 
 const cellRenderers: RendererRegistry = new Map();
-// @todo fix any type
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 const getNestedValue = (obj: any, path: string) => {
   return path.split(".").reduce((current, key) => current?.[key], obj);
 };
 
 const TextRenderer: CellRenderer = (value, _row, _column, _t) => {
   if (value === null || value === undefined) return "-";
-
   return String(value);
 };
 
 const CountRenderer: CellRenderer = (value, _row, _column, t) => {
   const items = value || [];
   const count = Array.isArray(items) ? items.length : 0;
-
   return t("general.items", { count });
 };
 
@@ -114,13 +107,18 @@ const StatusRenderer: CellRenderer = (value, row, column, t) => {
   );
 };
 
-const BadgeListRenderer: CellRenderer = (value, row, column, t) => {
+const BadgeListRenderer: CellRenderer = (value, row, column, t, dataTestId) => {
   // For sales channels
   if (
     column.field === "sales_channels_display" ||
     column.field === "sales_channels"
   ) {
-    return <SalesChannelsCell salesChannels={row.sales_channels} />;
+    return (
+      <SalesChannelsCell
+        salesChannels={row.sales_channels}
+        data-testid={dataTestId}
+      />
+    );
   }
 
   // Generic badge list
@@ -149,16 +147,18 @@ const BadgeListRenderer: CellRenderer = (value, row, column, t) => {
   );
 };
 
-const ProductInfoRenderer: CellRenderer = (_, row, _column, _t) => {
-  return <ProductCell product={row} />;
+const ProductInfoRenderer: CellRenderer = (_, row, _column, _t, dataTestId) => {
+  return <ProductCell product={row} data-testid={dataTestId} />;
 };
 
-const CollectionRenderer: CellRenderer = (_, row, _column, _t) => {
-  return <CollectionCell collection={row.collection} />;
+const CollectionRenderer: CellRenderer = (_, row, _column, _t, dataTestId) => {
+  return (
+    <CollectionCell collection={row.collection} data-testid={dataTestId} />
+  );
 };
 
-const VariantsRenderer: CellRenderer = (_, row, _column, _t) => {
-  return <VariantCell variants={row.variants} />;
+const VariantsRenderer: CellRenderer = (_, row, _column, _t, dataTestId) => {
+  return <VariantCell variants={row.variants} data-testid={dataTestId} />;
 };
 
 // Order-specific renderers
@@ -182,7 +182,7 @@ const CustomerNameRenderer: CellRenderer = (_, row, _column, t) => {
   return t ? t("customers.guest", "Guest") : "Guest";
 };
 
-const AddressSummaryRenderer: CellRenderer = (_, row, column, _t) => {
+const AddressSummaryRenderer: CellRenderer = (_, row, column) => {
   let address = null;
   if (column.field === "shipping_address_display") {
     address = row.shipping_address;
@@ -216,7 +216,7 @@ const AddressSummaryRenderer: CellRenderer = (_, row, column, _t) => {
   return parts.join(" • ") || "-";
 };
 
-const CountryCodeRenderer: CellRenderer = (_, row, _column, _t) => {
+const CountryCodeRenderer: CellRenderer = (_, row) => {
   const countryCode = row.shipping_address?.country_code;
 
   if (!countryCode) return <div className="flex w-full justify-center">-</div>;
@@ -243,23 +243,40 @@ const CountryCodeRenderer: CellRenderer = (_, row, _column, _t) => {
   );
 };
 
-const DateRenderer: CellRenderer = (value, _row, _column, _t) => {
-  return <DateCell date={value} />;
+const DateRenderer: CellRenderer = (value, _row, _column, _t, dataTestId) => {
+  return <DateCell date={value} data-testid={dataTestId} />;
 };
 
-const DisplayIdRenderer: CellRenderer = (value, _row, _column, _t) => {
-  return <DisplayIdCell displayId={value} />;
+const DisplayIdRenderer: CellRenderer = (
+  value,
+  _row,
+  _column,
+  _t,
+  dataTestId,
+) => {
+  return <DisplayIdCell displayId={value} data-testid={dataTestId} />;
 };
 
-const CurrencyRenderer: CellRenderer = (value, row, _column, _t) => {
+const CurrencyRenderer: CellRenderer = (
+  value,
+  row,
+  _column,
+  _t,
+  dataTestId,
+) => {
   const currencyCode = row.currency_code || "USD";
 
   return (
-    <MoneyAmountCell currencyCode={currencyCode} amount={value} align="right" />
+    <MoneyAmountCell
+      currencyCode={currencyCode}
+      amount={value}
+      align="right"
+      data-testid={dataTestId}
+    />
   );
 };
 
-const TotalRenderer: CellRenderer = (value, row, _column, _t) => {
+const TotalRenderer: CellRenderer = (value, row) => {
   const currencyCode = row.currency_code || "USD";
 
   return <TotalCell currencyCode={currencyCode} total={value} />;
@@ -306,7 +323,7 @@ export function getCellRenderer(
         if (t) {
           return value ? t("fields.yes", "Yes") : t("fields.no", "No");
         }
-
+        
         return value ? "Yes" : "No";
       };
     case "enum":
@@ -321,8 +338,7 @@ export function getCellRenderer(
 export function registerCellRenderer(type: string, renderer: CellRenderer) {
   cellRenderers.set(type, renderer);
 }
-// @todo fix any type
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export function getColumnValue(row: any, column: HttpTypes.AdminColumn): any {
   if (column.computed) {
     return row;

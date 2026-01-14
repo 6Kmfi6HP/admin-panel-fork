@@ -1,29 +1,28 @@
-import type { ReactNode } from "react";
+import { Switch } from "@medusajs/ui"
+import { ReactNode } from "react"
+import { ControllerProps, FieldPath, FieldValues } from "react-hook-form"
 
-import { Switch } from "@medusajs/ui";
+import { Form } from "../../common/form"
 
-import type { ControllerProps, FieldPath, FieldValues } from "react-hook-form";
-
-import { Form } from "@/components/common/form";
-
-type HeadlessControllerProps<
+interface HeadlessControllerProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<ControllerProps<TFieldValues, TName>, "render">;
+> extends Omit<ControllerProps<TFieldValues, TName>, "render"> {}
 
 interface SwitchBoxProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > extends HeadlessControllerProps<TFieldValues, TName> {
-  label: string;
-  description: string;
-  optional?: boolean;
-  tooltip?: ReactNode;
+  label: string
+  description: string
+  optional?: boolean
+  tooltip?: ReactNode
   /**
    * Callback for performing additional actions when the checked state changes.
    * This does not intercept the form control, it is only used for injecting side-effects.
    */
-  onCheckedChange?: (checked: boolean) => void;
+  onCheckedChange?: (checked: boolean) => void
+  "data-testid"?: string
 }
 
 /**
@@ -41,34 +40,40 @@ export const SwitchBox = <
   optional = false,
   tooltip,
   onCheckedChange,
+  "data-testid": dataTestId,
   ...props
-}: SwitchBoxProps<TFieldValues, TName>) => (
-  <Form.Field
-    {...props}
-    render={({ field: { value, onChange, ...field } }) => (
-      <Form.Item>
-        <div className="flex items-start gap-x-3 rounded-lg bg-ui-bg-component p-3 shadow-elevation-card-rest">
-          <Form.Control>
-            <Switch
-              className="rtl:rotate-180"
-              dir="ltr"
-              {...field}
-              checked={value}
-              onCheckedChange={(e) => {
-                onCheckedChange?.(e);
-                onChange(e);
-              }}
-            />
-          </Form.Control>
-          <div>
-            <Form.Label optional={optional} tooltip={tooltip}>
-              {label}
-            </Form.Label>
-            <Form.Hint>{description}</Form.Hint>
-          </div>
-        </div>
-        <Form.ErrorMessage />
-      </Form.Item>
-    )}
-  />
-);
+}: SwitchBoxProps<TFieldValues, TName>) => {
+  return (
+    <Form.Field
+      {...props}
+      render={({ field: { value, onChange, ...field } }) => {
+        return (
+          <Form.Item data-testid={dataTestId ? `${dataTestId}-item` : undefined}>
+            <div className="bg-ui-bg-component shadow-elevation-card-rest flex items-start gap-x-3 rounded-lg p-3" data-testid={dataTestId ? `${dataTestId}-container` : undefined}>
+              <Form.Control data-testid={dataTestId ? `${dataTestId}-control` : undefined}>
+                <Switch
+                  className="rtl:rotate-180"
+                  dir="ltr"
+                  {...field}
+                  checked={value}
+                  onCheckedChange={(e) => {
+                    onCheckedChange?.(e)
+                    onChange(e)
+                  }}
+                  data-testid={dataTestId ? `${dataTestId}-switch` : undefined}
+                />
+              </Form.Control>
+              <div data-testid={dataTestId ? `${dataTestId}-label-container` : undefined}>
+                <Form.Label optional={optional} tooltip={tooltip} data-testid={dataTestId ? `${dataTestId}-label` : undefined}>
+                  {label}
+                </Form.Label>
+                <Form.Hint data-testid={dataTestId ? `${dataTestId}-hint` : undefined}>{description}</Form.Hint>
+              </div>
+            </div>
+            <Form.ErrorMessage data-testid={dataTestId ? `${dataTestId}-error` : undefined} />
+          </Form.Item>
+        )
+      }}
+    />
+  )
+}

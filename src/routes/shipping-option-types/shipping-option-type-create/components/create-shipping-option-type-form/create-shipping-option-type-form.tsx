@@ -62,13 +62,13 @@ export const CreateShippingOptionTypeForm = () => {
   );
 
   return (
-    <RouteFocusModal.Form form={form}>
+    <RouteFocusModal.Form form={form} data-testid="shipping-option-type-create-form">
       <KeyboundForm onSubmit={handleSubmit} className="flex h-full flex-col">
-        <RouteFocusModal.Body className="flex flex-col items-center overflow-auto p-16">
+        <RouteFocusModal.Body className="flex flex-col items-center overflow-auto p-16" data-testid="shipping-option-type-create-form-body">
           <div className="flex w-full max-w-[720px] flex-col gap-y-8">
-            <div>
-              <Heading>{t("shippingOptionTypes.create.header")}</Heading>
-              <Text size="small" className="text-ui-fg-subtle">
+            <div data-testid="shipping-option-type-create-form-header-section">
+              <Heading data-testid="shipping-option-type-create-form-heading">{t("shippingOptionTypes.create.header")}</Heading>
+              <Text size="small" className="text-ui-fg-subtle" data-testid="shipping-option-type-create-form-hint">
                 {t("shippingOptionTypes.create.hint")}
               </Text>
             </div>
@@ -78,11 +78,11 @@ export const CreateShippingOptionTypeForm = () => {
                 name="label"
                 render={({ field }) => {
                   return (
-                    <Form.Item>
-                      <Form.Label>
+                    <Form.Item data-testid="shipping-option-type-create-form-label-item">
+                      <Form.Label data-testid="shipping-option-type-create-form-label-label">
                         {t("shippingOptionTypes.fields.label")}
                       </Form.Label>
-                      <Form.Control>
+                      <Form.Control data-testid="shipping-option-type-create-form-label-control">
                         <Input
                           {...field}
                           onChange={(e) => {
@@ -97,9 +97,10 @@ export const CreateShippingOptionTypeForm = () => {
                             }
                             field.onChange(e);
                           }}
+                          data-testid="shipping-option-type-create-form-label-input"
                         />
                       </Form.Control>
-                      <Form.ErrorMessage />
+                      <Form.ErrorMessage data-testid="shipping-option-type-create-form-label-error" />
                     </Form.Item>
                   );
                 }}
@@ -109,14 +110,14 @@ export const CreateShippingOptionTypeForm = () => {
                 name="code"
                 render={({ field }) => {
                   return (
-                    <Form.Item>
-                      <Form.Label>
+                    <Form.Item data-testid="shipping-option-type-create-form-code-item">
+                      <Form.Label data-testid="shipping-option-type-create-form-code-label">
                         {t("shippingOptionTypes.fields.code")}
                       </Form.Label>
-                      <Form.Control>
-                        <Input {...field} />
+                      <Form.Control data-testid="shipping-option-type-create-form-code-control">
+                        <Input {...field} data-testid="shipping-option-type-create-form-code-input" />
                       </Form.Control>
-                      <Form.ErrorMessage />
+                      <Form.ErrorMessage data-testid="shipping-option-type-create-form-code-error" />
                     </Form.Item>
                   );
                 }}
@@ -126,8 +127,8 @@ export const CreateShippingOptionTypeForm = () => {
                 name="description"
                 render={({ field }) => {
                   return (
-                    <Form.Item>
-                      <Form.Label>
+                    <Form.Item data-testid="shipping-option-type-create-form-description-item">
+                      <Form.Label data-testid="shipping-option-type-create-form-description-label">
                         {t("shippingOptionTypes.fields.description")}
                         <Text
                           size="small"
@@ -137,10 +138,10 @@ export const CreateShippingOptionTypeForm = () => {
                           ({t("fields.optional")})
                         </Text>
                       </Form.Label>
-                      <Form.Control>
-                        <Input {...field} />
+                      <Form.Control data-testid="shipping-option-type-create-form-description-control">
+                        <Input {...field} data-testid="shipping-option-type-create-form-description-input" />
                       </Form.Control>
-                      <Form.ErrorMessage />
+                      <Form.ErrorMessage data-testid="shipping-option-type-create-form-description-error" />
                     </Form.Item>
                   );
                 }}
@@ -148,10 +149,10 @@ export const CreateShippingOptionTypeForm = () => {
             </div>
           </div>
         </RouteFocusModal.Body>
-        <RouteFocusModal.Footer>
+        <RouteFocusModal.Footer data-testid="shipping-option-type-create-form-footer">
           <div className="flex items-center justify-end gap-x-2">
             <RouteFocusModal.Close asChild>
-              <Button size="small" variant="secondary">
+              <Button size="small" variant="secondary" data-testid="shipping-option-type-create-form-cancel-button">
                 {t("actions.cancel")}
               </Button>
             </RouteFocusModal.Close>
@@ -160,6 +161,7 @@ export const CreateShippingOptionTypeForm = () => {
               variant="primary"
               type="submit"
               isLoading={isPending}
+              data-testid="shipping-option-type-create-form-create-button"
             >
               {t("actions.create")}
             </Button>

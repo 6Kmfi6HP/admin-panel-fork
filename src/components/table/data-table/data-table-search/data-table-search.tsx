@@ -37,7 +37,7 @@ export const DataTableSearch = ({
         selectedParams.add(value)
       }
     }, 500),
-    [selectedParams]
+    [prefix]
   )
 
   useEffect(() => {
@@ -56,6 +56,7 @@ export const DataTableSearch = ({
       defaultValue={query?.[0] || undefined}
       onChange={debouncedOnChange}
       placeholder={placeholderText}
+      data-testid="data-table-search-input"
     />
   )
 }

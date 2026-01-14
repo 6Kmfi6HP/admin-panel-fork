@@ -1,35 +1,29 @@
-import React from "react";
+import { z } from "zod"
+import { useFieldArray, UseFormReturn } from "react-hook-form"
+import { Button, Heading, IconButton, Input, Label } from "@medusajs/ui"
 
-import { XMarkMini } from "@medusajs/icons";
-import { Button, Heading, IconButton, Input, Label } from "@medusajs/ui";
+import { CreateProductVariantSchema } from "./constants"
+import { XMarkMini } from "@medusajs/icons"
+import { useTranslation } from "react-i18next"
 
-import type { UseFormReturn } from "react-hook-form";
-import { useFieldArray } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import type { z } from "zod";
-
-import { Form } from "@components/common/form";
-import { Combobox } from "@components/inputs/combobox";
-
-import { useComboboxData } from "@hooks/use-combobox-data.tsx";
-
-import { sdk } from "@lib/client";
-
-import type { CreateProductVariantSchema } from "./constants";
+import { useComboboxData } from "../../../../../hooks/use-combobox-data"
+import { sdk } from "../../../../../lib/client"
+import { Form } from "../../../../../components/common/form"
+import { Combobox } from "../../../../../components/inputs/combobox"
 
 type InventoryKitTabProps = {
-  form: UseFormReturn<z.infer<typeof CreateProductVariantSchema>>;
-};
+  form: UseFormReturn<z.infer<typeof CreateProductVariantSchema>>
+}
 
 function InventoryKitTab({ form }: InventoryKitTabProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const inventory = useFieldArray({
     control: form.control,
     name: `inventory`,
-  });
+  })
 
-  const inventoryFormData = inventory.fields;
+  const inventoryFormData = inventory.fields
 
   const items = useComboboxData({
     queryKey: ["inventory_items"],
@@ -39,7 +33,7 @@ function InventoryKitTab({ form }: InventoryKitTabProps) {
         label: item.title,
         value: item.id,
       })),
-  });
+  })
 
   /**
    * Will mark an option as disabled if another input already selected that option
@@ -48,13 +42,13 @@ function InventoryKitTab({ form }: InventoryKitTabProps) {
    */
   const isItemOptionDisabled = (
     option: (typeof items.options)[0],
-    inventoryIndex: number,
+    inventoryIndex: number
   ) => {
     return inventoryFormData?.some(
       (i, index) =>
-        index != inventoryIndex && i.inventory_item_id === option.value,
-    );
-  };
+        index != inventoryIndex && i.inventory_item_id === option.value
+    )
+  }
 
   return (
     <div className="flex flex-col items-center p-16">
@@ -76,7 +70,7 @@ function InventoryKitTab({ form }: InventoryKitTabProps) {
                   inventory.append({
                     inventory_item_id: "",
                     required_quantity: "",
-                  });
+                  })
                 }}
               >
                 {t("actions.add")}
@@ -85,7 +79,7 @@ function InventoryKitTab({ form }: InventoryKitTabProps) {
             {inventory.fields.map((inventoryItem, inventoryIndex) => (
               <li
                 key={inventoryItem.id}
-                className="grid grid-cols-[1fr_28px] items-center gap-1.5 rounded-xl bg-ui-bg-component p-1.5 shadow-elevation-card-rest"
+                className="bg-ui-bg-component shadow-elevation-card-rest grid grid-cols-[1fr_28px] items-center gap-1.5 rounded-xl p-1.5"
               >
                 <div className="grid grid-cols-[min-content,1fr] items-center gap-1.5">
                   <div className="flex items-center px-2 py-1.5">
@@ -112,7 +106,7 @@ function InventoryKitTab({ form }: InventoryKitTabProps) {
                                 ...o,
                                 disabled: isItemOptionDisabled(
                                   o,
-                                  inventoryIndex,
+                                  inventoryIndex
                                 ),
                               }))}
                               searchValue={items.searchValue}
@@ -120,12 +114,12 @@ function InventoryKitTab({ form }: InventoryKitTabProps) {
                               fetchNextPage={items.fetchNextPage}
                               className="bg-ui-bg-field-component hover:bg-ui-bg-field-component-hover"
                               placeholder={t(
-                                "products.create.inventory.itemPlaceholder",
+                                "products.create.inventory.itemPlaceholder"
                               )}
                             />
                           </Form.Control>
                         </Form.Item>
-                      );
+                      )
                     }}
                   />
 
@@ -142,32 +136,34 @@ function InventoryKitTab({ form }: InventoryKitTabProps) {
                   <Form.Field
                     control={form.control}
                     name={`inventory.${inventoryIndex}.required_quantity`}
-                    render={({ field: { onChange, value, ...field } }) => (
-                      <Form.Item>
-                        <Form.Control>
-                          <Input
-                            type="number"
-                            className="bg-ui-bg-field-component"
-                            min={0}
-                            value={value}
-                            onChange={(e) => {
-                              const value = e.target.value;
+                    render={({ field: { onChange, value, ...field } }) => {
+                      return (
+                        <Form.Item>
+                          <Form.Control>
+                            <Input
+                              type="number"
+                              className="bg-ui-bg-field-component"
+                              min={0}
+                              value={value}
+                              onChange={(e) => {
+                                const value = e.target.value
 
-                              if (value === "") {
-                                onChange(null);
-                              } else {
-                                onChange(Number(value));
-                              }
-                            }}
-                            {...field}
-                            placeholder={t(
-                              "products.create.inventory.quantityPlaceholder",
-                            )}
-                          />
-                        </Form.Control>
-                        <Form.ErrorMessage />
-                      </Form.Item>
-                    )}
+                                if (value === "") {
+                                  onChange(null)
+                                } else {
+                                  onChange(Number(value))
+                                }
+                              }}
+                              {...field}
+                              placeholder={t(
+                                "products.create.inventory.quantityPlaceholder"
+                              )}
+                            />
+                          </Form.Control>
+                          <Form.ErrorMessage />
+                        </Form.Item>
+                      )
+                    }}
                   />
                 </div>
                 <IconButton
@@ -185,7 +181,7 @@ function InventoryKitTab({ form }: InventoryKitTabProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default InventoryKitTab;
+export default InventoryKitTab

@@ -15,7 +15,7 @@ export const ProductSalesChannels = () => {
   }
 
   return (
-    <RouteFocusModal>
+    <RouteFocusModal data-testid="product-sales-channels-modal">
       {!isLoading && product && <EditSalesChannelsForm product={product} />}
     </RouteFocusModal>
   );

@@ -1,5 +1,4 @@
-import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
   ArrowUturnLeft,
@@ -7,7 +6,7 @@ import {
   TrianglesMini,
   XMarkMini,
 } from "@medusajs/icons";
-import type { AdminProductCategory } from "@medusajs/types";
+import { AdminProductCategory } from "@medusajs/types";
 import { Badge, Text } from "@medusajs/ui";
 
 type MultiSelectCategoryProps = {
@@ -39,7 +38,6 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -84,20 +82,18 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
 
   const getBackButtonText = (): string => {
     const parentCategory = categories.find((cat) => cat.id === currentParentId);
-
     return parentCategory?.name || "";
   };
 
   return (
-    <div className="relative">
-      {/*fix a11y issue*/}
-      {/*eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
+    <div className="relative" data-testid="attribute-form-category-multiselect">
       <div
         ref={triggerRef}
         className="focus-within:ring-ui-ring-interactive relative flex h-10 w-full cursor-pointer items-center justify-between overflow-hidden rounded-md border border-ui-border-base bg-ui-bg-field text-ui-fg-base shadow-sm transition-colors duration-150 ease-in-out focus-within:border-ui-border-interactive focus-within:ring-1 hover:bg-ui-bg-field-hover"
         onClick={handleToggle}
+        data-testid="attribute-form-category-multiselect-trigger"
       >
-        <div className="flex items-center gap-2 px-3 py-2">
+        <div className="flex items-center gap-2 px-3 py-2" data-testid="attribute-form-category-multiselect-trigger-content">
           {value.length > 0 ? (
             <>
               <button
@@ -106,18 +102,19 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
                   e.stopPropagation();
                   onChange([]);
                 }}
+                data-testid="attribute-form-category-multiselect-clear-button"
               >
-                <Badge size="small" className="w-fit">
+                <Badge size="small" className="w-fit" data-testid="attribute-form-category-multiselect-badge">
                   {value.length}
                   <XMarkMini></XMarkMini>
                 </Badge>
               </button>
             </>
           ) : (
-            <Text className="text-ui-fg-subtle">Select categories</Text>
+            <Text className="text-ui-fg-subtle" data-testid="attribute-form-category-multiselect-placeholder">Select categories</Text>
           )}
         </div>
-        <span className="flex h-full w-10 items-center justify-center border-l border-ui-border-base">
+        <span className="flex h-full w-10 items-center justify-center border-l border-ui-border-base" data-testid="attribute-form-category-multiselect-icon">
           <TrianglesMini></TrianglesMini>
         </span>
       </div>
@@ -126,45 +123,42 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
         <div
           ref={dropdownRef}
           className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-ui-border-base bg-ui-bg-base shadow-lg"
+          data-testid="attribute-form-category-multiselect-dropdown"
         >
           {currentParentId !== null && (
-            /*fix a11y issue*/
-            /*eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
             <div
               className="flex cursor-pointer items-center gap-3 border-b border-ui-border-base px-3 py-2 text-ui-fg-subtle hover:bg-ui-bg-base-hover"
               onClick={handleGoBack}
+              data-testid="attribute-form-category-multiselect-back-button"
             >
               <ArrowUturnLeft />
-              <Text>{getBackButtonText()}</Text>
+              <Text data-testid="attribute-form-category-multiselect-back-text">{getBackButtonText()}</Text>
             </div>
           )}
           {currentCategories.length === 0 ? (
-            <div className="p-3 text-ui-fg-subtle">No categories found.</div>
+            <div className="p-3 text-ui-fg-subtle" data-testid="attribute-form-category-multiselect-empty">No categories found.</div>
           ) : (
             currentCategories.map((category) => {
               const isSelected = value.includes(category.id);
               const hasChildrenNode = hasChildren(category.id);
-
               return (
-                /*fix a11y issue*/
-                /*eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
                 <div
                   key={category.id}
-                  className="flex cursor-pointer items-center justify-between px-1 py-1"
+                  className={`flex cursor-pointer items-center justify-between px-1 py-1`}
                   onClick={() => handleItemClick(category.id)}
+                  data-testid={`attribute-form-category-multiselect-item-${category.id}`}
                 >
-                  <div className="relative mr-2 flex flex-1 items-center rounded-md px-2 py-1.5 hover:bg-ui-bg-base-hover">
+                  <div className="relative mr-2 flex flex-1 items-center rounded-md px-2 py-1.5 hover:bg-ui-bg-base-hover" data-testid={`attribute-form-category-multiselect-item-${category.id}-content`}>
                     {isSelected && (
-                      <span className="absolute left-3 top-1/2 h-1 w-1 -translate-y-1/2 rounded-full bg-ui-fg-base" />
+                      <span className="absolute left-3 top-1/2 h-1 w-1 -translate-y-1/2 rounded-full bg-ui-fg-base" data-testid={`attribute-form-category-multiselect-item-${category.id}-selected-indicator`} />
                     )}
-                    <Text className="ml-6">{category.name}</Text>
+                    <Text className="ml-6" data-testid={`attribute-form-category-multiselect-item-${category.id}-name`}>{category.name}</Text>
                   </div>
                   {hasChildrenNode && (
-                    /*fix a11y issue*/
-                    /*eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
                     <div
                       onClick={(e) => handleDrillDown(category, e)}
                       className="rounded-md p-2 hover:bg-ui-bg-base-hover"
+                      data-testid={`attribute-form-category-multiselect-item-${category.id}-drill-down`}
                     >
                       <TriangleRightMiniHover className="mr-1" />
                     </div>

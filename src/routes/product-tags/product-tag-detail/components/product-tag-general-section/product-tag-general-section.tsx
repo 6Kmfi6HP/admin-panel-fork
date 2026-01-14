@@ -1,28 +1,25 @@
-import { PencilSquare, Trash } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
-import { Container, Heading } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-
-import { ActionMenu } from "@components/common/action-menu";
-
-import { useDeleteProductTagAction } from "@routes/product-tags/common/hooks/use-delete-product-tag-action";
+import { PencilSquare, Trash } from "@medusajs/icons"
+import { HttpTypes } from "@medusajs/types"
+import { Container, Heading } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
+import { ActionMenu } from "../../../../../components/common/action-menu"
+import { useDeleteProductTagAction } from "../../../common/hooks/use-delete-product-tag-action"
 
 type ProductTagGeneralSectionProps = {
-  productTag: HttpTypes.AdminProductTag;
-};
+  productTag: HttpTypes.AdminProductTag
+}
 
 export const ProductTagGeneralSection = ({
   productTag,
 }: ProductTagGeneralSectionProps) => {
-  const { t } = useTranslation();
-  const handleDelete = useDeleteProductTagAction({ productTag });
+  const { t } = useTranslation()
+  const handleDelete = useDeleteProductTagAction({ productTag })
 
   return (
-    <Container className="flex items-center justify-between">
-      <div className="flex items-center gap-x-1.5">
-        <span className="h1-core text-ui-fg-muted">#</span>
-        <Heading>{productTag.value}</Heading>
+    <Container className="flex items-center justify-between" data-testid="product-tag-general-section-container">
+      <div className="flex items-center gap-x-1.5" data-testid="product-tag-general-section-heading-container">
+        <span className="text-ui-fg-muted h1-core">#</span>
+        <Heading data-testid="product-tag-general-section-heading">{productTag.value}</Heading>
       </div>
       <ActionMenu
         groups={[
@@ -45,7 +42,8 @@ export const ProductTagGeneralSection = ({
             ],
           },
         ]}
+        data-testid="product-tag-general-section-action-menu"
       />
     </Container>
-  );
-};
+  )
+}

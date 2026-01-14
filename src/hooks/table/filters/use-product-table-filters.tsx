@@ -1,8 +1,8 @@
-import { useTranslation } from "react-i18next";
-
-import type { Filter } from "@components/table/data-table";
-
-import { useProductTags, useProductTypes, useSalesChannels } from "@hooks/api";
+import { useTranslation } from "react-i18next"
+import { Filter } from "../../../components/table/data-table"
+import { useProductTags } from "../../api"
+import { useProductTypes } from "../../api/product-types"
+import { useSalesChannels } from "../../api/sales-channels"
 
 const excludeableFields = [
   "sales_channel_id",
@@ -10,14 +10,14 @@ const excludeableFields = [
   "categories",
   "product_types",
   "product_tags",
-] as const;
+] as const
 
 export const useProductTableFilters = (
-  exclude?: (typeof excludeableFields)[number][],
+  exclude?: (typeof excludeableFields)[number][]
 ) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
-  const isProductTypeExcluded = exclude?.includes("product_types");
+  const isProductTypeExcluded = exclude?.includes("product_types")
 
   const { product_types } = useProductTypes(
     {
@@ -26,22 +26,18 @@ export const useProductTableFilters = (
     },
     {
       enabled: !isProductTypeExcluded,
-    },
-  );
+    }
+  )
 
-  const isProductTagExcluded = exclude?.includes("product_tags");
+  const isProductTagExcluded = exclude?.includes("product_tags")
 
   const { product_tags } = useProductTags({
     limit: 1000,
     offset: 0,
-  });
+  })
 
-  // const { product_tags } = useAdminProductTags({
-  //   limit: 1000,
-  //   offset: 0,
-  // })
 
-  const isSalesChannelExcluded = exclude?.includes("sales_channel_id");
+  const isSalesChannelExcluded = exclude?.includes("sales_channel_id")
 
   const { sales_channels } = useSalesChannels(
     {
@@ -50,10 +46,11 @@ export const useProductTableFilters = (
     },
     {
       enabled: !isSalesChannelExcluded,
-    },
-  );
+    }
+  )
 
-  const isCategoryExcluded = exclude?.includes("categories");
+  // Commented out as it's not used yet. Seems it might be helpful in future
+  // const isCategoryExcluded = exclude?.includes("categories")
 
   // const { product_categories } = useAdminProductCategories({
   //   limit: 1000,
@@ -64,7 +61,7 @@ export const useProductTableFilters = (
   //  enabled: !isCategoryExcluded,
   // })
 
-  const isCollectionExcluded = exclude?.includes("collections");
+  // const isCollectionExcluded = exclude?.includes("collections")
 
   // const { collections } = useAdminCollections(
   //   {
@@ -76,7 +73,7 @@ export const useProductTableFilters = (
   //   }
   // )
 
-  let filters: Filter[] = [];
+  let filters: Filter[] = []
 
   if (product_types && !isProductTypeExcluded) {
     const typeFilter: Filter = {
@@ -89,9 +86,9 @@ export const useProductTableFilters = (
         label: t.value,
         value: t.id,
       })),
-    };
+    }
 
-    filters = [...filters, typeFilter];
+    filters = [...filters, typeFilter]
   }
 
   if (product_tags && !isProductTagExcluded) {
@@ -105,9 +102,9 @@ export const useProductTableFilters = (
         label: t.value,
         value: t.id,
       })),
-    };
+    }
 
-    filters = [...filters, tagFilter];
+    filters = [...filters, tagFilter]
   }
 
   if (sales_channels) {
@@ -121,11 +118,12 @@ export const useProductTableFilters = (
         label: s.name,
         value: s.id,
       })),
-    };
+    }
 
-    filters = [...filters, salesChannelFilter];
+    filters = [...filters, salesChannelFilter]
   }
 
+  // Commented out as it's not used yet. Seems it might be helpful in future
   // if (product_categories) {
   //   const categoryFilter: Filter = {
   //     key: "category_id",
@@ -195,7 +193,7 @@ export const useProductTableFilters = (
         value: "rejected",
       },
     ],
-  };
+  }
 
   const dateFilters: Filter[] = [
     { label: t("fields.createdAt"), key: "created_at" },
@@ -204,9 +202,9 @@ export const useProductTableFilters = (
     key: f.key,
     label: f.label,
     type: "date",
-  }));
+  }))
 
-  filters = [...filters, statusFilter, ...dateFilters];
+  filters = [...filters, statusFilter, ...dateFilters]
 
-  return filters;
-};
+  return filters
+}

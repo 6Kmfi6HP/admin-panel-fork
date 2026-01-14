@@ -14,6 +14,7 @@ export const OrderList = () => {
         before: getWidgets("order.list.before"),
       }}
       hasOutlet={false}
+      data-testid="orders-list-page"
     >
       <OrderListTable />
     </SingleColumnPage>

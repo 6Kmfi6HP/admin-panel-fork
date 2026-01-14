@@ -1,20 +1,20 @@
-import { SingleColumnPage } from "@components/layout/pages";
-
-import { ProductListTable } from "@routes/products/product-list/components/product-list-table";
-
-import { useExtension } from "@providers/extension-provider";
+import { SingleColumnPage } from "../../../components/layout/pages"
+import { useExtension } from "../../../providers/extension-provider"
+import { ProductListTable } from "./components/product-list-table"
 
 export const ProductList = () => {
-  const { getWidgets } = useExtension();
+  const { getWidgets } = useExtension()
 
   return (
-    <SingleColumnPage
-      widgets={{
-        after: getWidgets("product.list.after"),
-        before: getWidgets("product.list.before"),
-      }}
-    >
-      <ProductListTable />
-    </SingleColumnPage>
-  );
-};
+    <div data-testid="products-page">
+      <SingleColumnPage
+        widgets={{
+          after: getWidgets("product.list.after"),
+          before: getWidgets("product.list.before"),
+        }}
+      >
+        <ProductListTable />
+      </SingleColumnPage>
+    </div>
+  )
+}

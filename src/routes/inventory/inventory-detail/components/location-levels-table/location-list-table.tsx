@@ -1,6 +1,9 @@
-import { DataTable } from "@components/data-table";
+import type { ExtendedInventoryItemLevel } from "@custom-types/inventory";
+
+import { _DataTable } from "@components/table/data-table";
 
 import { useInventoryItemLevels } from "@hooks/api";
+import { useDataTable } from "@hooks/use-data-table";
 
 import { useLocationListTableColumns } from "./use-location-list-table-columns";
 import { useLocationLevelTableQuery } from "./use-location-list-table-query";
@@ -13,7 +16,7 @@ export const ItemLocationListTable = ({
 }: {
   inventory_item_id: string;
 }) => {
-  const searchParams = useLocationLevelTableQuery({
+  const { searchParams, raw } = useLocationLevelTableQuery({
     pageSize: PAGE_SIZE,
     prefix: PREFIX,
   });
@@ -35,17 +38,26 @@ export const ItemLocationListTable = ({
     throw error;
   }
 
+  const { table } = useDataTable({
+    data: (inventory_levels ?? []) as ExtendedInventoryItemLevel[],
+    columns,
+    count,
+    enablePagination: true,
+    getRowId: (row) => row.id,
+    pageSize: PAGE_SIZE,
+  });
+
   return (
-    <DataTable
-      data={inventory_levels ?? []}
-      columns={columns}
-      rowCount={count}
-      pageSize={PAGE_SIZE}
-      getRowId={(row) => row.id}
-      isLoading={isLoading}
-      prefix={PREFIX}
-      layout="fill"
-      enableSearch={false}
-    />
+    <div data-testid="inventory-location-levels-table">
+      <_DataTable
+        table={table}
+        columns={columns}
+        pageSize={PAGE_SIZE}
+        count={count}
+        isLoading={isLoading}
+        pagination
+        queryObject={raw}
+      />
+    </div>
   );
 };

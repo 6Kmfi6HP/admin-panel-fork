@@ -1,38 +1,38 @@
 /* Payment Account */
-import type { BigNumberInput } from "@medusajs/framework/types";
+import type { BigNumberInput } from '@medusajs/types'
 
 export enum PayoutAccountStatus {
-  PENDING = "pending",
-  ACTIVE = "active",
-  DISABLED = "disabled",
+  PENDING = 'pending',
+  ACTIVE = 'active',
+  DISABLED = 'disabled'
 }
 
 export type PayoutAccountDTO = {
-  id: string;
-  created_at: Date;
-  updated_at: Date;
-  reference_id: string;
-  data: Record<string, unknown>;
-  status: PayoutAccountStatus;
-};
+  id: string
+  created_at: Date
+  updated_at: Date
+  reference_id: string
+  data: Record<string, unknown>
+  status: PayoutAccountStatus
+}
 
 /* Onboarding */
 
 export type OnboardingDTO = {
-  id: string;
-  created_at: Date;
-  updated_at: Date;
-  data: Record<string, unknown>;
-  context: Record<string, unknown>;
-};
+  id: string
+  created_at: Date
+  updated_at: Date
+  data: Record<string, unknown>
+  context: Record<string, unknown>
+}
 
 /* Payout */
 
 export type PayoutDTO = {
-  id: string;
-  created_at: Date;
-  updated_at: Date;
-  data: Record<string, unknown> | null;
-  amount: BigNumberInput;
-  currency_code: string;
-};
+  id: string
+  created_at: Date
+  updated_at: Date
+  data: Record<string, unknown> | null
+  amount: BigNumberInput
+  currency_code: string
+}

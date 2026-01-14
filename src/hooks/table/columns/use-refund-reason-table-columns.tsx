@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 
-import type { HttpTypes } from "@medusajs/types";
 import { createDataTableColumnHelper } from "@medusajs/ui";
 
 import { useTranslation } from "react-i18next";
 
-import { DescriptionCell } from "@components/table/table-cells/sales-channel/description-cell";
+import { DescriptionCell } from "../../../components/table/table-cells/sales-channel/description-cell";
+import { AdminRefundReason } from "../../../types/refund-reasons/common";
 
-const columnHelper = createDataTableColumnHelper<HttpTypes.AdminRefundReason>();
+const columnHelper = createDataTableColumnHelper<AdminRefundReason>();
 
 export const useRefundReasonTableColumns = () => {
   const { t } = useTranslation();

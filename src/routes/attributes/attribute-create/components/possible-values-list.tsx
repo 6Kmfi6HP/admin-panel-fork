@@ -1,23 +1,22 @@
-import { DotsSix, XMark } from "@medusajs/icons";
-import { Button, IconButton, Input, Label } from "@medusajs/ui";
-
-import type { DragEndEvent } from "@dnd-kit/core";
 import {
   DndContext,
+  closestCenter,
   KeyboardSensor,
   PointerSensor,
-  closestCenter,
   useSensor,
   useSensors,
+  DragEndEvent,
 } from "@dnd-kit/core";
 import {
-  SortableContext,
   arrayMove,
+  SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Button, Input, IconButton, Label } from "@medusajs/ui";
+import { XMark, DotsSix } from "@medusajs/icons";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 type AttributeValueType = {
@@ -25,8 +24,7 @@ type AttributeValueType = {
   rank: number;
   metadata: Record<string, unknown>;
 };
-// @todo fix any type
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 type FormValues = any;
 
 interface SortableItemProps {
@@ -54,12 +52,14 @@ const SortableItem = ({ id, index, onRemove }: SortableItemProps) => {
     <div
       ref={setNodeRef}
       style={style}
-      className="mb-2 flex items-center gap-2 rounded-xl border border-ui-border-base bg-ui-bg-component p-2"
+      className="flex items-center gap-2 p-2 bg-ui-bg-component border border-ui-border-base rounded-xl mb-2"
+      data-testid={`attribute-form-possible-value-item-${index}`}
     >
       <button
         className="cursor-grab active:cursor-grabbing"
         {...attributes}
         {...listeners}
+        data-testid={`attribute-form-possible-value-drag-handle-${index}`}
       >
         <DotsSix className="text-ui-fg-subtle" />
       </button>
@@ -69,9 +69,10 @@ const SortableItem = ({ id, index, onRemove }: SortableItemProps) => {
           aria-invalid={!!fieldError}
           placeholder="Enter value"
           {...register(`possible_values.${index}.value`)}
+          data-testid={`attribute-form-possible-value-input-${index}`}
         />
       </div>
-      <IconButton variant="transparent" size="small" onClick={onRemove}>
+      <IconButton variant="transparent" size="small" onClick={onRemove} data-testid={`attribute-form-possible-value-remove-button-${index}`}>
         <XMark />
       </IconButton>
     </div>
@@ -89,7 +90,7 @@ const PossibleValuesList = () => {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -101,7 +102,7 @@ const PossibleValuesList = () => {
 
       // Get current form values
       const currentValues = getValues(
-        "possible_values",
+        "possible_values"
       ) as AttributeValueType[];
 
       // Create new array with reordered items
@@ -127,14 +128,15 @@ const PossibleValuesList = () => {
   };
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between pb-1">
-        <Label>Possible Values</Label>
+    <div className="space-y-2" data-testid="attribute-form-possible-values-list">
+      <div className="flex items-center justify-between pb-1" data-testid="attribute-form-possible-values-header">
+        <Label data-testid="attribute-form-possible-values-label">Possible Values</Label>
         <Button
           type="button"
           variant="secondary"
           size="small"
           onClick={handleAddValue}
+          data-testid="attribute-form-possible-values-add-button"
         >
           Add
         </Button>

@@ -1,11 +1,11 @@
-import { Buildings, XCircle } from "@medusajs/icons";
-import type {
+import { Buildings, XCircle } from "@medusajs/icons"
+import {
   AdminOrder,
   AdminOrderFulfillment,
   AdminOrderLineItem,
   HttpTypes,
   OrderLineItemDTO,
-} from "@medusajs/types";
+} from "@medusajs/types"
 import {
   Button,
   Container,
@@ -16,111 +16,108 @@ import {
   Tooltip,
   toast,
   usePrompt,
-} from "@medusajs/ui";
-
-import { format } from "date-fns";
-import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { Skeleton } from "@components/common/skeleton";
-import { Thumbnail } from "@components/common/thumbnail";
-
+} from "@medusajs/ui"
+import { format } from "date-fns"
+import { useTranslation } from "react-i18next"
+import { Link, useNavigate } from "react-router-dom"
+import { ActionMenu } from "../../../../../components/common/action-menu"
+import { Skeleton } from "../../../../../components/common/skeleton"
+import { Thumbnail } from "../../../../../components/common/thumbnail"
 import {
   useCancelOrderFulfillment,
   useMarkOrderFulfillmentAsDelivered,
-} from "@hooks/api";
-import { useStockLocation } from "@hooks/api";
-
-import { formatProvider } from "@lib/format-provider";
-import { getLocaleAmount } from "@lib/money-amount-helpers";
-
-import { FulfillmentSetType } from "@routes/locations/common/constants";
+} from "../../../../../hooks/api/orders"
+import { useStockLocation } from "../../../../../hooks/api/stock-locations"
+import { formatProvider } from "../../../../../lib/format-provider"
+import { getLocaleAmount } from "../../../../../lib/money-amount-helpers"
+import { FulfillmentSetType } from "../../../../locations/common/constants"
 
 type OrderFulfillmentSectionProps = {
-  order: AdminOrder;
-};
+  order: AdminOrder
+}
 
 export const OrderFulfillmentSection = ({
   order,
 }: OrderFulfillmentSectionProps) => {
-  const fulfillments = order.fulfillments || [];
+  const fulfillments = order.fulfillments || []
 
   return (
-    <div className="flex flex-col gap-y-3">
+    <div className="flex flex-col gap-y-3" data-testid="order-fulfillment-section">
       <UnfulfilledItemBreakdown order={order} />
       {fulfillments.map((f, index) => (
         <Fulfillment key={f.id} index={index} fulfillment={f} order={order} />
       ))}
     </div>
-  );
-};
+  )
+}
 
 const UnfulfilledItem = ({
   item,
   currencyCode,
 }: {
-  item: OrderLineItemDTO & { variant: HttpTypes.AdminProductVariant };
-  currencyCode: string;
-}) => (
-  <div
-    key={item.id}
-    className="grid grid-cols-2 items-start px-6 py-4 text-ui-fg-subtle"
-  >
-    <div className="flex items-start gap-x-4">
-      <Thumbnail src={item.thumbnail} />
-      <div>
-        <Text
-          size="small"
-          leading="compact"
-          weight="plus"
-          className="text-ui-fg-base"
-        >
-          {item.title}
-        </Text>
-        {item.variant_sku && (
-          <div className="flex items-center gap-x-1">
-            <Text size="small">{item.variant_sku}</Text>
-            <Copy content={item.variant_sku} className="text-ui-fg-muted" />
-          </div>
-        )}
-        <Text size="small">
-          {item.variant?.options.map((o) => o.value).join(" · ")}
-        </Text>
+  item: OrderLineItemDTO & { variant: HttpTypes.AdminProductVariant }
+  currencyCode: string
+}) => {
+  return (
+    <div
+      key={item.id}
+      className="text-ui-fg-subtle grid grid-cols-2 items-start px-6 py-4"
+    >
+      <div className="flex items-start gap-x-4">
+        <Thumbnail src={item.thumbnail} />
+        <div>
+          <Text
+            size="small"
+            leading="compact"
+            weight="plus"
+            className="text-ui-fg-base"
+          >
+            {item.title}
+          </Text>
+          {item.variant_sku && (
+            <div className="flex items-center gap-x-1">
+              <Text size="small">{item.variant_sku}</Text>
+              <Copy content={item.variant_sku} className="text-ui-fg-muted" />
+            </div>
+          )}
+          <Text size="small">
+            {item.variant?.options?.map((o) => o.value).join(" · ")}
+          </Text>
+        </div>
+      </div>
+      <div className="grid grid-cols-3 items-center gap-x-4">
+        <div className="flex items-center justify-end">
+          <Text size="small">
+            {getLocaleAmount(item.unit_price, currencyCode)}
+          </Text>
+        </div>
+        <div className="flex items-center justify-end">
+          <Text>
+            <span className="tabular-nums">
+              {item.quantity - item.detail.fulfilled_quantity}
+            </span>
+            x
+          </Text>
+        </div>
+        <div className="flex items-center justify-end">
+          <Text size="small">
+            {getLocaleAmount(item.subtotal || 0, currencyCode)}
+          </Text>
+        </div>
       </div>
     </div>
-    <div className="grid grid-cols-3 items-center gap-x-4">
-      <div className="flex items-center justify-end">
-        <Text size="small">
-          {getLocaleAmount(item.unit_price, currencyCode)}
-        </Text>
-      </div>
-      <div className="flex items-center justify-end">
-        <Text>
-          <span className="tabular-nums">
-            {item.quantity - item.detail.fulfilled_quantity}
-          </span>
-          x
-        </Text>
-      </div>
-      <div className="flex items-center justify-end">
-        <Text size="small">
-          {getLocaleAmount(item.subtotal || 0, currencyCode)}
-        </Text>
-      </div>
-    </div>
-  </div>
-);
+  )
+}
 
 const UnfulfilledItemBreakdown = ({ order }: { order: AdminOrder }) => {
   // Create an array of order items that haven't been fulfilled or at least not fully fulfilled
   const unfulfilledItemsWithShipping = order.items!.filter(
-    (i) => i.requires_shipping && i.detail.fulfilled_quantity < i.quantity,
-  );
+    (i) => i.requires_shipping && i.detail.fulfilled_quantity < i.quantity
+  )
 
   const unfulfilledItemsWithoutShipping = order.items!.filter(
-    (i) => !i.requires_shipping && i.detail.fulfilled_quantity < i.quantity,
-  );
+    (i) => !i.requires_shipping && i.detail.fulfilled_quantity < i.quantity
+  )
 
   return (
     <>
@@ -140,37 +137,37 @@ const UnfulfilledItemBreakdown = ({ order }: { order: AdminOrder }) => {
         />
       )}
     </>
-  );
-};
+  )
+}
 
 const UnfulfilledItemDisplay = ({
   order,
   unfulfilledItems,
   requiresShipping = false,
 }: {
-  order: AdminOrder;
-  unfulfilledItems: AdminOrderLineItem[];
-  requiresShipping: boolean;
+  order: AdminOrder
+  unfulfilledItems: AdminOrderLineItem[]
+  requiresShipping: boolean
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   if (order.status === "canceled") {
-    return;
+    return
   }
 
   return (
-    <Container className="divide-y p-0">
-      <div className="flex items-center justify-between px-6 py-4">
-        <Heading level="h2">{t("orders.fulfillment.unfulfilledItems")}</Heading>
+    <Container className="divide-y p-0" data-testid="order-fulfillment-unfulfilled">
+      <div className="flex items-center justify-between px-6 py-4" data-testid="order-fulfillment-unfulfilled-header">
+        <Heading level="h2" data-testid="order-fulfillment-unfulfilled-heading">{t("orders.fulfillment.unfulfilledItems")}</Heading>
 
-        <div className="flex items-center gap-x-4">
+        <div className="flex items-center gap-x-4" data-testid="order-fulfillment-unfulfilled-badges">
           {requiresShipping && (
-            <StatusBadge color="red" className="text-nowrap">
+            <StatusBadge color="red" className="text-nowrap" data-testid="order-fulfillment-unfulfilled-requires-shipping-badge">
               {t("orders.fulfillment.requiresShipping")}
             </StatusBadge>
           )}
 
-          <StatusBadge color="red" className="text-nowrap">
+          <StatusBadge color="red" className="text-nowrap" data-testid="order-fulfillment-unfulfilled-awaiting-badge">
             {t("orders.fulfillment.awaitingFulfillmentBadge")}
           </StatusBadge>
 
@@ -186,10 +183,11 @@ const UnfulfilledItemDisplay = ({
                 ],
               },
             ]}
+            data-testid="order-fulfillment-unfulfilled-action-menu"
           />
         </div>
       </div>
-      <div>
+      <div data-testid="order-fulfillment-unfulfilled-items">
         {unfulfilledItems.map((item: AdminOrderLineItem) => (
           <UnfulfilledItem
             key={item.id}
@@ -199,73 +197,73 @@ const UnfulfilledItemDisplay = ({
         ))}
       </div>
     </Container>
-  );
-};
+  )
+}
 
 const Fulfillment = ({
   fulfillment,
   order,
   index,
 }: {
-  fulfillment: AdminOrderFulfillment;
-  order: AdminOrder;
-  index: number;
+  fulfillment: AdminOrderFulfillment
+  order: AdminOrder
+  index: number
 }) => {
-  const { t } = useTranslation();
-  const prompt = usePrompt();
-  const navigate = useNavigate();
+  const { t } = useTranslation()
+  const prompt = usePrompt()
+  const navigate = useNavigate()
 
-  const showLocation = !!fulfillment.location_id;
+  const showLocation = !!fulfillment.location_id
 
   const isPickUpFulfillment =
     fulfillment.shipping_option?.service_zone.fulfillment_set.type ===
-    FulfillmentSetType.Pickup;
+    FulfillmentSetType.Pickup
 
   const { stock_location, isError, error } = useStockLocation(
     fulfillment.location_id!,
     undefined,
     {
       enabled: showLocation,
-    },
-  );
+    }
+  )
 
   let statusText = fulfillment.requires_shipping
     ? isPickUpFulfillment
       ? "Awaiting pickup"
       : "Awaiting shipping"
-    : "Awaiting delivery";
-  let statusColor: "blue" | "green" | "red" = "blue";
-  let statusTimestamp = fulfillment.created_at;
+    : "Awaiting delivery"
+  let statusColor: "blue" | "green" | "red" = "blue"
+  let statusTimestamp = fulfillment.created_at
 
   if (fulfillment.canceled_at) {
-    statusText = "Canceled";
-    statusColor = "red";
-    statusTimestamp = fulfillment.canceled_at;
+    statusText = "Canceled"
+    statusColor = "red"
+    statusTimestamp = fulfillment.canceled_at
   } else if (fulfillment.delivered_at) {
-    statusText = "Delivered";
-    statusColor = "green";
-    statusTimestamp = fulfillment.delivered_at;
+    statusText = "Delivered"
+    statusColor = "green"
+    statusTimestamp = fulfillment.delivered_at
   } else if (fulfillment.shipped_at) {
-    statusText = "Shipped";
-    statusColor = "green";
-    statusTimestamp = fulfillment.shipped_at;
+    statusText = "Shipped"
+    statusColor = "green"
+    statusTimestamp = fulfillment.shipped_at
   }
 
-  const { mutateAsync } = useCancelOrderFulfillment(order.id, fulfillment.id);
+  const { mutateAsync } = useCancelOrderFulfillment(order.id, fulfillment.id)
   const { mutateAsync: markAsDelivered } = useMarkOrderFulfillmentAsDelivered(
     order.id,
-    fulfillment.id,
-  );
+    fulfillment.id
+  )
 
   const showShippingButton =
     !fulfillment.canceled_at &&
     !fulfillment.shipped_at &&
     !fulfillment.delivered_at &&
     fulfillment.requires_shipping &&
-    !isPickUpFulfillment;
+    !isPickUpFulfillment
 
   const showDeliveryButton =
-    !fulfillment.canceled_at && !fulfillment.delivered_at;
+    !fulfillment.canceled_at && !fulfillment.delivered_at
 
   const handleMarkAsDelivered = async () => {
     const res = await prompt({
@@ -274,7 +272,7 @@ const Fulfillment = ({
       confirmText: t("actions.continue"),
       cancelText: t("actions.cancel"),
       variant: "confirmation",
-    });
+    })
 
     if (res) {
       await markAsDelivered(undefined, {
@@ -283,22 +281,21 @@ const Fulfillment = ({
             t(
               isPickUpFulfillment
                 ? "orders.fulfillment.toast.fulfillmentPickedUp"
-                : "orders.fulfillment.toast.fulfillmentDelivered",
-            ),
-          );
+                : "orders.fulfillment.toast.fulfillmentDelivered"
+            )
+          )
         },
         onError: (e) => {
-          toast.error(e.message);
+          toast.error(e.message)
         },
-      });
+      })
     }
-  };
+  }
 
   const handleCancel = async () => {
     if (fulfillment.shipped_at) {
-      toast.warning(t("orders.fulfillment.toast.fulfillmentShipped"));
-
-      return;
+      toast.warning(t("orders.fulfillment.toast.fulfillmentShipped"))
+      return
     }
 
     const res = await prompt({
@@ -306,42 +303,42 @@ const Fulfillment = ({
       description: t("orders.fulfillment.cancelWarning"),
       confirmText: t("actions.continue"),
       cancelText: t("actions.cancel"),
-    });
+    })
 
     if (res) {
       await mutateAsync(undefined, {
         onSuccess: () => {
-          toast.success(t("orders.fulfillment.toast.canceled"));
+          toast.success(t("orders.fulfillment.toast.canceled"))
         },
         onError: (e) => {
-          toast.error(e.message);
+          toast.error(e.message)
         },
-      });
+      })
     }
-  };
-
-  if (isError) {
-    throw error;
   }
 
-  const isValidUrl = (url?: string) => url && url.length > 0 && url !== "#";
+  if (isError) {
+    throw error
+  }
+
+  const isValidUrl = (url?: string) => url && url.length > 0 && url !== "#"
 
   return (
-    <Container className="divide-y p-0">
-      <div className="flex items-center justify-between px-6 py-4">
-        <Heading level="h2">
+    <Container className="divide-y p-0" data-testid={`order-fulfillment-${fulfillment.id}`}>
+      <div className="flex items-center justify-between px-6 py-4" data-testid={`order-fulfillment-${fulfillment.id}-header`}>
+        <Heading level="h2" data-testid={`order-fulfillment-${fulfillment.id}-heading`}>
           {t("orders.fulfillment.number", {
             number: index + 1,
           })}
         </Heading>
-        <div className="flex items-center gap-x-4">
+        <div className="flex items-center gap-x-4" data-testid={`order-fulfillment-${fulfillment.id}-status-container`}>
           <Tooltip
             content={format(
               new Date(statusTimestamp),
-              "dd MMM, yyyy, HH:mm:ss",
+              "dd MMM, yyyy, HH:mm:ss"
             )}
           >
-            <StatusBadge color={statusColor} className="text-nowrap">
+            <StatusBadge color={statusColor} className="text-nowrap" data-testid={`order-fulfillment-${fulfillment.id}-status-badge`}>
               {statusText}
             </StatusBadge>
           </Tooltip>
@@ -361,10 +358,11 @@ const Fulfillment = ({
                 ],
               },
             ]}
+            data-testid={`order-fulfillment-${fulfillment.id}-action-menu`}
           />
         </div>
       </div>
-      <div className="grid grid-cols-2 items-start px-6 py-4 text-ui-fg-subtle">
+      <div className="text-ui-fg-subtle grid grid-cols-2 items-start px-6 py-4">
         <Text size="small" leading="compact" weight="plus">
           {t("orders.fulfillment.itemsLabel")}
         </Text>
@@ -379,14 +377,14 @@ const Fulfillment = ({
         </ul>
       </div>
       {showLocation && (
-        <div className="grid grid-cols-2 items-center px-6 py-4 text-ui-fg-subtle">
+        <div className="text-ui-fg-subtle grid grid-cols-2 items-center px-6 py-4">
           <Text size="small" leading="compact" weight="plus">
             {t("orders.fulfillment.shippingFromLabel")}
           </Text>
           {stock_location ? (
             <Link
               to={`/settings/locations/${stock_location.id}`}
-              className="text-ui-fg-interactive transition-fg hover:text-ui-fg-interactive-hover"
+              className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover transition-fg"
             >
               <Text size="small" leading="compact">
                 {stock_location.name}
@@ -397,7 +395,7 @@ const Fulfillment = ({
           )}
         </div>
       )}
-      <div className="grid grid-cols-2 items-center px-6 py-4 text-ui-fg-subtle">
+      <div className="text-ui-fg-subtle grid grid-cols-2 items-center px-6 py-4">
         <Text size="small" leading="compact" weight="plus">
           {t("fields.provider")}
         </Text>
@@ -406,7 +404,7 @@ const Fulfillment = ({
           {formatProvider(fulfillment.provider_id)}
         </Text>
       </div>
-      <div className="grid grid-cols-2 items-start px-6 py-4 text-ui-fg-subtle">
+      <div className="text-ui-fg-subtle grid grid-cols-2 items-start px-6 py-4">
         <Text size="small" leading="compact" weight="plus">
           {t("orders.fulfillment.trackingLabel")}
         </Text>
@@ -414,8 +412,8 @@ const Fulfillment = ({
           {fulfillment.labels && fulfillment.labels.length > 0 ? (
             <ul>
               {fulfillment.labels.map((tlink) => {
-                const hasTrackingUrl = isValidUrl(tlink.tracking_url);
-                const hasLabelUrl = isValidUrl(tlink.label_url);
+                const hasTrackingUrl = isValidUrl(tlink.tracking_url)
+                const hasLabelUrl = isValidUrl(tlink.label_url)
 
                 if (hasTrackingUrl || hasLabelUrl) {
                   return (
@@ -425,7 +423,7 @@ const Fulfillment = ({
                           href={tlink.tracking_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-ui-fg-interactive transition-fg hover:text-ui-fg-interactive-hover"
+                          className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover transition-fg"
                         >
                           <Text size="small" leading="compact" as="span">
                             {tlink.tracking_number}
@@ -438,7 +436,7 @@ const Fulfillment = ({
                           href={tlink.label_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-ui-fg-interactive transition-fg hover:text-ui-fg-interactive-hover"
+                          className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover transition-fg"
                         >
                           <Text size="small" leading="compact" as="span">
                             Label
@@ -446,7 +444,7 @@ const Fulfillment = ({
                         </a>
                       )}
                     </li>
-                  );
+                  )
                 }
 
                 return (
@@ -455,7 +453,7 @@ const Fulfillment = ({
                       {tlink.tracking_number}
                     </Text>
                   </li>
-                );
+                )
               })}
             </ul>
           ) : (
@@ -467,13 +465,13 @@ const Fulfillment = ({
       </div>
 
       {(showShippingButton || showDeliveryButton) && (
-        <div className="flex items-center justify-end gap-x-2 rounded-b-xl bg-ui-bg-subtle px-4 py-4">
+        <div className="bg-ui-bg-subtle flex items-center justify-end gap-x-2 rounded-b-xl px-4 py-4" data-testid={`order-fulfillment-${fulfillment.id}-actions`}>
           {showDeliveryButton && (
-            <Button onClick={handleMarkAsDelivered} variant="secondary">
+            <Button onClick={handleMarkAsDelivered} variant="secondary" data-testid={`order-fulfillment-${fulfillment.id}-mark-delivered-button`}>
               {t(
                 isPickUpFulfillment
                   ? "orders.fulfillment.markAsPickedUp"
-                  : "orders.fulfillment.markAsDelivered",
+                  : "orders.fulfillment.markAsDelivered"
               )}
             </Button>
           )}
@@ -482,6 +480,7 @@ const Fulfillment = ({
             <Button
               onClick={() => navigate(`./${fulfillment.id}/create-shipment`)}
               variant="secondary"
+              data-testid={`order-fulfillment-${fulfillment.id}-mark-shipped-button`}
             >
               {t("orders.fulfillment.markAsShipped")}
             </Button>
@@ -489,5 +488,5 @@ const Fulfillment = ({
         </div>
       )}
     </Container>
-  );
-};
+  )
+}

@@ -1,9 +1,10 @@
-import { RouteFocusModal } from "@components/modals";
+import { RouteFocusModal } from "../../../components/modals"
+import { ProductTagCreateForm } from "./components/product-tag-create-form"
 
-import { ProductTagCreateForm } from "@routes/product-tags/product-tag-create/components/product-tag-create-form";
-
-export const ProductTagCreate = () => (
-  <RouteFocusModal>
-    <ProductTagCreateForm />
-  </RouteFocusModal>
-);
+export const ProductTagCreate = () => {
+  return (
+    <RouteFocusModal data-testid="product-tag-create-modal">
+      <ProductTagCreateForm />
+    </RouteFocusModal>
+  )
+}

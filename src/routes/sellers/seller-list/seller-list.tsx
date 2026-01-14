@@ -13,6 +13,7 @@ import {
   usePrompt,
 } from "@medusajs/ui";
 
+import { keepPreviousData } from "@tanstack/react-query";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useNavigate } from "react-router-dom";
 
@@ -36,38 +37,31 @@ const PAGE_SIZE = 10;
 
 type SellersProps = VendorSeller & { store_status: string };
 
-type SellersResponse = {
-  sellers?: SellersProps[];
-  isLoading: boolean;
-};
-
 export const SellersList = () => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const { searchParams, raw } = useSellersTableQuery({
     pageSize: PAGE_SIZE,
-    offset: 0,
   });
 
-  const { sellers, isLoading } = useSellers(
+  const { sellers, count, isLoading } = useSellers(
     {
       fields: "id,email,name,created_at,store_status",
+      ...searchParams,
     },
-    undefined,
     {
-      q: searchParams.q,
-      order: searchParams.order,
+      placeholderData: keepPreviousData,
     },
-  ) as SellersResponse;
+  );
 
   const { mutateAsync: inviteSeller } = useInviteSeller();
 
   const columns = useColumns();
 
   const { table } = useDataTable({
-    data: sellers,
+    data: sellers ?? [],
     columns,
-    count: sellers?.length || 0,
+    count: count ?? 0,
     enablePagination: true,
     pageSize: PAGE_SIZE,
     getRowId: (row) => row?.id || "",
@@ -90,14 +84,15 @@ export const SellersList = () => {
   };
 
   return (
-    <Container>
-      <div className="flex items-center justify-between">
+    <Container data-testid="seller-list-container">
+      <div className="flex items-center justify-between" data-testid="seller-list-header">
         <div>
-          <Heading>Sellers</Heading>
+          <Heading data-testid="seller-list-heading">Sellers</Heading>
         </div>
         <Drawer
           open={open}
           onOpenChange={(openChanged) => setOpen(openChanged)}
+          data-testid="seller-list-invite-drawer"
         >
           <Drawer.Trigger
             onClick={() => {
@@ -105,25 +100,26 @@ export const SellersList = () => {
             }}
             asChild
           >
-            <Button>Invite</Button>
+            <Button data-testid="seller-list-invite-button">Invite</Button>
           </Drawer.Trigger>
-          <Drawer.Content>
-            <Drawer.Header />
-            <Drawer.Body>
-              <Heading>Invite Seller</Heading>
-              <Text className="text-ui-fg-subtle" size="small">
+          <Drawer.Content data-testid="seller-list-invite-drawer-content">
+            <Drawer.Header data-testid="seller-list-invite-drawer-header" />
+            <Drawer.Body data-testid="seller-list-invite-drawer-body">
+              <Heading data-testid="seller-list-invite-drawer-title">Invite Seller</Heading>
+              <Text className="text-ui-fg-subtle" size="small" data-testid="seller-list-invite-drawer-description">
                 Invite a new seller to your store
               </Text>
-              <div className="mt-6 flex flex-col gap-2">
-                <Label>Email</Label>
+              <div className="mt-6 flex flex-col gap-2" data-testid="seller-list-invite-drawer-email-field">
+                <Label data-testid="seller-list-invite-drawer-email-label">Email</Label>
                 <Input
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  data-testid="seller-list-invite-drawer-email-input"
                 />
               </div>
-              <div className="flex justify-end">
-                <Button className="mt-6" onClick={handleInvite}>
+              <div className="flex justify-end" data-testid="seller-list-invite-drawer-footer">
+                <Button className="mt-6" onClick={handleInvite} data-testid="seller-list-invite-drawer-submit-button">
                   Invite
                 </Button>
               </div>
@@ -135,8 +131,8 @@ export const SellersList = () => {
         <_DataTable
           table={table}
           columns={columns}
-          count={sellers?.length || 0}
-          pageSize={10}
+          count={count ?? 0}
+          pageSize={PAGE_SIZE}
           isLoading={isLoading}
           queryObject={raw}
           search
@@ -199,6 +195,7 @@ const useColumns = () => {
         cell: ({ row }) => {
           return (
             <ActionsButton
+              data-testid={`seller-list-row-actions-${row.original.id}`}
               actions={[
                 {
                   label: "Edit",

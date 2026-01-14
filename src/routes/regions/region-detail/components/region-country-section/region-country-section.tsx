@@ -1,46 +1,46 @@
-import { useMemo, useState } from "react";
-
-import { PlusMini, Trash } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
-import { Checkbox, Container, Heading, toast, usePrompt } from "@medusajs/ui";
-
-import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { _DataTable } from "@components/table/data-table";
-
-import { useUpdateRegion } from "@hooks/api";
-import { useDataTable } from "@hooks/use-data-table";
-
-import { useCountries } from "@routes/regions/common/hooks/use-countries";
-import { useCountryTableColumns } from "@routes/regions/common/hooks/use-country-table-columns";
-import { useCountryTableQuery } from "@routes/regions/common/hooks/use-country-table-query";
+import { PlusMini, Trash } from "@medusajs/icons"
+import type { HttpTypes } from "@medusajs/types"
+import { Checkbox, Container, Heading, toast, usePrompt } from "@medusajs/ui"
+import {
+  type ColumnDef,
+  type RowSelectionState,
+  createColumnHelper,
+} from "@tanstack/react-table"
+import { useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { ActionMenu } from "../../../../../components/common/action-menu"
+import { _DataTable } from "../../../../../components/table/data-table"
+import { useUpdateRegion } from "../../../../../hooks/api/regions"
+import { useDataTable } from "../../../../../hooks/use-data-table"
+import type { StaticCountry } from "../../../../../lib/data/countries"
+import { useCountries } from "../../../common/hooks/use-countries"
+import { useCountryTableColumns } from "../../../common/hooks/use-country-table-columns"
+import { useCountryTableQuery } from "../../../common/hooks/use-country-table-query"
+import { convertToStaticCountries } from "./helpers"
 
 type RegionCountrySectionProps = {
-  region: HttpTypes.AdminRegion;
-};
+  region: HttpTypes.AdminRegion
+}
 
-const PREFIX = "c";
-const PAGE_SIZE = 10;
+const PREFIX = "c"
+const PAGE_SIZE = 10
 
 export const RegionCountrySection = ({ region }: RegionCountrySectionProps) => {
-  const { t } = useTranslation();
-  const prompt = usePrompt();
+  const { t } = useTranslation()
+  const prompt = usePrompt()
 
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
   const { searchParams, raw } = useCountryTableQuery({
     pageSize: PAGE_SIZE,
     prefix: PREFIX,
-  });
+  })
   const { countries, count } = useCountries({
-    countries: region.countries || [],
+    countries: convertToStaticCountries(region.countries),
     ...searchParams,
-  });
+  })
 
-  const columns = useColumns();
+  const columns = useColumns()
 
   const { table } = useDataTable({
     data: countries || [],
@@ -58,12 +58,12 @@ export const RegionCountrySection = ({ region }: RegionCountrySectionProps) => {
     meta: {
       region,
     },
-  });
+  })
 
-  const { mutateAsync } = useUpdateRegion(region.id);
+  const { mutateAsync } = useUpdateRegion(region.id)
 
   const handleRemoveCountries = async () => {
-    const ids = Object.keys(rowSelection).filter((k) => rowSelection[k]);
+    const ids = Object.keys(rowSelection).filter((k) => rowSelection[k])
 
     const res = await prompt({
       title: t("general.areYouSure"),
@@ -74,15 +74,15 @@ export const RegionCountrySection = ({ region }: RegionCountrySectionProps) => {
       verificationInstruction: t("general.typeToConfirm"),
       cancelText: t("actions.cancel"),
       confirmText: t("actions.remove"),
-    });
+    })
 
     if (!res) {
-      return;
+      return
     }
 
     const payload = region.countries
       ?.filter((c) => !ids.includes(c.iso_2!))
-      .map((c) => c.iso_2!);
+      .map((c) => c.iso_2!)
 
     await mutateAsync(
       {
@@ -90,19 +90,19 @@ export const RegionCountrySection = ({ region }: RegionCountrySectionProps) => {
       },
       {
         onSuccess: () => {
-          toast.success(t("regions.toast.countries"));
+          toast.success(t("regions.toast.countries"))
         },
         onError: (e) => {
-          toast.error(e.message);
+          toast.error(e.message)
         },
-      },
-    );
-  };
+      }
+    )
+  }
 
   return (
-    <Container className="divide-y p-0">
-      <div className="flex items-center justify-between px-6 py-4">
-        <Heading level="h2">{t("fields.countries")}</Heading>
+    <Container className="divide-y p-0" data-testid="region-country-section-container">
+      <div className="flex items-center justify-between px-6 py-4" data-testid="region-country-section-header">
+        <Heading level="h2" data-testid="region-country-section-heading">{t("fields.countries")}</Heading>
         <ActionMenu
           groups={[
             {
@@ -115,6 +115,7 @@ export const RegionCountrySection = ({ region }: RegionCountrySectionProps) => {
               ],
             },
           ]}
+          data-testid="region-country-section-action-menu"
         />
       </div>
       <_DataTable
@@ -137,25 +138,27 @@ export const RegionCountrySection = ({ region }: RegionCountrySectionProps) => {
             shortcut: "r",
           },
         ]}
+        data-testid="region-country-section-table"
       />
     </Container>
-  );
-};
+  )
+}
 
 const CountryActions = ({
   country,
   region,
 }: {
-  country: HttpTypes.AdminRegionCountry;
-  region: HttpTypes.AdminRegion;
+  country: StaticCountry
+  region: HttpTypes.AdminRegion
 }) => {
-  const { t } = useTranslation();
-  const prompt = usePrompt();
-  const { mutateAsync } = useUpdateRegion(region.id);
+  const { t } = useTranslation()
+  const prompt = usePrompt()
+  const { mutateAsync } = useUpdateRegion(region.id)
 
   const payload = region.countries
     ?.filter((c) => c.iso_2 !== country.iso_2)
-    .map((c) => c.iso_2);
+    .map((c) => c.iso_2)
+    .filter((iso): iso is string => iso !== undefined)
 
   const handleRemove = async () => {
     const res = await prompt({
@@ -167,10 +170,10 @@ const CountryActions = ({
       verificationInstruction: t("general.typeToConfirm"),
       cancelText: t("actions.cancel"),
       confirmText: t("actions.remove"),
-    });
+    })
 
     if (!res) {
-      return;
+      return
     }
 
     await mutateAsync(
@@ -179,14 +182,14 @@ const CountryActions = ({
       },
       {
         onSuccess: () => {
-          toast.success(t("regions.toast.countries"));
+          toast.success(t("regions.toast.countries"))
         },
         onError: (e) => {
-          toast.error(e.message);
+          toast.error(e.message)
         },
-      },
-    );
-  };
+      }
+    )
+  }
 
   return (
     <ActionMenu
@@ -201,14 +204,15 @@ const CountryActions = ({
           ],
         },
       ]}
+      data-testid={`region-country-section-action-menu-${country.iso_2}`}
     />
-  );
-};
+  )
+}
 
-const columnHelper = createColumnHelper<HttpTypes.AdminRegionCountry>();
+const columnHelper = createColumnHelper<StaticCountry>()
 
 const useColumns = () => {
-  const base = useCountryTableColumns();
+  const base = useCountryTableColumns()
 
   return useMemo(
     () => [
@@ -225,8 +229,9 @@ const useColumns = () => {
               onCheckedChange={(value) =>
                 table.toggleAllPageRowsSelected(!!value)
               }
+              data-testid="region-country-section-select-all-checkbox"
             />
-          );
+          )
         },
         cell: ({ row }) => {
           return (
@@ -234,10 +239,11 @@ const useColumns = () => {
               checked={row.getIsSelected()}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               onClick={(e) => {
-                e.stopPropagation();
+                e.stopPropagation()
               }}
+              data-testid={`region-country-section-select-checkbox-${row.original.iso_2}`}
             />
-          );
+          )
         },
       }),
       ...base,
@@ -245,13 +251,13 @@ const useColumns = () => {
         id: "actions",
         cell: ({ row, table }) => {
           const { region } = table.options.meta as {
-            region: HttpTypes.AdminRegion;
-          };
+            region: HttpTypes.AdminRegion
+          }
 
-          return <CountryActions country={row.original} region={region} />;
+          return <CountryActions country={row.original} region={region} />
         },
       }),
     ],
-    [base],
-  ) as ColumnDef<HttpTypes.AdminRegionCountry>[];
-};
+    [base]
+  ) as ColumnDef<StaticCountry>[]
+}

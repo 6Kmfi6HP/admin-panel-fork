@@ -1,5 +1,10 @@
-import type { PropsWithChildren, ReactNode } from "react";
-import { useCallback, useEffect, useState } from "react";
+import {
+  PropsWithChildren,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 import { Kbd, Text, clx } from "@medusajs/ui";
 
@@ -7,9 +12,8 @@ import { Collapsible as RadixCollapsible } from "radix-ui";
 import { useTranslation } from "react-i18next";
 import { NavLink, useLocation } from "react-router-dom";
 
-import { ConditionalTooltip } from "@components/common/conditional-tooltip";
-
-import { useGlobalShortcuts } from "@providers/keybind-provider/hooks";
+import { useGlobalShortcuts } from "../../../providers/keybind-provider/hooks";
+import { ConditionalTooltip } from "../../common/conditional-tooltip";
 
 type ItemType = "core" | "extension" | "setting";
 
@@ -39,8 +43,11 @@ const getIsOpen = (
   to: string,
   items: NestedItemProps[] | undefined,
   pathname: string,
-) =>
-  [to, ...(items?.map((i) => i.to) ?? [])].some((p) => pathname.startsWith(p));
+) => {
+  return [to, ...(items?.map((i) => i.to) ?? [])].some((p) =>
+    pathname.startsWith(p),
+  );
+};
 
 const NavItemTooltip = ({
   to,
@@ -122,7 +129,10 @@ export const NavItem = ({
   const isSetting = type === "setting";
 
   return (
-    <div className="px-3">
+    <div
+      className="px-3"
+      data-testid={`sidebar-nav-item-${to.replace(/\//g, "-").replace(/^-/, "")}`}
+    >
       <NavItemTooltip to={to}>
         <NavLink
           to={to}
@@ -139,6 +149,7 @@ export const NavItem = ({
               "max-lg:hidden": !!items?.length,
             });
           }}
+          data-testid={`sidebar-nav-link-${to.replace(/\//g, "-").replace(/^-/, "")}`}
         >
           {type !== "setting" && (
             <div className="flex size-6 items-center justify-center">
@@ -166,23 +177,27 @@ export const NavItem = ({
             </Text>
           </RadixCollapsible.Trigger>
           <RadixCollapsible.Content>
-            <div className="flex flex-col gap-y-0.5 pb-2 pt-0.5">
+            <div
+              className="flex flex-col gap-y-0.5 pb-2 pt-0.5"
+              data-testid={`sidebar-nav-nested-items-${to.replace(/\//g, "-").replace(/^-/, "")}`}
+            >
               <ul className="flex flex-col gap-y-0.5">
                 <li className="flex w-full items-center gap-x-1 lg:hidden">
                   <NavItemTooltip to={to}>
                     <NavLink
                       to={to}
                       end
-                      className={({ isActive }) =>
-                        clx(
+                      className={({ isActive }) => {
+                        return clx(
                           navLinkClassNames({
                             to,
                             isActive,
                             isSetting,
                             isNested: true,
                           }),
-                        )
-                      }
+                        );
+                      }}
+                      data-testid={`sidebar-nav-link-nested-${to.replace(/\//g, "-").replace(/^-/, "")}`}
                     >
                       <Text size="small" weight="plus" leading="compact">
                         {label}
@@ -197,16 +212,17 @@ export const NavItem = ({
                         <NavLink
                           to={item.to}
                           end
-                          className={({ isActive }) =>
-                            clx(
+                          className={({ isActive }) => {
+                            return clx(
                               navLinkClassNames({
                                 to: item.to,
                                 isActive,
                                 isSetting,
                                 isNested: true,
                               }),
-                            )
-                          }
+                            );
+                          }}
+                          data-testid={`sidebar-nav-link-nested-${item.to.replace(/\//g, "-").replace(/^-/, "")}`}
                         >
                           <Text size="small" weight="plus" leading="compact">
                             {item.label}

@@ -137,13 +137,14 @@ export const DateFilter = ({
   };
 
   return (
-    <RadixPopover.Root modal open={open} onOpenChange={handleOpenChange}>
+    <RadixPopover.Root modal open={open} onOpenChange={handleOpenChange} data-testid={`data-table-date-filter-${key}`}>
       <FilterChip
         hadPreviousValue={!!previousValue}
         label={label}
         value={displayValue}
         onRemove={handleRemove}
         readonly={readonly}
+        data-testid={`data-table-date-filter-chip-${key}`}
       />
       {!readonly && (
         <RadixPopover.Portal>
@@ -155,6 +156,7 @@ export const DateFilter = ({
             className={clx(
               "h-full max-h-[var(--radix-popper-available-height)] w-[300px] overflow-auto rounded-lg bg-ui-bg-base text-ui-fg-base shadow-elevation-flyout",
             )}
+            data-testid={`data-table-date-filter-content-${key}`}
             onInteractOutside={(e) => {
               if (e.target instanceof HTMLElement) {
                 if (
@@ -166,7 +168,7 @@ export const DateFilter = ({
               }
             }}
           >
-            <ul className="w-full p-1">
+            <ul className="w-full p-1" data-testid={`data-table-date-filter-presets-${key}`}>
               {presets.map((preset) => {
                 const isSelected = selectedParams
                   .get()
@@ -180,6 +182,7 @@ export const DateFilter = ({
                       onClick={() => {
                         handleSelectPreset(preset.value);
                       }}
+                      data-testid={`data-table-date-filter-preset-${key}-${preset.label.toLowerCase().replace(/\s+/g, "-")}`}
                     >
                       <div
                         className={clx(
@@ -188,6 +191,7 @@ export const DateFilter = ({
                             "[&_svg]:invisible": !isSelected,
                           },
                         )}
+                        data-testid={`data-table-date-filter-preset-checkbox-${key}-${preset.label.toLowerCase().replace(/\s+/g, "-")}`}
                       >
                         <EllipseMiniSolid />
                       </div>
@@ -201,6 +205,7 @@ export const DateFilter = ({
                   className="txt-compact-small relative flex w-full cursor-pointer select-none items-center rounded-md bg-ui-bg-base px-2 py-1.5 text-ui-fg-base outline-none transition-colors hover:bg-ui-bg-base-hover focus-visible:bg-ui-bg-base-pressed data-[disabled]:pointer-events-none data-[disabled]:text-ui-fg-disabled"
                   type="button"
                   onClick={handleSelectCustom}
+                  data-testid={`data-table-date-filter-custom-${key}`}
                 >
                   <div
                     className={clx(
@@ -209,6 +214,7 @@ export const DateFilter = ({
                         "[&_svg]:invisible": !showCustom,
                       },
                     )}
+                    data-testid={`data-table-date-filter-custom-checkbox-${key}`}
                   >
                     <EllipseMiniSolid />
                   </div>
@@ -217,10 +223,10 @@ export const DateFilter = ({
               </li>
             </ul>
             {showCustom && (
-              <div className="border-t px-1 pb-3 pt-1">
-                <div>
+              <div className="border-t px-1 pb-3 pt-1" data-testid={`data-table-date-filter-custom-form-${key}`}>
+                <div data-testid={`data-table-date-filter-from-${key}`}>
                   <div className="px-2 py-1">
-                    <Text size="xsmall" leading="compact" weight="plus">
+                    <Text size="xsmall" leading="compact" weight="plus" data-testid={`data-table-date-filter-from-label-${key}`}>
                       {t("filters.date.from")}
                     </Text>
                   </div>
@@ -230,12 +236,13 @@ export const DateFilter = ({
                       maxValue={customEndValue}
                       value={customStartValue}
                       onChange={(d) => handleCustomDateChange(d, "start")}
+                      data-testid={`data-table-date-filter-from-picker-${key}`}
                     />
                   </div>
                 </div>
-                <div>
+                <div data-testid={`data-table-date-filter-to-${key}`}>
                   <div className="px-2 py-1">
-                    <Text size="xsmall" leading="compact" weight="plus">
+                    <Text size="xsmall" leading="compact" weight="plus" data-testid={`data-table-date-filter-to-label-${key}`}>
                       {t("filters.date.to")}
                     </Text>
                   </div>
@@ -247,6 +254,7 @@ export const DateFilter = ({
                       onChange={(d) => {
                         handleCustomDateChange(d, "end");
                       }}
+                      data-testid={`data-table-date-filter-to-picker-${key}`}
                     />
                   </div>
                 </div>

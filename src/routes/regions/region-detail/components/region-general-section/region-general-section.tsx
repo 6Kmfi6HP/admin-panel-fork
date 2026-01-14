@@ -37,28 +37,30 @@ export const RegionGeneralSection = ({
   );
 
   return (
-    <Container className="divide-y p-0">
-      <div className="flex items-center justify-between px-6 py-4">
-        <Heading>{region.name}</Heading>
+    <Container className="divide-y p-0" data-testid="region-general-section-container">
+      <div className="flex items-center justify-between px-6 py-4" data-testid="region-general-section-header">
+        <Heading data-testid="region-general-section-name">{region.name}</Heading>
         <RegionActions region={region} />
       </div>
       <SectionRow
         title={t("fields.currency")}
         value={
-          <div className="flex items-center gap-x-2">
-            <Badge size="2xsmall" className="uppercase">
+          <div className="flex items-center gap-x-2" data-testid="region-general-section-currency-value">
+            <Badge size="2xsmall" className="uppercase" data-testid="region-general-section-currency-badge">
               {region.currency_code}
             </Badge>
-            <Text size="small" leading="compact">
+            <Text size="small" leading="compact" data-testid="region-general-section-currency-name">
               {currencies[region.currency_code.toUpperCase()].name}
             </Text>
           </div>
         }
+        data-testid="region-general-section-currency"
       />
 
       <SectionRow
         title={t("fields.automaticTaxes")}
         value={region.automatic_taxes ? t("fields.true") : t("fields.false")}
+        data-testid="region-general-section-automatic-taxes"
       />
 
       <SectionRow
@@ -68,12 +70,13 @@ export const RegionGeneralSection = ({
             ? t("fields.true")
             : t("fields.false")
         }
+        data-testid="region-general-section-tax-inclusive-pricing"
       />
 
       <SectionRow
         title={t("fields.paymentProviders")}
         value={
-          <div className="inline-flex">
+          <div className="inline-flex" data-testid="region-general-section-payment-providers-value">
             {region.payment_providers?.length ? (
               <ListSummary
                 list={region.payment_providers.map((p) => formatProvider(p.id))}
@@ -83,6 +86,7 @@ export const RegionGeneralSection = ({
             )}
           </div>
         }
+        data-testid="region-general-section-payment-providers"
       />
     </Container>
   );
@@ -143,6 +147,7 @@ const RegionActions = ({ region }: { region: HttpTypes.AdminRegion }) => {
           ],
         },
       ]}
+      data-testid="region-general-section-action-menu"
     />
   );
 };

@@ -1,24 +1,21 @@
-import { PencilSquare, Plus, Trash } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
-import { Badge, Container, Heading, usePrompt } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { SectionRow } from "@components/common/section";
-
-import { useDeleteProductOption } from "@hooks/api";
+import { PencilSquare, Plus, Trash } from "@medusajs/icons"
+import { Badge, Container, Heading, usePrompt } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
+import { ActionMenu } from "../../../../../components/common/action-menu"
+import { SectionRow } from "../../../../../components/common/section"
+import { useDeleteProductOption } from "../../../../../hooks/api/products"
+import { HttpTypes } from "@medusajs/types"
 
 const OptionActions = ({
   product,
   option,
 }: {
-  product: HttpTypes.AdminProduct;
-  option: HttpTypes.AdminProductOption;
+  product: HttpTypes.AdminProduct
+  option: HttpTypes.AdminProductOption
 }) => {
-  const { t } = useTranslation();
-  const { mutateAsync } = useDeleteProductOption(product.id, option.id);
-  const prompt = usePrompt();
+  const { t } = useTranslation()
+  const { mutateAsync } = useDeleteProductOption(product.id, option.id)
+  const prompt = usePrompt()
 
   const handleDelete = async () => {
     const res = await prompt({
@@ -28,14 +25,14 @@ const OptionActions = ({
       }),
       confirmText: t("actions.delete"),
       cancelText: t("actions.cancel"),
-    });
+    })
 
     if (!res) {
-      return;
+      return
     }
 
-    await mutateAsync();
-  };
+    await mutateAsync()
+  }
 
   return (
     <ActionMenu
@@ -59,23 +56,24 @@ const OptionActions = ({
           ],
         },
       ]}
+      data-testid={`product-option-actions-${option.id}`}
     />
-  );
-};
+  )
+}
 
 type ProductOptionSectionProps = {
-  product: HttpTypes.AdminProduct;
-};
+  product: HttpTypes.AdminProduct
+}
 
 export const ProductOptionSection = ({
   product,
 }: ProductOptionSectionProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
-    <Container className="divide-y p-0">
-      <div className="flex items-center justify-between px-6 py-4">
-        <Heading level="h2">{t("products.options.header")}</Heading>
+    <Container className="divide-y p-0" data-testid="product-option-section">
+      <div className="flex items-center justify-between px-6 py-4" data-testid="product-option-header">
+        <Heading level="h2" data-testid="product-option-title">{t("products.options.header")}</Heading>
         <ActionMenu
           groups={[
             {
@@ -88,6 +86,7 @@ export const ProductOptionSection = ({
               ],
             },
           ]}
+          data-testid="product-option-action-menu"
         />
       </div>
 
@@ -96,19 +95,23 @@ export const ProductOptionSection = ({
           <SectionRow
             title={option.title}
             key={option.id}
-            value={option.values?.map((val) => (
-              <Badge
-                key={val.value}
-                size="2xsmall"
-                className="flex min-w-[20px] items-center justify-center"
-              >
-                {val.value}
-              </Badge>
-            ))}
+            value={option.values?.map((val) => {
+              return (
+                <Badge
+                  key={val.value}
+                  size="2xsmall"
+                  className="flex min-w-[20px] items-center justify-center"
+                  data-testid={`product-option-value-badge-${option.id}-${val.value}`}
+                >
+                  {val.value}
+                </Badge>
+              )
+            })}
             actions={<OptionActions product={product} option={option} />}
+            data-testid={`product-option-row-${option.id}`}
           />
-        );
+        )
       })}
     </Container>
-  );
-};
+  )
+}

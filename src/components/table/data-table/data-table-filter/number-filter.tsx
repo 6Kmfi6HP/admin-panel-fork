@@ -1,27 +1,23 @@
-import type { ChangeEvent } from "react";
-import { useCallback, useEffect, useState } from "react";
-
-import { EllipseMiniSolid } from "@medusajs/icons";
-import { Input, Label, clx } from "@medusajs/ui";
-
-import type { TFunction } from "i18next";
-import { debounce } from "lodash";
+import { EllipseMiniSolid } from "@medusajs/icons"
+import { Input, Label, clx } from "@medusajs/ui"
+import { debounce } from "lodash"
 import {
   Popover as RadixPopover,
   RadioGroup as RadixRadioGroup,
-} from "radix-ui";
-import { useTranslation } from "react-i18next";
+} from "radix-ui"
+import { ChangeEvent, useCallback, useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 
-import { useSelectedParams } from "@components/table/data-table/hooks";
+import { TFunction } from "i18next"
+import { useSelectedParams } from "../hooks"
+import { useDataTableFilterContext } from "./context"
+import FilterChip from "./filter-chip"
+import { IFilter } from "./types"
 
-import { useDataTableFilterContext } from "./context";
-import FilterChip from "./filter-chip";
-import type { IFilter } from "./types";
+type NumberFilterProps = IFilter
 
-type NumberFilterProps = IFilter;
-
-type Comparison = "exact" | "range";
-type Operator = "lt" | "gt" | "eq";
+type Comparison = "exact" | "range"
+type Operator = "lt" | "gt" | "eq"
 
 export const NumberFilter = ({
   filter,
@@ -29,100 +25,98 @@ export const NumberFilter = ({
   readonly,
   openOnMount,
 }: NumberFilterProps) => {
-  const { t } = useTranslation();
-  const [open, setOpen] = useState(openOnMount);
+  const { t } = useTranslation()
+  const [open, setOpen] = useState(openOnMount)
 
-  const { key, label } = filter;
+  const { key, label } = filter
 
-  const { removeFilter } = useDataTableFilterContext();
+  const { removeFilter } = useDataTableFilterContext()
   const selectedParams = useSelectedParams({
     param: key,
     prefix,
     multiple: false,
-  });
+  })
 
-  const currentValue = selectedParams.get();
+  const currentValue = selectedParams.get()
   const [previousValue, setPreviousValue] = useState<string[] | undefined>(
-    currentValue,
-  );
+    currentValue
+  )
 
   const [operator, setOperator] = useState<Comparison | undefined>(
-    getOperator(currentValue),
-  );
+    getOperator(currentValue)
+  )
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedOnChange = useCallback(
     debounce((e: ChangeEvent<HTMLInputElement>, operator: Operator) => {
-      const value = e.target.value;
-      const curr = JSON.parse(currentValue?.join(",") || "{}");
-      const isCurrentNumber = !isNaN(Number(curr));
+      const value = e.target.value
+      const curr = JSON.parse(currentValue?.join(",") || "{}")
+      const isCurrentNumber = !isNaN(Number(curr))
 
       const handleValue = (operator: Operator) => {
         if (!value && isCurrentNumber) {
-          selectedParams.delete();
-
-          return;
+          selectedParams.delete()
+          return
         }
 
         if (curr && !value) {
-          delete curr[operator];
-          selectedParams.add(JSON.stringify(curr));
-
-          return;
+          delete curr[operator]
+          selectedParams.add(JSON.stringify(curr))
+          return
         }
 
         if (!curr) {
-          selectedParams.add(JSON.stringify({ [operator]: value }));
-
-          return;
+          selectedParams.add(JSON.stringify({ [operator]: value }))
+          return
         }
 
-        selectedParams.add(JSON.stringify({ ...curr, [operator]: value }));
-      };
+        selectedParams.add(JSON.stringify({ ...curr, [operator]: value }))
+      }
 
       switch (operator) {
         case "eq":
           if (!value) {
-            selectedParams.delete();
+            selectedParams.delete()
           } else {
-            selectedParams.add(value);
+            selectedParams.add(value)
           }
-          break;
+          break
         case "lt":
         case "gt":
-          handleValue(operator);
-          break;
+          handleValue(operator)
+          break
       }
     }, 500),
-    [selectedParams, currentValue],
-  );
+    [selectedParams, currentValue]
+  )
 
   useEffect(() => {
     return () => {
-      debouncedOnChange.cancel();
-    };
-  }, [debouncedOnChange]);
+      debouncedOnChange.cancel()
+    }
+  }, [debouncedOnChange])
 
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null
 
   const handleOpenChange = (open: boolean) => {
-    setOpen(open);
-    setPreviousValue(currentValue);
+    setOpen(open)
+    setPreviousValue(currentValue)
 
     if (timeoutId) {
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId)
     }
 
     if (!open && !currentValue.length) {
       timeoutId = setTimeout(() => {
-        removeFilter(key);
-      }, 200);
+        removeFilter(key)
+      }, 200)
     }
-  };
+  }
 
   const handleRemove = () => {
-    selectedParams.delete();
-    removeFilter(key);
-  };
+    selectedParams.delete()
+    removeFilter(key)
+  }
 
   const operators: { operator: Comparison; label: string }[] = [
     {
@@ -133,17 +127,17 @@ export const NumberFilter = ({
       operator: "range",
       label: t("filters.compare.range"),
     },
-  ];
+  ]
 
-  const GT_KEY = `${key}-gt`;
-  const LT_KEY = `${key}-lt`;
-  const EQ_KEY = key;
+  const GT_KEY = `${key}-gt`
+  const LT_KEY = `${key}-lt`
+  const EQ_KEY = key
 
-  const displayValue = parseDisplayValue(currentValue, t);
-  const previousDisplayValue = parseDisplayValue(previousValue, t);
+  const displayValue = parseDisplayValue(currentValue, t)
+  const previousDisplayValue = parseDisplayValue(previousValue, t)
 
   return (
-    <RadixPopover.Root modal open={open} onOpenChange={handleOpenChange}>
+    <RadixPopover.Root modal open={open} onOpenChange={handleOpenChange} data-testid={`data-table-number-filter-${key}`}>
       <FilterChip
         hasOperator
         hadPreviousValue={!!previousDisplayValue}
@@ -151,6 +145,7 @@ export const NumberFilter = ({
         value={displayValue}
         onRemove={handleRemove}
         readonly={readonly}
+        data-testid={`data-table-number-filter-chip-${key}`}
       />
       {!readonly && (
         <RadixPopover.Portal>
@@ -160,34 +155,35 @@ export const NumberFilter = ({
             sideOffset={8}
             collisionPadding={24}
             className={clx(
-              "max-h-[var(--radix-popper-available-height)] w-[300px] divide-y overflow-y-auto rounded-lg bg-ui-bg-base text-ui-fg-base shadow-elevation-flyout outline-none",
+              "bg-ui-bg-base text-ui-fg-base shadow-elevation-flyout max-h-[var(--radix-popper-available-height)] w-[300px] divide-y overflow-y-auto rounded-lg outline-none"
             )}
+            data-testid={`data-table-number-filter-content-${key}`}
             onInteractOutside={(e) => {
               if (e.target instanceof HTMLElement) {
                 if (
                   e.target.attributes.getNamedItem("data-name")?.value ===
                   "filters_menu_content"
                 ) {
-                  e.preventDefault();
+                  e.preventDefault()
                 }
               }
             }}
           >
-            <div className="p-1">
+            <div className="p-1" data-testid={`data-table-number-filter-operator-group-${key}`}>
               <RadixRadioGroup.Root
                 value={operator}
                 onValueChange={(val) => setOperator(val as Comparison)}
                 className="flex flex-col items-start"
                 orientation="vertical"
-                /*@todo fix a11y*/
-                /* eslint-disable-next-line jsx-a11y/no-autofocus */
                 autoFocus
+                data-testid={`data-table-number-filter-operator-radio-${key}`}
               >
                 {operators.map((o) => (
                   <RadixRadioGroup.Item
                     key={o.operator}
                     value={o.operator}
-                    className="txt-compact-small grid w-full grid-cols-[20px_1fr] gap-2 rounded-[4px] px-2 py-1.5 text-left outline-none transition-fg hover:bg-ui-bg-base-hover focus-visible:bg-ui-bg-base-hover active:bg-ui-bg-base-pressed"
+                    className="txt-compact-small hover:bg-ui-bg-base-hover focus-visible:bg-ui-bg-base-hover active:bg-ui-bg-base-pressed transition-fg grid w-full grid-cols-[20px_1fr] gap-2 rounded-[4px] px-2 py-1.5 text-left outline-none"
+                    data-testid={`data-table-number-filter-operator-${key}-${o.operator}`}
                   >
                     <div className="size-5">
                       <RadixRadioGroup.Indicator>
@@ -199,11 +195,11 @@ export const NumberFilter = ({
                 ))}
               </RadixRadioGroup.Root>
             </div>
-            <div>
+            <div data-testid={`data-table-number-filter-inputs-${key}`}>
               {operator === "range" ? (
-                <div className="px-1 pb-3 pt-1" key="range">
+                <div className="px-1 pb-3 pt-1" key="range" data-testid={`data-table-number-filter-range-${key}`}>
                   <div className="px-2 py-1.5">
-                    <Label size="xsmall" weight="plus" htmlFor={GT_KEY}>
+                    <Label size="xsmall" weight="plus" htmlFor={GT_KEY} data-testid={`data-table-number-filter-gt-label-${key}`}>
                       {t("filters.compare.greaterThan")}
                     </Label>
                   </div>
@@ -214,10 +210,11 @@ export const NumberFilter = ({
                       type="number"
                       defaultValue={getValue(currentValue, "gt")}
                       onChange={(e) => debouncedOnChange(e, "gt")}
+                      data-testid={`data-table-number-filter-gt-input-${key}`}
                     />
                   </div>
                   <div className="px-2 py-1.5">
-                    <Label size="xsmall" weight="plus" htmlFor={LT_KEY}>
+                    <Label size="xsmall" weight="plus" htmlFor={LT_KEY} data-testid={`data-table-number-filter-lt-label-${key}`}>
                       {t("filters.compare.lessThan")}
                     </Label>
                   </div>
@@ -228,13 +225,14 @@ export const NumberFilter = ({
                       type="number"
                       defaultValue={getValue(currentValue, "lt")}
                       onChange={(e) => debouncedOnChange(e, "lt")}
+                      data-testid={`data-table-number-filter-lt-input-${key}`}
                     />
                   </div>
                 </div>
               ) : (
-                <div className="px-1 pb-3 pt-1" key="exact">
+                <div className="px-1 pb-3 pt-1" key="exact" data-testid={`data-table-number-filter-exact-${key}`}>
                   <div className="px-2 py-1.5">
-                    <Label size="xsmall" weight="plus" htmlFor={EQ_KEY}>
+                    <Label size="xsmall" weight="plus" htmlFor={EQ_KEY} data-testid={`data-table-number-filter-eq-label-${key}`}>
                       {label}
                     </Label>
                   </div>
@@ -245,6 +243,7 @@ export const NumberFilter = ({
                       type="number"
                       defaultValue={getValue(currentValue, "eq")}
                       onChange={(e) => debouncedOnChange(e, "eq")}
+                      data-testid={`data-table-number-filter-eq-input-${key}`}
                     />
                   </div>
                 </div>
@@ -254,71 +253,71 @@ export const NumberFilter = ({
         </RadixPopover.Portal>
       )}
     </RadixPopover.Root>
-  );
-};
+  )
+}
 
 const parseDisplayValue = (
   value: string[] | null | undefined,
-  t: TFunction,
+  t: TFunction
 ) => {
-  const parsed = JSON.parse(value?.join(",") || "{}");
-  let displayValue = "";
+  const parsed = JSON.parse(value?.join(",") || "{}")
+  let displayValue = ""
 
   if (typeof parsed === "object") {
-    const parts = [];
+    const parts = []
     if (parsed.gt) {
-      parts.push(t("filters.compare.greaterThanLabel", { value: parsed.gt }));
+      parts.push(t("filters.compare.greaterThanLabel", { value: parsed.gt }))
     }
 
     if (parsed.lt) {
       parts.push(
         t("filters.compare.lessThanLabel", {
           value: parsed.lt,
-        }),
-      );
+        })
+      )
     }
 
-    displayValue = parts.join(` ${t("filters.compare.andLabel")} `);
+    displayValue = parts.join(` ${t("filters.compare.andLabel")} `)
   }
 
   if (typeof parsed === "number") {
-    displayValue = parsed.toString();
+    displayValue = parsed.toString()
   }
 
-  return displayValue;
-};
+  return displayValue
+}
 
 const parseValue = (value: string[] | null | undefined) => {
   if (!value) {
-    return undefined;
+    return undefined
   }
 
-  const val = value.join(",");
+  const val = value.join(",")
   if (!val) {
-    return undefined;
+    return undefined
   }
 
-  return JSON.parse(val);
-};
+  return JSON.parse(val)
+}
 
 const getValue = (
   value: string[] | null | undefined,
-  key: Operator,
+  key: Operator
 ): number | undefined => {
-  const parsed = parseValue(value);
+  const parsed = parseValue(value)
 
   if (typeof parsed === "object") {
-    return parsed[key];
+    return parsed[key]
   }
   if (typeof parsed === "number" && key === "eq") {
-    return parsed;
+    return parsed
   }
 
-  return undefined;
-};
+  return undefined
+}
 
 const getOperator = (value?: string[] | null): Comparison | undefined => {
-  const parsed = parseValue(value);
+  const parsed = parseValue(value)
 
-  return typeof parsed === "object" ? "range" : "exact";
-};
+  return typeof parsed === "object" ? "range" : "exact"
+}

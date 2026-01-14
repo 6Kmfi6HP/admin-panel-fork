@@ -4,7 +4,7 @@ import { CreateShippingProfileForm } from "@routes/shipping-profiles/shipping-pr
 
 export function ShippingProfileCreate() {
   return (
-    <RouteFocusModal>
+    <RouteFocusModal data-testid="shipping-profile-create-modal">
       <CreateShippingProfileForm />
     </RouteFocusModal>
   );

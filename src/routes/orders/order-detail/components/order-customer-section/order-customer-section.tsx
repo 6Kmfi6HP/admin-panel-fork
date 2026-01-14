@@ -1,37 +1,32 @@
-import {
-  ArrowPath,
-  CurrencyDollar,
-  Envelope,
-  FlyingBox,
-} from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
-import { Container, Heading } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { CustomerInfo } from "@components/common/customer-info";
+import { Container, Heading } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
+import { ArrowPath, CurrencyDollar, Envelope, FlyingBox } from "@medusajs/icons"
+import { ActionMenu } from "../../../../../components/common/action-menu"
+import { CustomerInfo } from "../../../../../components/common/customer-info"
+import { HttpTypes } from "@medusajs/types"
 
 type OrderCustomerSectionProps = {
-  order: HttpTypes.AdminOrder;
-};
+  order: HttpTypes.AdminOrder
+}
 
-export const OrderCustomerSection = ({ order }: OrderCustomerSectionProps) => (
-  <Container className="divide-y p-0">
-    <Header />
-    <CustomerInfo.ID data={order} />
-    <CustomerInfo.Contact data={order} />
-    <CustomerInfo.Company data={order} />
-    <CustomerInfo.Addresses data={order} />
-  </Container>
-);
+export const OrderCustomerSection = ({ order }: OrderCustomerSectionProps) => {
+  return (
+    <Container className="divide-y p-0" data-testid="order-customer-section">
+      <Header />
+      <CustomerInfo.ID data={order} />
+      <CustomerInfo.Contact data={order} />
+      <CustomerInfo.Company data={order} />
+      <CustomerInfo.Addresses data={order} />
+    </Container>
+  )
+}
 
 const Header = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
-    <div className="flex items-center justify-between px-6 py-4">
-      <Heading level="h2">{t("fields.customer")}</Heading>
+    <div className="flex items-center justify-between px-6 py-4" data-testid="order-customer-header">
+      <Heading level="h2" data-testid="order-customer-heading">{t("fields.customer")}</Heading>
       <ActionMenu
         groups={[
           {
@@ -67,7 +62,8 @@ const Header = () => {
             ],
           },
         ]}
+        data-testid="order-customer-action-menu"
       />
     </div>
-  );
-};
+  )
+}

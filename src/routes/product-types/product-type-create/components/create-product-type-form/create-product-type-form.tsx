@@ -1,32 +1,32 @@
-import { Button, Heading, Input, Text, toast } from "@medusajs/ui";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { z } from "zod";
-
-import { Form } from "@components/common/form";
-import { RouteFocusModal, useRouteModal } from "@components/modals";
-import { KeyboundForm } from "@components/utilities/keybound-form";
-
-import { useCreateProductType } from "@hooks/api";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Button, Heading, Input, Text, toast } from "@medusajs/ui"
+import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
+import { z } from "zod"
+import { Form } from "../../../../../components/common/form"
+import {
+  RouteFocusModal,
+  useRouteModal,
+} from "../../../../../components/modals"
+import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
+import { useCreateProductType } from "../../../../../hooks/api/product-types"
 
 const CreateProductTypeSchema = z.object({
   value: z.string().min(1),
-});
+})
 
 export const CreateProductTypeForm = () => {
-  const { t } = useTranslation();
-  const { handleSuccess } = useRouteModal();
+  const { t } = useTranslation()
+  const { handleSuccess } = useRouteModal()
 
   const form = useForm<z.infer<typeof CreateProductTypeSchema>>({
     defaultValues: {
       value: "",
     },
     resolver: zodResolver(CreateProductTypeSchema),
-  });
+  })
 
-  const { mutateAsync, isPending } = useCreateProductType();
+  const { mutateAsync, isPending } = useCreateProductType()
 
   const handleSubmit = form.handleSubmit(
     async (values: z.infer<typeof CreateProductTypeSchema>) => {
@@ -35,26 +35,26 @@ export const CreateProductTypeForm = () => {
           toast.success(
             t("productTypes.create.successToast", {
               value: product_type.value.trim(),
-            }),
-          );
+            })
+          )
 
-          handleSuccess(`/settings/product-types/${product_type.id}`);
+          handleSuccess(`/settings/product-types/${product_type.id}`)
         },
         onError: (e) => {
-          toast.error(e.message);
+          toast.error(e.message)
         },
-      });
-    },
-  );
+      })
+    }
+  )
 
   return (
-    <RouteFocusModal.Form form={form}>
+    <RouteFocusModal.Form form={form} data-testid="product-type-create-form">
       <KeyboundForm onSubmit={handleSubmit} className="flex h-full flex-col">
-        <RouteFocusModal.Body className="flex flex-col items-center overflow-auto p-16">
+        <RouteFocusModal.Body className="flex flex-col items-center overflow-auto p-16" data-testid="product-type-create-form-body">
           <div className="flex w-full max-w-[720px] flex-col gap-y-8">
-            <div>
-              <Heading>{t("productTypes.create.header")}</Heading>
-              <Text size="small" className="text-ui-fg-subtle">
+            <div data-testid="product-type-create-form-header-section">
+              <Heading data-testid="product-type-create-form-heading">{t("productTypes.create.header")}</Heading>
+              <Text size="small" className="text-ui-fg-subtle" data-testid="product-type-create-form-hint">
                 {t("productTypes.create.hint")}
               </Text>
             </div>
@@ -62,23 +62,25 @@ export const CreateProductTypeForm = () => {
               <Form.Field
                 control={form.control}
                 name="value"
-                render={({ field }) => (
-                  <Form.Item>
-                    <Form.Label>{t("productTypes.fields.value")}</Form.Label>
-                    <Form.Control>
-                      <Input {...field} />
-                    </Form.Control>
-                    <Form.ErrorMessage />
-                  </Form.Item>
-                )}
+                render={({ field }) => {
+                  return (
+                    <Form.Item data-testid="product-type-create-form-value-item">
+                      <Form.Label data-testid="product-type-create-form-value-label">{t("productTypes.fields.value")}</Form.Label>
+                      <Form.Control data-testid="product-type-create-form-value-control">
+                        <Input {...field} data-testid="product-type-create-form-value-input" />
+                      </Form.Control>
+                      <Form.ErrorMessage data-testid="product-type-create-form-value-error" />
+                    </Form.Item>
+                  )
+                }}
               />
             </div>
           </div>
         </RouteFocusModal.Body>
-        <RouteFocusModal.Footer>
+        <RouteFocusModal.Footer data-testid="product-type-create-form-footer">
           <div className="flex items-center justify-end gap-x-2">
             <RouteFocusModal.Close asChild>
-              <Button size="small" variant="secondary">
+              <Button size="small" variant="secondary" data-testid="product-type-create-form-cancel-button">
                 {t("actions.cancel")}
               </Button>
             </RouteFocusModal.Close>
@@ -87,6 +89,7 @@ export const CreateProductTypeForm = () => {
               variant="primary"
               type="submit"
               isLoading={isPending}
+              data-testid="product-type-create-form-create-button"
             >
               {t("actions.create")}
             </Button>
@@ -94,5 +97,5 @@ export const CreateProductTypeForm = () => {
         </RouteFocusModal.Footer>
       </KeyboundForm>
     </RouteFocusModal.Form>
-  );
-};
+  )
+}

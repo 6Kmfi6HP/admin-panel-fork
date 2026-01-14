@@ -25,6 +25,7 @@ export const ProfileDetail = () => {
         after: getWidgets("profile.details.after"),
         before: getWidgets("profile.details.before"),
       }}
+      data-testid="profile-detail-page"
     >
       <ProfileGeneralSection user={user} />
     </SingleColumnPage>
