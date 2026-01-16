@@ -17,7 +17,12 @@ export const canVariantBeFulfilledByAdmin = (
     return false;
   }
 
-  return inventory.location_levels.some(level => adminLocationIds.has(level.location_id));
+  return inventory.location_levels.some(
+    level =>
+      adminLocationIds.has(level.location_id) &&
+      level.available_quantity &&
+      level.available_quantity > 0
+  );
 };
 
 export const filterItemsFulfillableByAdmin = (
