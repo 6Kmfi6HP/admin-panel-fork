@@ -1,13 +1,13 @@
-import { useQueryParams } from "@hooks/use-query-params";
+import { useQueryParams } from '@hooks/use-query-params';
 
 export const useCountryTableQuery = ({
   pageSize,
-  prefix,
+  prefix
 }: {
   pageSize: number;
   prefix?: string;
 }) => {
-  const raw = useQueryParams(["order", "q", "offset"], prefix);
+  const raw = useQueryParams(['order', 'q', 'offset'], prefix);
 
   const { offset, order, q } = raw;
 
@@ -15,11 +15,11 @@ export const useCountryTableQuery = ({
     limit: pageSize,
     offset: offset ? parseInt(offset, 10) : 0,
     order,
-    q,
+    q
   };
 
   return {
     searchParams,
-    raw,
+    raw
   };
 };

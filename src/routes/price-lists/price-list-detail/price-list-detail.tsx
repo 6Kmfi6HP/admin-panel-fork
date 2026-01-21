@@ -1,15 +1,11 @@
-import { useParams } from "react-router-dom";
-
-import { TwoColumnPageSkeleton } from "@components/common/skeleton";
-import { TwoColumnPage } from "@components/layout/pages";
-
-import { usePriceList } from "@hooks/api";
-
-import { PriceListConfigurationSection } from "@routes/price-lists/price-list-detail/components/price-list-configuration-section";
-import { PriceListGeneralSection } from "@routes/price-lists/price-list-detail/components/price-list-general-section";
-import { PriceListProductSection } from "@routes/price-lists/price-list-detail/components/price-list-product-section";
-
-import { useExtension } from "@providers/extension-provider";
+import { TwoColumnPageSkeleton } from '@components/common/skeleton';
+import { TwoColumnPage } from '@components/layout/pages';
+import { usePriceList } from '@hooks/api';
+import { useExtension } from '@providers/extension-provider';
+import { PriceListConfigurationSection } from '@routes/price-lists/price-list-detail/components/price-list-configuration-section';
+import { PriceListGeneralSection } from '@routes/price-lists/price-list-detail/components/price-list-general-section';
+import { PriceListProductSection } from '@routes/price-lists/price-list-detail/components/price-list-product-section';
+import { useParams } from 'react-router-dom';
 
 export const PriceListDetails = () => {
   const { id } = useParams();
@@ -19,7 +15,11 @@ export const PriceListDetails = () => {
 
   if (isLoading || !price_list) {
     return (
-      <TwoColumnPageSkeleton mainSections={2} sidebarSections={1} showJSON />
+      <TwoColumnPageSkeleton
+        mainSections={2}
+        sidebarSections={1}
+        showJSON
+      />
     );
   }
 
@@ -30,10 +30,10 @@ export const PriceListDetails = () => {
   return (
     <TwoColumnPage
       widgets={{
-        after: getWidgets("price_list.details.after"),
-        before: getWidgets("price_list.details.before"),
-        sideAfter: getWidgets("price_list.details.side.after"),
-        sideBefore: getWidgets("price_list.details.side.before"),
+        after: getWidgets('price_list.details.after'),
+        before: getWidgets('price_list.details.before'),
+        sideAfter: getWidgets('price_list.details.side.after'),
+        sideBefore: getWidgets('price_list.details.side.before')
       }}
       data={price_list}
       showJSON

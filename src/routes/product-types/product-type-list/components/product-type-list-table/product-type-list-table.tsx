@@ -1,22 +1,19 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import type { HttpTypes } from "@medusajs/types";
-import { Button, Container, Heading, Text } from "@medusajs/ui";
+import { _DataTable } from '@components/table/data-table';
+import { useProductTypes } from '@hooks/api';
+import { useProductTypeTableColumns } from '@hooks/table/columns';
+import { useProductTypeTableFilters } from '@hooks/table/filters';
+import { useProductTypeTableQuery } from '@hooks/table/query';
+import { useDataTable } from '@hooks/use-data-table';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, Container, Heading, Text } from '@medusajs/ui';
+import { keepPreviousData } from '@tanstack/react-query';
+import { createColumnHelper } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
-import { keepPreviousData } from "@tanstack/react-query";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-
-import { _DataTable } from "@components/table/data-table";
-
-import { useProductTypes } from "@hooks/api";
-import { useProductTypeTableColumns } from "@hooks/table/columns";
-import { useProductTypeTableFilters } from "@hooks/table/filters";
-import { useProductTypeTableQuery } from "@hooks/table/query";
-import { useDataTable } from "@hooks/use-data-table";
-
-import { ProductTypeRowActions } from "./product-table-row-actions";
+import { ProductTypeRowActions } from './product-table-row-actions';
 
 const PAGE_SIZE = 20;
 
@@ -24,14 +21,11 @@ export const ProductTypeListTable = () => {
   const { t } = useTranslation();
 
   const { searchParams, raw } = useProductTypeTableQuery({
-    pageSize: PAGE_SIZE,
+    pageSize: PAGE_SIZE
   });
-  const { product_types, count, isLoading, isError, error } = useProductTypes(
-    searchParams,
-    {
-      placeholderData: keepPreviousData,
-    },
-  );
+  const { product_types, count, isLoading, isError, error } = useProductTypes(searchParams, {
+    placeholderData: keepPreviousData
+  });
 
   const filters = useProductTypeTableFilters();
   const columns = useColumns();
@@ -40,8 +34,8 @@ export const ProductTypeListTable = () => {
     columns,
     data: product_types,
     count,
-    getRowId: (row) => row.id,
-    pageSize: PAGE_SIZE,
+    getRowId: row => row.id,
+    pageSize: PAGE_SIZE
   });
 
   if (isError) {
@@ -49,16 +43,33 @@ export const ProductTypeListTable = () => {
   }
 
   return (
-    <Container className="divide-y p-0" data-testid="product-type-list-table-container">
-      <div className="flex items-center justify-between px-6 py-4" data-testid="product-type-list-table-header">
+    <Container
+      className="divide-y p-0"
+      data-testid="product-type-list-table-container"
+    >
+      <div
+        className="flex items-center justify-between px-6 py-4"
+        data-testid="product-type-list-table-header"
+      >
         <div>
-          <Heading data-testid="product-type-list-table-heading">{t("productTypes.domain")}</Heading>
-          <Text className="text-ui-fg-subtle" size="small" data-testid="product-type-list-table-subtitle">
-            {t("productTypes.subtitle")}
+          <Heading data-testid="product-type-list-table-heading">
+            {t('productTypes.domain')}
+          </Heading>
+          <Text
+            className="text-ui-fg-subtle"
+            size="small"
+            data-testid="product-type-list-table-subtitle"
+          >
+            {t('productTypes.subtitle')}
           </Text>
         </div>
-        <Button size="small" variant="secondary" asChild data-testid="product-type-list-table-create-button">
-          <Link to="create">{t("actions.create")}</Link>
+        <Button
+          size="small"
+          variant="secondary"
+          asChild
+          data-testid="product-type-list-table-create-button"
+        >
+          <Link to="create">{t('actions.create')}</Link>
         </Button>
       </div>
       <_DataTable
@@ -69,9 +80,9 @@ export const ProductTypeListTable = () => {
         pageSize={PAGE_SIZE}
         count={count}
         orderBy={[
-          { key: "value", label: t("fields.value") },
-          { key: "created_at", label: t("fields.createdAt") },
-          { key: "updated_at", label: t("fields.updatedAt") },
+          { key: 'value', label: t('fields.value') },
+          { key: 'created_at', label: t('fields.createdAt') },
+          { key: 'updated_at', label: t('fields.updatedAt') }
         ]}
         navigateTo={({ original }) => original.id}
         queryObject={raw}
@@ -92,10 +103,10 @@ const useColumns = () => {
     () => [
       ...base,
       columnHelper.display({
-        id: "actions",
-        cell: ({ row }) => <ProductTypeRowActions productType={row.original} />,
-      }),
+        id: 'actions',
+        cell: ({ row }) => <ProductTypeRowActions productType={row.original} />
+      })
     ],
-    [base],
+    [base]
   );
 };

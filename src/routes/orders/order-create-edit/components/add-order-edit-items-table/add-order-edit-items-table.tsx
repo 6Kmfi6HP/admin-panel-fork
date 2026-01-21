@@ -1,19 +1,17 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import type { OnChangeFn, RowSelectionState } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
+import { _DataTable } from '@components/table/data-table';
+import { useVariants } from '@hooks/api';
+import { useDataTable } from '@hooks/use-data-table';
+import type { OnChangeFn, RowSelectionState } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 
-import { _DataTable } from "@components/table/data-table";
-
-import { useVariants } from "@hooks/api";
-import { useDataTable } from "@hooks/use-data-table";
-
-import { useOrderEditItemsTableColumns } from "./use-order-edit-item-table-columns";
-import { useOrderEditItemTableFilters } from "./use-order-edit-item-table-filters";
-import { useOrderEditItemTableQuery } from "./use-order-edit-item-table-query";
+import { useOrderEditItemsTableColumns } from './use-order-edit-item-table-columns';
+import { useOrderEditItemTableFilters } from './use-order-edit-item-table-filters';
+import { useOrderEditItemTableQuery } from './use-order-edit-item-table-query';
 
 const PAGE_SIZE = 50;
-const PREFIX = "rit";
+const PREFIX = 'rit';
 
 type AddExchangeOutboundItemsTableProps = {
   onSelectionChange: (ids: string[]) => void;
@@ -22,15 +20,14 @@ type AddExchangeOutboundItemsTableProps = {
 
 export const AddOrderEditItemsTable = ({
   onSelectionChange,
-  currencyCode,
+  currencyCode
 }: AddExchangeOutboundItemsTableProps) => {
   const { t } = useTranslation();
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const updater: OnChangeFn<RowSelectionState> = (fn) => {
-    const newState: RowSelectionState =
-      typeof fn === "function" ? fn(rowSelection) : fn;
+  const updater: OnChangeFn<RowSelectionState> = fn => {
+    const newState: RowSelectionState = typeof fn === 'function' ? fn(rowSelection) : fn;
 
     setRowSelection(newState);
     onSelectionChange(Object.keys(newState));
@@ -38,12 +35,12 @@ export const AddOrderEditItemsTable = ({
 
   const { searchParams, raw } = useOrderEditItemTableQuery({
     pageSize: PAGE_SIZE,
-    prefix: PREFIX,
+    prefix: PREFIX
   });
 
   const { variants = [], count } = useVariants({
     ...searchParams,
-    fields: "*inventory_items.inventory.location_levels,+inventory_quantity",
+    fields: '*inventory_items.inventory.location_levels,+inventory_quantity'
   });
 
   const columns = useOrderEditItemsTableColumns(currencyCode);
@@ -54,16 +51,16 @@ export const AddOrderEditItemsTable = ({
     columns: columns,
     count,
     enablePagination: true,
-    getRowId: (row) => row.id,
+    getRowId: row => row.id,
     pageSize: PAGE_SIZE,
-    enableRowSelection: (_row) => {
+    enableRowSelection: _row => {
       // TODO: Check inventory here. Check if other validations needs to be made
       return true;
     },
     rowSelection: {
       state: rowSelection,
-      updater,
-    },
+      updater
+    }
   });
 
   return (
@@ -78,9 +75,9 @@ export const AddOrderEditItemsTable = ({
         layout="fill"
         search
         orderBy={[
-          { key: "product_id", label: t("fields.product") },
-          { key: "title", label: t("fields.title") },
-          { key: "sku", label: t("fields.sku") },
+          { key: 'product_id', label: t('fields.product') },
+          { key: 'title', label: t('fields.title') },
+          { key: 'sku', label: t('fields.sku') }
         ]}
         prefix={PREFIX}
         queryObject={raw}

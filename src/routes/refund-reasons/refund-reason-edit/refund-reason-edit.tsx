@@ -1,13 +1,9 @@
-import { Heading } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-
-import { RouteDrawer } from "@components/modals";
-
-import { useRefundReason } from "@hooks/api";
-
-import { RefundReasonEditForm } from "@routes/refund-reasons/refund-reason-edit/components/refund-reason-edit-form";
+import { RouteDrawer } from '@components/modals';
+import { useRefundReason } from '@hooks/api';
+import { Heading } from '@medusajs/ui';
+import { RefundReasonEditForm } from '@routes/refund-reasons/refund-reason-edit/components/refund-reason-edit-form';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 export const RefundReasonEdit = () => {
   const { id } = useParams();
@@ -25,10 +21,12 @@ export const RefundReasonEdit = () => {
     <RouteDrawer data-testid="refund-reason-edit-drawer">
       <RouteDrawer.Header data-testid="refund-reason-edit-drawer-header">
         <RouteDrawer.Title asChild>
-          <Heading data-testid="refund-reason-edit-drawer-heading">{t("refundReasons.edit.header")}</Heading>
+          <Heading data-testid="refund-reason-edit-drawer-heading">
+            {t('refundReasons.edit.header')}
+          </Heading>
         </RouteDrawer.Title>
         <RouteDrawer.Description className="sr-only">
-          {t("refundReasons.edit.subtitle")}
+          {t('refundReasons.edit.subtitle')}
         </RouteDrawer.Description>
       </RouteDrawer.Header>
       {ready && <RefundReasonEditForm refundReason={refund_reason} />}

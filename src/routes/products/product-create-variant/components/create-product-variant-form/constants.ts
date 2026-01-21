@@ -1,7 +1,6 @@
-import { z } from "zod";
-import * as zod from "zod";
-
-import { optionalInt } from "@lib/validation";
+import { optionalInt } from '@lib/validation';
+import { z } from 'zod';
+import * as zod from 'zod';
 
 export const CreateProductVariantSchema = z.object({
   title: z.string().min(1),
@@ -10,17 +9,15 @@ export const CreateProductVariantSchema = z.object({
   allow_backorder: z.boolean().optional(),
   inventory_kit: z.boolean().optional(),
   options: z.record(z.string()),
-  prices: zod
-    .record(zod.string(), zod.string().or(zod.number()).optional())
-    .optional(),
+  prices: zod.record(zod.string(), zod.string().or(zod.number()).optional()).optional(),
   inventory: z
     .array(
       z.object({
         inventory_item_id: z.string(),
-        required_quantity: optionalInt,
-      }),
+        required_quantity: optionalInt
+      })
     )
-    .optional(),
+    .optional()
 });
 
 export const CreateVariantDetailsSchema = CreateProductVariantSchema.pick({
@@ -29,17 +26,17 @@ export const CreateVariantDetailsSchema = CreateProductVariantSchema.pick({
   manage_inventory: true,
   allow_backorder: true,
   inventory_kit: true,
-  options: true,
+  options: true
 });
 
 export const CreateVariantDetailsFields = Object.keys(
-  CreateVariantDetailsSchema.shape,
+  CreateVariantDetailsSchema.shape
 ) as (keyof typeof CreateVariantDetailsSchema.shape)[];
 
 export const CreateVariantPriceSchema = CreateProductVariantSchema.pick({
-  prices: true,
+  prices: true
 });
 
 export const CreateVariantPriceFields = Object.keys(
-  CreateVariantPriceSchema.shape,
+  CreateVariantPriceSchema.shape
 ) as (keyof typeof CreateVariantPriceSchema.shape)[];

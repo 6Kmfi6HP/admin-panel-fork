@@ -1,23 +1,21 @@
-import type { HttpTypes } from "@medusajs/types";
+import type { HttpTypes } from '@medusajs/types';
+import { EditProductMediaForm } from '@routes/products/product-media/components/edit-product-media-form';
+import { ProductMediaGallery } from '@routes/products/product-media/components/product-media-gallery';
+import { useSearchParams } from 'react-router-dom';
 
-import { useSearchParams } from "react-router-dom";
-
-import { EditProductMediaForm } from "@routes/products/product-media/components/edit-product-media-form";
-import { ProductMediaGallery } from "@routes/products/product-media/components/product-media-gallery";
-
-import { ProductMediaViewContext } from "./product-media-view-context";
+import { ProductMediaViewContext } from './product-media-view-context';
 
 type ProductMediaViewProps = {
   product: HttpTypes.AdminProduct;
 };
 
 enum View {
-  GALLERY = "gallery",
-  EDIT = "edit",
+  GALLERY = 'gallery',
+  EDIT = 'edit'
 }
 
 const getView = (searchParams: URLSearchParams) => {
-  const view = searchParams.get("view");
+  const view = searchParams.get('view');
   if (view === View.EDIT) {
     return View.EDIT;
   }
@@ -39,7 +37,7 @@ export const ProductMediaView = ({ product }: ProductMediaViewProps) => {
     <ProductMediaViewContext.Provider
       value={{
         goToGallery: handleGoToView(View.GALLERY),
-        goToEdit: handleGoToView(View.EDIT),
+        goToEdit: handleGoToView(View.EDIT)
       }}
     >
       {renderView(view, product)}

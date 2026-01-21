@@ -1,8 +1,6 @@
-import { SingleColumnPage } from "@components/layout/pages";
-
-import { PromotionListTable } from "@routes/promotions/promotion-list/components/promotion-list-table";
-
-import { useExtension } from "@providers/extension-provider";
+import { SingleColumnPage } from '@components/layout/pages';
+import { useExtension } from '@providers/extension-provider';
+import { PromotionListTable } from '@routes/promotions/promotion-list/components/promotion-list-table';
 
 export const PromotionsList = () => {
   const { getWidgets } = useExtension();
@@ -10,8 +8,8 @@ export const PromotionsList = () => {
   return (
     <SingleColumnPage
       widgets={{
-        before: getWidgets("promotion.list.before"),
-        after: getWidgets("promotion.list.after"),
+        before: getWidgets('promotion.list.before'),
+        after: getWidgets('promotion.list.after')
       }}
     >
       <PromotionListTable />

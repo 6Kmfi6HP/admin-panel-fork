@@ -1,27 +1,23 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 
+import { _DataTable } from '@components/table/data-table';
+import { useDataTable } from '@hooks/use-data-table';
+import { getStylizedAmount } from '@lib/money-amount-helpers';
+import { getReturnableQuantity } from '@lib/rma';
 import type {
   AdminOrderLineItem,
   DateComparisonOperator,
-  NumericalComparisonOperator,
-} from "@medusajs/types";
+  NumericalComparisonOperator
+} from '@medusajs/types';
+import type { OnChangeFn, RowSelectionState } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 
-import type { OnChangeFn, RowSelectionState } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-
-import { _DataTable } from "@components/table/data-table";
-
-import { useDataTable } from "@hooks/use-data-table";
-
-import { getStylizedAmount } from "@lib/money-amount-helpers";
-import { getReturnableQuantity } from "@lib/rma";
-
-import { useClaimItemTableColumns } from "./use-claim-item-table-columns";
-import { useClaimItemTableFilters } from "./use-claim-item-table-filters";
-import { useClaimItemTableQuery } from "./use-claim-item-table-query";
+import { useClaimItemTableColumns } from './use-claim-item-table-columns';
+import { useClaimItemTableFilters } from './use-claim-item-table-filters';
+import { useClaimItemTableQuery } from './use-claim-item-table-query';
 
 const PAGE_SIZE = 50;
-const PREFIX = "rit";
+const PREFIX = 'rit';
 
 type AddReturnItemsTableProps = {
   onSelectionChange: (ids: string[]) => void;
@@ -34,7 +30,7 @@ export const AddClaimItemsTable = ({
   onSelectionChange,
   selectedItems,
   items,
-  currencyCode,
+  currencyCode
 }: AddReturnItemsTableProps) => {
   const { t } = useTranslation();
 
@@ -43,12 +39,11 @@ export const AddClaimItemsTable = ({
       acc[id] = true;
 
       return acc;
-    }, {} as RowSelectionState),
+    }, {} as RowSelectionState)
   );
 
-  const updater: OnChangeFn<RowSelectionState> = (fn) => {
-    const newState: RowSelectionState =
-      typeof fn === "function" ? fn(rowSelection) : fn;
+  const updater: OnChangeFn<RowSelectionState> = fn => {
+    const newState: RowSelectionState = typeof fn === 'function' ? fn(rowSelection) : fn;
 
     setRowSelection(newState);
     onSelectionChange(Object.keys(newState));
@@ -56,7 +51,7 @@ export const AddClaimItemsTable = ({
 
   const { searchParams, raw } = useClaimItemTableQuery({
     pageSize: PAGE_SIZE,
-    prefix: PREFIX,
+    prefix: PREFIX
   });
 
   const queriedItems = useMemo(() => {
@@ -68,13 +63,13 @@ export const AddClaimItemsTable = ({
       created_at,
       updated_at,
       refundable_amount,
-      returnable_quantity,
+      returnable_quantity
     } = searchParams;
 
     let results: AdminOrderLineItem[] = items;
 
     if (q) {
-      results = results.filter((i) => {
+      results = results.filter(i => {
         return (
           i.product_title?.toLowerCase().includes(q.toLowerCase()) ||
           i.variant_title?.toLowerCase().includes(q.toLowerCase()) ||
@@ -84,36 +79,26 @@ export const AddClaimItemsTable = ({
     }
 
     if (order) {
-      const direction = order[0] === "-" ? "desc" : "asc";
-      const field = order.replace("-", "");
+      const direction = order[0] === '-' ? 'desc' : 'asc';
+      const field = order.replace('-', '');
 
       results = sortItems(results, field, direction);
     }
 
     if (created_at) {
-      results = filterByDate(results, created_at, "created_at");
+      results = filterByDate(results, created_at, 'created_at');
     }
 
     if (updated_at) {
-      results = filterByDate(results, updated_at, "updated_at");
+      results = filterByDate(results, updated_at, 'updated_at');
     }
 
     if (returnable_quantity) {
-      results = filterByNumber(
-        results,
-        returnable_quantity,
-        "returnable_quantity",
-        currencyCode,
-      );
+      results = filterByNumber(results, returnable_quantity, 'returnable_quantity', currencyCode);
     }
 
     if (refundable_amount) {
-      results = filterByNumber(
-        results,
-        refundable_amount,
-        "refundable_amount",
-        currencyCode,
-      );
+      results = filterByNumber(results, refundable_amount, 'refundable_amount', currencyCode);
     }
 
     return results.slice(offset, offset + limit);
@@ -127,15 +112,15 @@ export const AddClaimItemsTable = ({
     columns: columns,
     count: queriedItems.length,
     enablePagination: true,
-    getRowId: (row) => row.id,
+    getRowId: row => row.id,
     pageSize: PAGE_SIZE,
-    enableRowSelection: (row) => {
+    enableRowSelection: row => {
       return getReturnableQuantity(row.original) > 0;
     },
     rowSelection: {
       state: rowSelection,
-      updater,
-    },
+      updater
+    }
   });
 
   return (
@@ -150,17 +135,17 @@ export const AddClaimItemsTable = ({
         layout="fill"
         search
         orderBy={[
-          { key: "product_title", label: t("fields.product") },
-          { key: "variant_title", label: t("fields.variant") },
-          { key: "sku", label: t("fields.sku") },
+          { key: 'product_title', label: t('fields.product') },
+          { key: 'variant_title', label: t('fields.variant') },
+          { key: 'sku', label: t('fields.sku') },
           {
-            key: "returnable_quantity",
-            label: t("orders.fields.returnableQuantity"),
+            key: 'returnable_quantity',
+            label: t('orders.fields.returnableQuantity')
           },
           {
-            key: "refundable_amount",
-            label: t("orders.fields.refundableAmount"),
-          },
+            key: 'refundable_amount',
+            label: t('orders.fields.refundableAmount')
+          }
         ]}
         prefix={PREFIX}
         queryObject={raw}
@@ -169,37 +154,33 @@ export const AddClaimItemsTable = ({
   );
 };
 
-const sortItems = (
-  items: AdminOrderLineItem[],
-  field: string,
-  direction: "asc" | "desc",
-) => {
+const sortItems = (items: AdminOrderLineItem[], field: string, direction: 'asc' | 'desc') => {
   return items.sort((a, b) => {
     let aValue: any;
     let bValue: any;
 
-    if (field === "product_title") {
+    if (field === 'product_title') {
       aValue = a.product_title;
       bValue = b.product_title;
-    } else if (field === "variant_title") {
+    } else if (field === 'variant_title') {
       aValue = a.variant_title;
       bValue = b.variant_title;
-    } else if (field === "sku") {
+    } else if (field === 'sku') {
       aValue = a.variant_sku;
       bValue = b.variant_sku;
-    } else if (field === "returnable_quantity") {
+    } else if (field === 'returnable_quantity') {
       aValue = a.quantity - (a.returned_quantity || 0);
       bValue = b.quantity - (b.returned_quantity || 0);
-    } else if (field === "refundable_amount") {
+    } else if (field === 'refundable_amount') {
       aValue = a.refundable || 0;
       bValue = b.refundable || 0;
     }
 
     if (aValue < bValue) {
-      return direction === "asc" ? -1 : 1;
+      return direction === 'asc' ? -1 : 1;
     }
     if (aValue > bValue) {
-      return direction === "asc" ? 1 : -1;
+      return direction === 'asc' ? 1 : -1;
     }
 
     return 0;
@@ -209,11 +190,11 @@ const sortItems = (
 const filterByDate = (
   items: AdminOrderLineItem[],
   date: DateComparisonOperator,
-  field: "created_at" | "updated_at",
+  field: 'created_at' | 'updated_at'
 ) => {
   const { gt, gte, lt, lte } = date;
 
-  return items.filter((i) => {
+  return items.filter(i => {
     const itemDate = new Date(i[field]);
     let isValid = true;
 
@@ -242,29 +223,25 @@ const defaultOperators = {
   gt: undefined,
   gte: undefined,
   lt: undefined,
-  lte: undefined,
+  lte: undefined
 };
 
 const filterByNumber = (
   items: AdminOrderLineItem[],
   value: NumericalComparisonOperator | number,
-  field: "returnable_quantity" | "refundable_amount",
-  currency_code: string,
+  field: 'returnable_quantity' | 'refundable_amount',
+  currency_code: string
 ) => {
   const { eq, gt, lt, gte, lte } =
-    typeof value === "object"
+    typeof value === 'object'
       ? { ...defaultOperators, ...value }
       : { ...defaultOperators, eq: value };
 
-  return items.filter((i) => {
+  return items.filter(i => {
     const returnableQuantity = i.quantity - (i.returned_quantity || 0);
-    const refundableAmount = getStylizedAmount(
-      i.refundable || 0,
-      currency_code,
-    );
+    const refundableAmount = getStylizedAmount(i.refundable || 0, currency_code);
 
-    const itemValue =
-      field === "returnable_quantity" ? returnableQuantity : refundableAmount;
+    const itemValue = field === 'returnable_quantity' ? returnableQuantity : refundableAmount;
 
     if (eq) {
       return itemValue === eq;

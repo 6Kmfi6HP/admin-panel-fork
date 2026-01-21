@@ -1,34 +1,25 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { Hint } from "@medusajs/ui";
+import { FileUpload, type FileType } from '@components/common/file-upload';
+import { Hint } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
 
-import { useTranslation } from "react-i18next";
+const SUPPORTED_FORMATS = ['text/csv'];
+const SUPPORTED_FORMATS_FILE_EXTENSIONS = ['.csv'];
 
-import type { FileType } from "@components/common/file-upload";
-import { FileUpload } from "@components/common/file-upload";
-
-const SUPPORTED_FORMATS = ["text/csv"];
-const SUPPORTED_FORMATS_FILE_EXTENSIONS = [".csv"];
-
-export const UploadImport = ({
-  onUploaded,
-}: {
-  onUploaded: (file: File) => void;
-}) => {
+export const UploadImport = ({ onUploaded }: { onUploaded: (file: File) => void }) => {
   const { t } = useTranslation();
   const [error, setError] = useState<string>();
 
   const hasInvalidFiles = (fileList: FileType[]) => {
-    const invalidFile = fileList.find(
-      (f) => !SUPPORTED_FORMATS.includes(f.file.type),
-    );
+    const invalidFile = fileList.find(f => !SUPPORTED_FORMATS.includes(f.file.type));
 
     if (invalidFile) {
       setError(
-        t("products.media.invalidFileType", {
+        t('products.media.invalidFileType', {
           name: invalidFile.file.name,
-          types: SUPPORTED_FORMATS_FILE_EXTENSIONS.join(", "),
-        }),
+          types: SUPPORTED_FORMATS_FILE_EXTENSIONS.join(', ')
+        })
       );
 
       return true;
@@ -40,12 +31,12 @@ export const UploadImport = ({
   return (
     <div className="flex flex-col gap-y-4">
       <FileUpload
-        label={t("products.import.uploadLabel")}
-        hint={t("products.import.uploadHint")}
+        label={t('products.import.uploadLabel')}
+        hint={t('products.import.uploadHint')}
         multiple={false}
         hasError={!!error}
         formats={SUPPORTED_FORMATS}
-        onUploaded={(files) => {
+        onUploaded={files => {
           setError(undefined);
           if (hasInvalidFiles(files)) {
             return;

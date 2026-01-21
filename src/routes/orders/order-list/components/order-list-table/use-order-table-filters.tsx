@@ -1,14 +1,10 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import type { HttpTypes } from "@medusajs/types";
-import { createDataTableFilterHelper } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-
-import { useDataTableDateFilters } from "@components/data-table/helpers/general";
-
-import { useRegions } from "@hooks/api";
-import { useSalesChannels } from "@hooks/api";
+import { useDataTableDateFilters } from '@components/data-table/helpers/general';
+import { useRegions, useSalesChannels } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import { createDataTableFilterHelper } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
 
 const filterHelper = createDataTableFilterHelper<HttpTypes.AdminOrder>();
 
@@ -21,12 +17,12 @@ export const useOrderTableFilters = () => {
 
   const { regions } = useRegions({
     limit: 1000,
-    fields: "id,name",
+    fields: 'id,name'
   });
 
   const { sales_channels } = useSalesChannels({
     limit: 1000,
-    fields: "id,name",
+    fields: 'id,name'
   });
 
   return useMemo(() => {
@@ -34,27 +30,27 @@ export const useOrderTableFilters = () => {
 
     if (regions?.length) {
       filters.push(
-        filterHelper.accessor("region_id", {
-          label: t("fields.region"),
-          type: "multiselect",
-          options: regions.map((r) => ({
+        filterHelper.accessor('region_id', {
+          label: t('fields.region'),
+          type: 'multiselect',
+          options: regions.map(r => ({
             label: r.name,
-            value: r.id,
-          })),
-        }),
+            value: r.id
+          }))
+        })
       );
     }
 
     if (sales_channels?.length) {
       filters.push(
-        filterHelper.accessor("sales_channel_id", {
-          label: t("fields.salesChannel"),
-          type: "multiselect",
-          options: sales_channels.map((s) => ({
+        filterHelper.accessor('sales_channel_id', {
+          label: t('fields.salesChannel'),
+          type: 'multiselect',
+          options: sales_channels.map(s => ({
             label: s.name,
-            value: s.id,
-          })),
-        }),
+            value: s.id
+          }))
+        })
       );
     }
 

@@ -1,9 +1,8 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import { createColumnHelper } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-
-import type { StaticCountry } from "@lib/data/countries";
+import type { StaticCountry } from '@lib/data/countries';
+import { createColumnHelper } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 
 const columnHelper = createColumnHelper<StaticCountry>();
 
@@ -12,15 +11,15 @@ export const useCountryTableColumns = () => {
 
   return useMemo(
     () => [
-      columnHelper.accessor("display_name", {
-        header: t("fields.name"),
-        cell: ({ getValue }) => getValue(),
+      columnHelper.accessor('display_name', {
+        header: t('fields.name'),
+        cell: ({ getValue }) => getValue()
       }),
-      columnHelper.accessor("iso_2", {
-        header: t("fields.code"),
-        cell: ({ getValue }) => <span className="uppercase">{getValue()}</span>,
-      }),
+      columnHelper.accessor('iso_2', {
+        header: t('fields.code'),
+        cell: ({ getValue }) => <span className="uppercase">{getValue()}</span>
+      })
     ],
-    [t],
+    [t]
   );
 };

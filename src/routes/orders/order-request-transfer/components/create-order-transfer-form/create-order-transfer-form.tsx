@@ -1,22 +1,18 @@
-import type { HttpTypes } from "@medusajs/types";
-import { Button, Input, toast } from "@medusajs/ui";
+import { Form } from '@components/common/form';
+import { Combobox } from '@components/inputs/combobox';
+import { RouteDrawer, useRouteModal } from '@components/modals';
+import { KeyboundForm } from '@components/utilities/keybound-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRequestTransferOrder } from '@hooks/api';
+import { useComboboxData } from '@hooks/use-combobox-data';
+import { sdk } from '@lib/client';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, Input, toast } from '@medusajs/ui';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import * as zod from 'zod';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import * as zod from "zod";
-
-import { Form } from "@components/common/form";
-import { Combobox } from "@components/inputs/combobox";
-import { RouteDrawer, useRouteModal } from "@components/modals";
-import { KeyboundForm } from "@components/utilities/keybound-form";
-
-import { useRequestTransferOrder } from "@hooks/api";
-import { useComboboxData } from "@hooks/use-combobox-data";
-
-import { sdk } from "@lib/client";
-
-import { TransferHeader } from "./transfer-header";
+import { TransferHeader } from './transfer-header';
 
 type CreateOrderTransferFormProps = {
   order: HttpTypes.AdminOrder;
@@ -24,46 +20,41 @@ type CreateOrderTransferFormProps = {
 
 const CreateOrderTransferSchema = zod.object({
   customer_id: zod.string().min(1),
-  current_customer_details: zod.string().min(1),
+  current_customer_details: zod.string().min(1)
 });
 
-export function CreateOrderTransferForm({
-  order,
-}: CreateOrderTransferFormProps) {
+export function CreateOrderTransferForm({ order }: CreateOrderTransferFormProps) {
   const { t } = useTranslation();
   const { handleSuccess } = useRouteModal();
 
   const form = useForm<zod.infer<typeof CreateOrderTransferSchema>>({
     defaultValues: {
-      customer_id: "",
+      customer_id: '',
       current_customer_details: order.customer?.first_name
         ? `${order.customer?.first_name} ${order.customer?.last_name} (${order.customer?.email}) `
-        : order.customer?.email,
+        : order.customer?.email
     },
-    resolver: zodResolver(CreateOrderTransferSchema),
+    resolver: zodResolver(CreateOrderTransferSchema)
   });
 
   const customers = useComboboxData({
-    queryKey: ["customers"],
-    queryFn: (params) =>
-      sdk.admin.customer.list({ ...params, has_account: true }),
-    getOptions: (data) =>
-      data.customers.map((item) => ({
-        label: `${item.first_name || ""} ${item.last_name || ""} (${item.email})`,
-        value: item.id,
-      })),
+    queryKey: ['customers'],
+    queryFn: params => sdk.admin.customer.list({ ...params, has_account: true }),
+    getOptions: data =>
+      data.customers.map(item => ({
+        label: `${item.first_name || ''} ${item.last_name || ''} (${item.email})`,
+        value: item.id
+      }))
   });
 
   const { mutateAsync, isPending } = useRequestTransferOrder(order.id);
 
-  const handleSubmit = form.handleSubmit(async (data) => {
+  const handleSubmit = form.handleSubmit(async data => {
     try {
       await mutateAsync({
-        customer_id: data.customer_id,
+        customer_id: data.customer_id
       });
-      toast.success(
-        t("orders.transfer.requestSuccess", { email: order.email }),
-      );
+      toast.success(t('orders.transfer.requestSuccess', { email: order.email }));
       handleSuccess();
     } catch (error) {
       toast.error((error as Error).message);
@@ -71,14 +62,23 @@ export function CreateOrderTransferForm({
   });
 
   return (
-    <RouteDrawer.Form form={form} data-testid="order-request-transfer-form">
+    <RouteDrawer.Form
+      form={form}
+      data-testid="order-request-transfer-form"
+    >
       <KeyboundForm
         onSubmit={handleSubmit}
         className="flex size-full flex-col overflow-hidden"
       >
-        <RouteDrawer.Body className="flex-1 overflow-auto" data-testid="order-request-transfer-body">
+        <RouteDrawer.Body
+          className="flex-1 overflow-auto"
+          data-testid="order-request-transfer-body"
+        >
           <div className="flex flex-col gap-y-8">
-            <div className="flex justify-center" data-testid="order-request-transfer-header-section">
+            <div
+              className="flex justify-center"
+              data-testid="order-request-transfer-header-section"
+            >
               <TransferHeader />
             </div>
             <Form.Field
@@ -87,13 +87,23 @@ export function CreateOrderTransferForm({
               render={({ field }) => {
                 return (
                   <Form.Item data-testid="order-request-transfer-current-customer-item">
-                    <Form.Label data-testid="order-request-transfer-current-customer-label">{t("orders.transfer.currentOwner")}</Form.Label>
-                    <span className="txt-small text-ui-fg-muted" data-testid="order-request-transfer-current-customer-hint">
-                      {t("orders.transfer.currentOwnerDescription")}
+                    <Form.Label data-testid="order-request-transfer-current-customer-label">
+                      {t('orders.transfer.currentOwner')}
+                    </Form.Label>
+                    <span
+                      className="txt-small text-ui-fg-muted"
+                      data-testid="order-request-transfer-current-customer-hint"
+                    >
+                      {t('orders.transfer.currentOwnerDescription')}
                     </span>
 
                     <Form.Control data-testid="order-request-transfer-current-customer-control">
-                      <Input type="email" {...field} disabled data-testid="order-request-transfer-current-customer-input" />
+                      <Input
+                        type="email"
+                        {...field}
+                        disabled
+                        data-testid="order-request-transfer-current-customer-input"
+                      />
                     </Form.Control>
 
                     <Form.ErrorMessage data-testid="order-request-transfer-current-customer-error" />
@@ -108,9 +118,14 @@ export function CreateOrderTransferForm({
               render={({ field }) => {
                 return (
                   <Form.Item data-testid="order-request-transfer-new-customer-item">
-                    <Form.Label data-testid="order-request-transfer-new-customer-label">{t("orders.transfer.newOwner")}</Form.Label>
-                    <span className="txt-small text-ui-fg-muted" data-testid="order-request-transfer-new-customer-hint">
-                      {t("orders.transfer.newOwnerDescription")}
+                    <Form.Label data-testid="order-request-transfer-new-customer-label">
+                      {t('orders.transfer.newOwner')}
+                    </Form.Label>
+                    <span
+                      className="txt-small text-ui-fg-muted"
+                      data-testid="order-request-transfer-new-customer-hint"
+                    >
+                      {t('orders.transfer.newOwnerDescription')}
                     </span>
 
                     <Form.Control data-testid="order-request-transfer-new-customer-control">
@@ -121,7 +136,7 @@ export function CreateOrderTransferForm({
                         onSearchValueChange={customers.onSearchValueChange}
                         fetchNextPage={customers.fetchNextPage}
                         className="bg-ui-bg-field-component hover:bg-ui-bg-field-component-hover"
-                        placeholder={t("actions.select")}
+                        placeholder={t('actions.select')}
                         data-testid="order-request-transfer-new-customer-combobox"
                       />
                     </Form.Control>
@@ -137,8 +152,12 @@ export function CreateOrderTransferForm({
         <RouteDrawer.Footer data-testid="order-request-transfer-footer">
           <div className="flex items-center justify-end gap-x-2">
             <RouteDrawer.Close asChild>
-              <Button variant="secondary" size="small" data-testid="order-request-transfer-cancel-button">
-                {t("actions.cancel")}
+              <Button
+                variant="secondary"
+                size="small"
+                data-testid="order-request-transfer-cancel-button"
+              >
+                {t('actions.cancel')}
               </Button>
             </RouteDrawer.Close>
 
@@ -150,7 +169,7 @@ export function CreateOrderTransferForm({
               disabled={!!Object.keys(form.formState.errors || {}).length}
               data-testid="order-request-transfer-save-button"
             >
-              {t("actions.save")}
+              {t('actions.save')}
             </Button>
           </div>
         </RouteDrawer.Footer>

@@ -1,28 +1,22 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-import type { AdminCampaign, AdminPromotion } from "@medusajs/types";
-import { Button, RadioGroup, toast } from "@medusajs/ui";
+import { Form } from '@components/common/form';
+import { Combobox } from '@components/inputs/combobox';
+import { RouteDrawer, useRouteModal } from '@components/modals';
+import { KeyboundForm } from '@components/utilities/keybound-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useCampaign, useUpdatePromotion } from '@hooks/api';
+import { useComboboxData } from '@hooks/use-combobox-data';
+import { useDocumentDirection } from '@hooks/use-document-direction';
+import { sdk } from '@lib/client';
+import type { AdminCampaign, AdminPromotion } from '@medusajs/types';
+import { Button, RadioGroup, toast } from '@medusajs/ui';
+import { CreateCampaignFormFields } from '@routes/campaigns/common/components/create-campaign-form-fields';
+import { useForm, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import * as zod from 'zod';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import * as zod from "zod";
-
-import { Form } from "@components/common/form";
-import { Combobox } from "@components/inputs/combobox";
-import { RouteDrawer, useRouteModal } from "@components/modals";
-import { KeyboundForm } from "@components/utilities/keybound-form";
-
-import { useUpdatePromotion } from "@hooks/api";
-import { useCampaign } from "@hooks/api";
-import { useComboboxData } from "@hooks/use-combobox-data";
-import { useDocumentDirection } from "@hooks/use-document-direction";
-
-import { sdk } from "@lib/client";
-
-import { CreateCampaignFormFields } from "@routes/campaigns/common/components/create-campaign-form-fields";
-
-import { CampaignDetails } from "./campaign-details";
+import { CampaignDetails } from './campaign-details';
 
 type EditPromotionFormProps = {
   promotion: AdminPromotion;
@@ -30,14 +24,16 @@ type EditPromotionFormProps = {
 
 const EditPromotionSchema = zod.object({
   campaign_id: zod.string().optional().nullable(),
-  campaign_choice: zod.enum(["none", "existing"]).optional(),
+  campaign_choice: zod.enum(['none', 'existing']).optional()
 });
 
 export const AddCampaignPromotionFields = ({
   form,
   withNewCampaign = true,
-  promotionCurrencyCode,
+  promotionCurrencyCode
 }: {
+  // @todo fix any type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: any;
   withNewCampaign?: boolean;
   promotionCurrencyCode?: string;
@@ -47,102 +43,99 @@ export const AddCampaignPromotionFields = ({
 
   const watchCampaignId = useWatch({
     control: form.control,
-    name: "campaign_id",
+    name: 'campaign_id'
   });
 
   const watchCampaignChoice = useWatch({
     control: form.control,
-    name: "campaign_choice",
+    name: 'campaign_choice'
   });
 
   const campaignsCombobox = useComboboxData({
-    queryFn: (params) =>
+    queryFn: params =>
       sdk.admin.campaign.list({
-        ...params,
+        ...params
       }),
-    queryKey: ["campaigns"],
-    getOptions: (data) =>
-      data.campaigns.map((campaign) => ({
+    queryKey: ['campaigns'],
+    getOptions: data =>
+      data.campaigns.map(campaign => ({
         label: campaign.name.toUpperCase(),
         value: campaign.id,
         disabled:
           campaign.budget?.currency_code &&
-          campaign.budget?.currency_code?.toLowerCase() !==
-            promotionCurrencyCode?.toLowerCase(), // also cannot add promotion which doesn't have currency defined to a campaign with a currency amount budget
-      })),
+          campaign.budget?.currency_code?.toLowerCase() !== promotionCurrencyCode?.toLowerCase() // also cannot add promotion which doesn't have currency defined to a campaign with a currency amount budget
+      }))
   });
 
-  const { campaign: selectedCampaign } = useCampaign(
-    watchCampaignId as string,
-    undefined,
-    {
-      enabled: !!watchCampaignId,
-    },
-  );
+  const { campaign: selectedCampaign } = useCampaign(watchCampaignId as string, undefined, {
+    enabled: !!watchCampaignId
+  });
 
   return (
-    <div className="flex flex-col gap-y-8" data-testid="promotion-add-campaign-fields">
+    <div
+      className="flex flex-col gap-y-8"
+      data-testid="promotion-add-campaign-fields"
+    >
       <Form.Field
         control={form.control}
         name="campaign_choice"
-        render={({ field }) => {
-          return (
-            <Form.Item data-testid="promotion-add-campaign-form-campaign-choice-item">
-              <Form.Label data-testid="promotion-add-campaign-form-campaign-choice-label">{t("promotions.fields.campaign")}</Form.Label>
+        render={({ field }) => (
+          <Form.Item data-testid="promotion-add-campaign-form-campaign-choice-item">
+            <Form.Label data-testid="promotion-add-campaign-form-campaign-choice-label">
+              {t('promotions.fields.campaign')}
+            </Form.Label>
 
-              <Form.Control data-testid="promotion-add-campaign-form-campaign-choice-control">
-                <RadioGroup
-                  dir={direction}
-                  className="grid grid-cols-1 gap-3"
-                  {...field}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  data-testid="promotion-add-campaign-form-campaign-choice-radio-group"
-                >
+            <Form.Control data-testid="promotion-add-campaign-form-campaign-choice-control">
+              <RadioGroup
+                dir={direction}
+                className="grid grid-cols-1 gap-3"
+                {...field}
+                value={field.value}
+                onValueChange={field.onChange}
+                data-testid="promotion-add-campaign-form-campaign-choice-radio-group"
+              >
+                <RadioGroup.ChoiceBox
+                  value="none"
+                  label={t('promotions.form.campaign.none.title')}
+                  description={t('promotions.form.campaign.none.description')}
+                  data-testid="promotion-add-campaign-form-campaign-choice-option-none"
+                />
+
+                <RadioGroup.ChoiceBox
+                  value="existing"
+                  label={t('promotions.form.campaign.existing.title')}
+                  description={t('promotions.form.campaign.existing.description')}
+                  data-testid="promotion-add-campaign-form-campaign-choice-option-existing"
+                />
+
+                {withNewCampaign && (
                   <RadioGroup.ChoiceBox
-                    value="none"
-                    label={t("promotions.form.campaign.none.title")}
-                    description={t("promotions.form.campaign.none.description")}
-                    data-testid="promotion-add-campaign-form-campaign-choice-option-none"
+                    value="new"
+                    label={t('promotions.form.campaign.new.title')}
+                    description={t('promotions.form.campaign.new.description')}
+                    data-testid="promotion-add-campaign-form-campaign-choice-option-new"
                   />
+                )}
+              </RadioGroup>
+            </Form.Control>
 
-                  <RadioGroup.ChoiceBox
-                    value="existing"
-                    label={t("promotions.form.campaign.existing.title")}
-                    description={t(
-                      "promotions.form.campaign.existing.description",
-                    )}
-                    data-testid="promotion-add-campaign-form-campaign-choice-option-existing"
-                  />
-
-                  {withNewCampaign && (
-                    <RadioGroup.ChoiceBox
-                      value="new"
-                      label={t("promotions.form.campaign.new.title")}
-                      description={t(
-                        "promotions.form.campaign.new.description",
-                      )}
-                      data-testid="promotion-add-campaign-form-campaign-choice-option-new"
-                    />
-                  )}
-                </RadioGroup>
-              </Form.Control>
-
-              <Form.ErrorMessage data-testid="promotion-add-campaign-form-campaign-choice-error" />
-            </Form.Item>
-          );
-        }}
+            <Form.ErrorMessage data-testid="promotion-add-campaign-form-campaign-choice-error" />
+          </Form.Item>
+        )}
       />
 
-      {watchCampaignChoice === "existing" && (
+      {watchCampaignChoice === 'existing' && (
         <Form.Field
           control={form.control}
           name="campaign_id"
           render={({ field: { onChange, ...field } }) => {
             return (
               <Form.Item data-testid="promotion-add-campaign-form-campaign-id-item">
-                <Form.Label tooltip={t("campaigns.fields.campaign_id.hint")} data-testid="promotion-add-campaign-form-campaign-id-label">
-                  {t("promotions.form.campaign.existing.title")}
+                <Form.Label
+                  tooltip={t('campaigns.fields.campaign_id.hint')}
+                  data-testid="promotion-add-campaign-form-campaign-id-label"
+                >
+                  {t('promotions.form.campaign.existing.title')}
                 </Form.Label>
 
                 <Form.Control data-testid="promotion-add-campaign-form-campaign-id-control">
@@ -164,8 +157,11 @@ export const AddCampaignPromotionFields = ({
         />
       )}
 
-      {watchCampaignChoice === "new" && (
-        <CreateCampaignFormFields form={form} fieldScope="campaign." />
+      {watchCampaignChoice === 'new' && (
+        <CreateCampaignFormFields
+          form={form}
+          fieldScope="campaign."
+        />
       )}
 
       <CampaignDetails campaign={selectedCampaign as AdminCampaign} />
@@ -173,9 +169,7 @@ export const AddCampaignPromotionFields = ({
   );
 };
 
-export const AddCampaignPromotionForm = ({
-  promotion,
-}: EditPromotionFormProps) => {
+export const AddCampaignPromotionForm = ({ promotion }: EditPromotionFormProps) => {
   const { t } = useTranslation();
   const { handleSuccess } = useRouteModal();
   const { campaign } = promotion;
@@ -185,51 +179,57 @@ export const AddCampaignPromotionForm = ({
   const form = useForm<zod.infer<typeof EditPromotionSchema>>({
     defaultValues: {
       campaign_id: campaign?.id,
-      campaign_choice: campaign?.id ? "existing" : "none",
+      campaign_choice: campaign?.id ? 'existing' : 'none'
     },
-    resolver: zodResolver(EditPromotionSchema),
+    resolver: zodResolver(EditPromotionSchema)
   });
 
   const { setValue } = form;
 
   const { mutateAsync, isPending } = useUpdatePromotion(promotion.id);
-  const handleSubmit = form.handleSubmit(async (data) => {
+  const handleSubmit = form.handleSubmit(async data => {
     await mutateAsync(
       { campaign_id: data.campaign_id },
       {
         onSuccess: () => {
-          toast.success(t("promotions.campaign.edit.successToast"));
+          toast.success(t('promotions.campaign.edit.successToast'));
           handleSuccess();
         },
-        onError: (e) => {
+        onError: e => {
           toast.error(e.message);
-        },
-      },
+        }
+      }
     );
   });
 
   const watchCampaignChoice = useWatch({
     control: form.control,
-    name: "campaign_choice",
+    name: 'campaign_choice'
   });
 
   useEffect(() => {
-    if (watchCampaignChoice === "none") {
-      setValue("campaign_id", null);
+    if (watchCampaignChoice === 'none') {
+      setValue('campaign_id', null);
     }
 
-    if (watchCampaignChoice === "existing") {
-      setValue("campaign_id", originalId);
+    if (watchCampaignChoice === 'existing') {
+      setValue('campaign_id', originalId);
     }
   }, [watchCampaignChoice, setValue, originalId]);
 
   return (
-    <RouteDrawer.Form form={form} data-testid="promotion-add-campaign-form">
+    <RouteDrawer.Form
+      form={form}
+      data-testid="promotion-add-campaign-form"
+    >
       <KeyboundForm
         onSubmit={handleSubmit}
         className="flex size-full flex-col overflow-hidden"
       >
-        <RouteDrawer.Body className="size-full overflow-auto" data-testid="promotion-add-campaign-form-body">
+        <RouteDrawer.Body
+          className="size-full overflow-auto"
+          data-testid="promotion-add-campaign-form-body"
+        >
           <AddCampaignPromotionFields
             form={form}
             withNewCampaign={false}
@@ -240,13 +240,22 @@ export const AddCampaignPromotionForm = ({
         <RouteDrawer.Footer data-testid="promotion-add-campaign-form-footer">
           <div className="flex items-center justify-end gap-x-2">
             <RouteDrawer.Close asChild>
-              <Button size="small" variant="secondary" data-testid="promotion-add-campaign-form-cancel-button">
-                {t("actions.cancel")}
+              <Button
+                size="small"
+                variant="secondary"
+                data-testid="promotion-add-campaign-form-cancel-button"
+              >
+                {t('actions.cancel')}
               </Button>
             </RouteDrawer.Close>
 
-            <Button size="small" type="submit" isLoading={isPending} data-testid="promotion-add-campaign-form-save-button">
-              {t("actions.save")}
+            <Button
+              size="small"
+              type="submit"
+              isLoading={isPending}
+              data-testid="promotion-add-campaign-form-save-button"
+            >
+              {t('actions.save')}
             </Button>
           </div>
         </RouteDrawer.Footer>

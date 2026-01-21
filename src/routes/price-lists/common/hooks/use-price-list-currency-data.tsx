@@ -1,8 +1,6 @@
-import type { HttpTypes } from "@medusajs/types";
-
-import { useRegions } from "@hooks/api";
-import { useStore } from "@hooks/api";
-import { usePricePreferences } from "@hooks/api/price-preferences";
+import { useRegions, useStore } from '@hooks/api';
+import { usePricePreferences } from '@hooks/api/price-preferences';
+import type { HttpTypes } from '@medusajs/types';
 
 type UsePriceListCurrencyDataReturn =
   | {
@@ -23,9 +21,9 @@ export const usePriceListCurrencyData = (): UsePriceListCurrencyDataReturn => {
     store,
     isPending: isStorePending,
     isError: isStoreError,
-    error: storeError,
+    error: storeError
   } = useStore({
-    fields: "+supported_currencies",
+    fields: '+supported_currencies'
   });
 
   const currencies = store?.supported_currencies;
@@ -34,17 +32,17 @@ export const usePriceListCurrencyData = (): UsePriceListCurrencyDataReturn => {
     regions,
     isPending: isRegionsPending,
     isError: isRegionsError,
-    error: regionsError,
+    error: regionsError
   } = useRegions({
-    fields: "id,name,currency_code",
-    limit: 999,
+    fields: 'id,name,currency_code',
+    limit: 999
   });
 
   const {
     price_preferences: pricePreferences,
     isPending: isPreferencesPending,
     isError: isPreferencesError,
-    error: preferencesError,
+    error: preferencesError
   } = usePricePreferences({});
 
   const isReady =
@@ -72,7 +70,7 @@ export const usePriceListCurrencyData = (): UsePriceListCurrencyDataReturn => {
       regions: undefined,
       currencies: undefined,
       pricePreferences: undefined,
-      isReady: false,
+      isReady: false
     };
   }
 

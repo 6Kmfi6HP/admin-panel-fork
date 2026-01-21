@@ -1,8 +1,6 @@
-import { SingleColumnPage } from "@components/layout/pages";
-
-import { RefundReasonListTable } from "@routes/refund-reasons/refund-reason-list/components/refund-reason-list-table";
-
-import { useExtension } from "@providers/extension-provider";
+import { SingleColumnPage } from '@components/layout/pages';
+import { useExtension } from '@providers/extension-provider';
+import { RefundReasonListTable } from '@routes/refund-reasons/refund-reason-list/components/refund-reason-list-table';
 
 export const RefundReasonList = () => {
   const { getWidgets } = useExtension();
@@ -13,8 +11,8 @@ export const RefundReasonList = () => {
       showJSON={false}
       hasOutlet
       widgets={{
-        after: getWidgets("refund_reason.list.after"),
-        before: getWidgets("refund_reason.list.before"),
+        after: getWidgets('refund_reason.list.after'),
+        before: getWidgets('refund_reason.list.before')
       }}
     >
       <RefundReasonListTable />

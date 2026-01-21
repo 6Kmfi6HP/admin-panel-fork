@@ -1,20 +1,18 @@
-import type { LoaderFunctionArgs } from "react-router-dom";
+import { variantsQueryKeys } from '@hooks/api';
+import { sdk } from '@lib/client';
+import { queryClient } from '@lib/query-client';
+import type { LoaderFunctionArgs } from 'react-router-dom';
 
-import { variantsQueryKeys } from "@hooks/api";
-
-import { sdk } from "@lib/client";
-import { queryClient } from "@lib/query-client";
-
-import { VARIANT_DETAIL_FIELDS } from "./constants";
+import { VARIANT_DETAIL_FIELDS } from './constants';
 
 const variantDetailQuery = (productId: string, variantId: string) => ({
   queryKey: variantsQueryKeys.detail(variantId, {
-    fields: VARIANT_DETAIL_FIELDS,
+    fields: VARIANT_DETAIL_FIELDS
   }),
   queryFn: async () =>
     sdk.admin.product.retrieveVariant(productId, variantId, {
-      fields: VARIANT_DETAIL_FIELDS,
-    }),
+      fields: VARIANT_DETAIL_FIELDS
+    })
 });
 
 export const variantLoader = async ({ params }: LoaderFunctionArgs) => {

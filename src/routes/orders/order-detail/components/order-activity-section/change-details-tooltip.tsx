@@ -1,9 +1,7 @@
-import type { ReactNode } from "react";
-import { useState } from "react";
+import { useState, type ReactNode } from 'react';
 
-import { Popover, Text } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
+import { Popover, Text } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
 
 type ChangeDetailsTooltipProps = {
   previous: ReactNode;
@@ -38,7 +36,11 @@ function ChangeDetailsTooltip(props: ChangeDetailsTooltipProps) {
         autoFocus={false}
         className="focus-visible:outline-none"
       >
-        <Text size="small" leading="compact" weight="plus">
+        <Text
+          size="small"
+          leading="compact"
+          weight="plus"
+        >
           {title}
         </Text>
       </Popover.Trigger>
@@ -51,9 +53,7 @@ function ChangeDetailsTooltip(props: ChangeDetailsTooltipProps) {
         <div className="flex flex-col">
           {!!previous && (
             <div className="p-3">
-              <div className="txt-compact-small-plus mb-1">
-                {t("labels.from")}
-              </div>
+              <div className="txt-compact-small-plus mb-1">{t('labels.from')}</div>
 
               <p className="txt-compact-small text-ui-fg-subtle">{previous}</p>
             </div>
@@ -61,9 +61,7 @@ function ChangeDetailsTooltip(props: ChangeDetailsTooltipProps) {
 
           {!!next && (
             <div className="border-t-2 border-dotted p-3">
-              <div className="txt-compact-small-plus mb-1">
-                {t("labels.to")}
-              </div>
+              <div className="txt-compact-small-plus mb-1">{t('labels.to')}</div>
 
               <p className="txt-compact-small text-ui-fg-subtle">{next}</p>
             </div>

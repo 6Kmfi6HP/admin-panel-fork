@@ -1,8 +1,7 @@
-import { InformationCircleSolid } from "@medusajs/icons";
-import type { AdminOrderShippingMethod } from "@medusajs/types";
-import { Badge, Tooltip } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
+import { InformationCircleSolid } from '@medusajs/icons';
+import type { AdminOrderShippingMethod } from '@medusajs/types';
+import { Badge, Tooltip } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
 
 type ShippingInfoPopoverProps = {
   shippingMethod: AdminOrderShippingMethod;
@@ -16,16 +15,16 @@ function ShippingInfoPopover({ shippingMethod }: ShippingInfoPopoverProps) {
     return;
   }
 
-  let rmaType = t("orders.return");
+  let rmaType = t('orders.return');
   let rmaId = shippingDetail.return_id;
 
   if (shippingDetail.claim_id) {
-    rmaType = t("orders.claim");
+    rmaType = t('orders.claim');
     rmaId = shippingDetail.claim_id;
   }
 
   if (shippingDetail.exchange_id) {
-    rmaType = t("orders.exchange");
+    rmaType = t('orders.exchange');
     rmaId = shippingDetail.exchange_id;
   }
 
@@ -36,7 +35,10 @@ function ShippingInfoPopover({ shippingMethod }: ShippingInfoPopoverProps) {
   return (
     <Tooltip
       content={
-        <Badge size="2xsmall" rounded="full">
+        <Badge
+          size="2xsmall"
+          rounded="full"
+        >
           {rmaType}: #{rmaId.slice(-7)}
         </Badge>
       }

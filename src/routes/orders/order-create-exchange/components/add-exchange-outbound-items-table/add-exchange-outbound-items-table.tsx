@@ -1,19 +1,17 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import type { OnChangeFn, RowSelectionState } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
+import { _DataTable } from '@components/table/data-table';
+import { useVariants } from '@hooks/api';
+import { useDataTable } from '@hooks/use-data-table';
+import type { OnChangeFn, RowSelectionState } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 
-import { _DataTable } from "@components/table/data-table";
-
-import { useVariants } from "@hooks/api";
-import { useDataTable } from "@hooks/use-data-table";
-
-import { useExchangeOutboundItemTableColumns } from "./use-exchange-outbound-item-table-columns";
-import { useExchangeOutboundItemTableFilters } from "./use-exchange-outbound-item-table-filters";
-import { useExchangeOutboundItemTableQuery } from "./use-exchange-outbound-item-table-query";
+import { useExchangeOutboundItemTableColumns } from './use-exchange-outbound-item-table-columns';
+import { useExchangeOutboundItemTableFilters } from './use-exchange-outbound-item-table-filters';
+import { useExchangeOutboundItemTableQuery } from './use-exchange-outbound-item-table-query';
 
 const PAGE_SIZE = 50;
-const PREFIX = "rit";
+const PREFIX = 'rit';
 
 type AddExchangeOutboundItemsTableProps = {
   onSelectionChange: (ids: string[]) => void;
@@ -24,7 +22,7 @@ type AddExchangeOutboundItemsTableProps = {
 export const AddExchangeOutboundItemsTable = ({
   onSelectionChange,
   selectedItems,
-  currencyCode,
+  currencyCode
 }: AddExchangeOutboundItemsTableProps) => {
   const { t } = useTranslation();
 
@@ -33,12 +31,11 @@ export const AddExchangeOutboundItemsTable = ({
       acc[id] = true;
 
       return acc;
-    }, {} as RowSelectionState),
+    }, {} as RowSelectionState)
   );
 
-  const updater: OnChangeFn<RowSelectionState> = (fn) => {
-    const newState: RowSelectionState =
-      typeof fn === "function" ? fn(rowSelection) : fn;
+  const updater: OnChangeFn<RowSelectionState> = fn => {
+    const newState: RowSelectionState = typeof fn === 'function' ? fn(rowSelection) : fn;
 
     setRowSelection(newState);
     onSelectionChange(Object.keys(newState));
@@ -46,12 +43,12 @@ export const AddExchangeOutboundItemsTable = ({
 
   const { searchParams, raw } = useExchangeOutboundItemTableQuery({
     pageSize: PAGE_SIZE,
-    prefix: PREFIX,
+    prefix: PREFIX
   });
 
   const { variants = [], count } = useVariants({
     ...searchParams,
-    fields: "*inventory_items.inventory.location_levels,+inventory_quantity",
+    fields: '*inventory_items.inventory.location_levels,+inventory_quantity'
   });
 
   const columns = useExchangeOutboundItemTableColumns(currencyCode);
@@ -62,16 +59,16 @@ export const AddExchangeOutboundItemsTable = ({
     columns: columns,
     count,
     enablePagination: true,
-    getRowId: (row) => row.id,
+    getRowId: row => row.id,
     pageSize: PAGE_SIZE,
-    enableRowSelection: (_row) => {
+    enableRowSelection: _row => {
       // TODO: Check inventory here. Check if other validations needs to be made
       return true;
     },
     rowSelection: {
       state: rowSelection,
-      updater,
-    },
+      updater
+    }
   });
 
   return (
@@ -86,9 +83,9 @@ export const AddExchangeOutboundItemsTable = ({
         layout="fill"
         search
         orderBy={[
-          { key: "product_id", label: t("fields.product") },
-          { key: "title", label: t("fields.title") },
-          { key: "sku", label: t("fields.sku") },
+          { key: 'product_id', label: t('fields.product') },
+          { key: 'title', label: t('fields.title') },
+          { key: 'sku', label: t('fields.sku') }
         ]}
         prefix={PREFIX}
         queryObject={raw}

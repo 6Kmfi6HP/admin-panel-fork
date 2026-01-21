@@ -1,18 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { toast } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-
-import { RouteFocusModal } from "@components/modals";
-
-import { useOrder, useOrderPreview } from "@hooks/api";
-import { useCreateExchange, useExchange } from "@hooks/api/exchanges.tsx";
-import { useReturn } from "@hooks/api/returns";
-
-import { ExchangeCreateForm } from "@routes/orders/order-create-exchange/components/exchange-create-form";
-import { DEFAULT_FIELDS } from "@routes/orders/order-detail/constants.ts";
+import { RouteFocusModal } from '@components/modals';
+import { useOrder, useOrderPreview } from '@hooks/api';
+import { useCreateExchange, useExchange } from '@hooks/api/exchanges.tsx';
+import { useReturn } from '@hooks/api/returns';
+import { toast } from '@medusajs/ui';
+import { ExchangeCreateForm } from '@routes/orders/order-create-exchange/components/exchange-create-form';
+import { DEFAULT_FIELDS } from '@routes/orders/order-detail/constants.ts';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 
 let IS_REQUEST_RUNNING = false;
 
@@ -22,7 +18,7 @@ export const ExchangeCreate = () => {
   const { t } = useTranslation();
 
   const { order } = useOrder(id!, {
-    fields: DEFAULT_FIELDS,
+    fields: DEFAULT_FIELDS
   });
 
   const { order: preview } = useOrderPreview(id!);
@@ -30,11 +26,11 @@ export const ExchangeCreate = () => {
   const { mutateAsync: createExchange } = useCreateExchange(order.id);
 
   const { exchange } = useExchange(activeExchangeId!, undefined, {
-    enabled: !!activeExchangeId,
+    enabled: !!activeExchangeId
   });
 
   const { return: orderReturn } = useReturn(exchange?.return_id!, undefined, {
-    enabled: !!exchange?.return_id,
+    enabled: !!exchange?.return_id
   });
 
   useEffect(() => {
@@ -44,11 +40,11 @@ export const ExchangeCreate = () => {
       }
 
       if (preview.order_change) {
-        if (preview.order_change.change_type === "exchange") {
+        if (preview.order_change.change_type === 'exchange') {
           setActiveExchangeId(preview.order_change.exchange_id);
         } else {
           navigate(`/orders/${preview.id}`, { replace: true });
-          toast.error(t("orders.exchanges.activeChangeError"));
+          toast.error(t('orders.exchanges.activeChangeError'));
         }
 
         return;
@@ -58,7 +54,7 @@ export const ExchangeCreate = () => {
 
       try {
         const { exchange: createdExchange } = await createExchange({
-          order_id: preview.id,
+          order_id: preview.id
         });
 
         setActiveExchangeId(createdExchange.id);

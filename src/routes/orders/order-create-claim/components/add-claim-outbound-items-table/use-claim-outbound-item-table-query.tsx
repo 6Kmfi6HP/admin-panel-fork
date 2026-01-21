@@ -1,9 +1,5 @@
-import type {
-  DateComparisonOperator,
-  NumericalComparisonOperator,
-} from "@medusajs/types";
-
-import { useQueryParams } from "@hooks/use-query-params";
+import { useQueryParams } from '@hooks/use-query-params';
+import type { DateComparisonOperator, NumericalComparisonOperator } from '@medusajs/types';
 
 export type ReturnItemTableQuery = {
   q?: string;
@@ -17,15 +13,12 @@ export type ReturnItemTableQuery = {
 
 export const useClaimOutboundItemTableQuery = ({
   pageSize = 50,
-  prefix,
+  prefix
 }: {
   pageSize?: number;
   prefix?: string;
 }) => {
-  const raw = useQueryParams(
-    ["q", "offset", "order", "created_at", "updated_at"],
-    prefix,
-  );
+  const raw = useQueryParams(['q', 'offset', 'order', 'created_at', 'updated_at'], prefix);
 
   const { offset, created_at, updated_at, ...rest } = raw;
 
@@ -34,7 +27,7 @@ export const useClaimOutboundItemTableQuery = ({
     limit: pageSize,
     offset: offset ? Number(offset) : 0,
     created_at: created_at ? JSON.parse(created_at) : undefined,
-    updated_at: updated_at ? JSON.parse(updated_at) : undefined,
+    updated_at: updated_at ? JSON.parse(updated_at) : undefined
   };
 
   return { searchParams, raw };

@@ -1,20 +1,17 @@
-import type { HttpTypes } from "@medusajs/types";
+import { useOrders } from '@hooks/api';
+import { orderColumnAdapter } from '@lib/table/entity-adapters';
+import { createTableAdapter, type TableAdapter } from '@lib/table/table-adapters.ts';
+import type { HttpTypes } from '@medusajs/types';
 
-import { useOrders } from "@hooks/api";
-
-import { orderColumnAdapter } from "@lib/table/entity-adapters";
-import type { TableAdapter } from "@lib/table/table-adapters.ts";
-import { createTableAdapter } from "@lib/table/table-adapters.ts";
-
-import { useOrderTableFilters } from "./use-order-table-filters";
+import { useOrderTableFilters } from './use-order-table-filters';
 
 /**
  * Create the order table adapter with all order-specific logic
  */
 export function createOrderTableAdapter(): TableAdapter<HttpTypes.AdminOrder> {
   return createTableAdapter<HttpTypes.AdminOrder>({
-    entity: "orders",
-    queryPrefix: "o",
+    entity: 'orders',
+    queryPrefix: 'o',
     pageSize: 20,
     columnAdapter: orderColumnAdapter,
 
@@ -22,13 +19,12 @@ export function createOrderTableAdapter(): TableAdapter<HttpTypes.AdminOrder> {
       const { orders, count, isError, error, isLoading } = useOrders(
         {
           fields,
-          ...params,
+          ...params
         },
         {
           placeholderData: (previousData, previousQuery) => {
             // Only keep placeholder data if the fields haven't changed
-            const prevFields =
-              previousQuery?.[previousQuery.length - 1]?.query?.fields;
+            const prevFields = previousQuery?.[previousQuery.length - 1]?.query?.fields;
             if (prevFields && prevFields !== fields) {
               // Fields changed, don't use placeholder data
               return undefined;
@@ -36,8 +32,8 @@ export function createOrderTableAdapter(): TableAdapter<HttpTypes.AdminOrder> {
 
             // Fields are the same, keep previous data for smooth transitions
             return previousData;
-          },
-        },
+          }
+        }
       );
 
       return {
@@ -45,17 +41,17 @@ export function createOrderTableAdapter(): TableAdapter<HttpTypes.AdminOrder> {
         count,
         isLoading,
         isError,
-        error,
+        error
       };
     },
 
-    getRowHref: (row) => `/orders/${row.id}`,
+    getRowHref: row => `/orders/${row.id}`,
 
     emptyState: {
       empty: {
-        heading: "No orders found",
-      },
-    },
+        heading: 'No orders found'
+      }
+    }
   });
 }
 
@@ -69,6 +65,6 @@ export function useOrderTableAdapter(): TableAdapter<HttpTypes.AdminOrder> {
   // Add dynamic filters to the adapter
   return {
     ...adapter,
-    filters,
+    filters
   };
 }

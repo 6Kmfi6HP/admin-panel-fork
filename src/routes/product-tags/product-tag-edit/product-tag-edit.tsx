@@ -1,13 +1,9 @@
-import { Heading } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-
-import { RouteDrawer } from "@components/modals";
-
-import { useProductTag } from "@hooks/api";
-
-import { ProductTagEditForm } from "@routes/product-tags/product-tag-edit/components/product-tag-edit-form";
+import { RouteDrawer } from '@components/modals';
+import { useProductTag } from '@hooks/api';
+import { Heading } from '@medusajs/ui';
+import { ProductTagEditForm } from '@routes/product-tags/product-tag-edit/components/product-tag-edit-form';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 export const ProductTagEdit = () => {
   const { id } = useParams();
@@ -25,10 +21,12 @@ export const ProductTagEdit = () => {
     <RouteDrawer data-testid="product-tag-edit-drawer">
       <RouteDrawer.Header data-testid="product-tag-edit-drawer-header">
         <RouteDrawer.Title asChild>
-          <Heading data-testid="product-tag-edit-drawer-heading">{t("productTags.edit.header")}</Heading>
+          <Heading data-testid="product-tag-edit-drawer-heading">
+            {t('productTags.edit.header')}
+          </Heading>
         </RouteDrawer.Title>
         <RouteDrawer.Description className="sr-only">
-          {t("productTags.edit.subtitle")}
+          {t('productTags.edit.subtitle')}
         </RouteDrawer.Description>
       </RouteDrawer.Header>
       {ready && <ProductTagEditForm productTag={product_tag} />}

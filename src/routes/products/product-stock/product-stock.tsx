@@ -1,25 +1,20 @@
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from 'react';
 
-import type { HttpTypes } from "@medusajs/types";
-
-import type { ColumnDef } from "@tanstack/react-table";
-import { AnimatePresence } from "motion/react";
-import { useTranslation } from "react-i18next";
-import { Await, useLoaderData } from "react-router-dom";
-
-import { ProgressBar } from "@components/common/progress-bar";
-import { Skeleton } from "@components/common/skeleton";
-import { DataGridSkeleton } from "@components/data-grid/components";
-import { RouteFocusModal } from "@components/modals";
-
-import { ProductStockForm } from "@routes/products/product-stock/components/product-stock-form";
-import type { productStockLoader } from "@routes/products/product-stock/loader";
+import { ProgressBar } from '@components/common/progress-bar';
+import { Skeleton } from '@components/common/skeleton';
+import { DataGridSkeleton } from '@components/data-grid/components';
+import { RouteFocusModal } from '@components/modals';
+import type { HttpTypes } from '@medusajs/types';
+import { ProductStockForm } from '@routes/products/product-stock/components/product-stock-form';
+import type { productStockLoader } from '@routes/products/product-stock/loader';
+import type { ColumnDef } from '@tanstack/react-table';
+import { AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
+import { Await, useLoaderData } from 'react-router-dom';
 
 export const ProductStock = () => {
   const { t } = useTranslation();
-  const data = useLoaderData() as Awaited<
-    ReturnType<typeof productStockLoader>
-  >;
+  const data = useLoaderData() as Awaited<ReturnType<typeof productStockLoader>>;
 
   /**
    * We render a local ProgressBar, as we cannot rely on the global NavigationBar.
@@ -56,17 +51,18 @@ export const ProductStock = () => {
 
   return (
     <div>
-      <div className="fixed inset-x-0 top-0 z-50 h-1" data-testid="product-stock-progress-bar-container">
-        <AnimatePresence>
-          {isLoading ? <ProgressBar duration={5} /> : null}
-        </AnimatePresence>
+      <div
+        className="fixed inset-x-0 top-0 z-50 h-1"
+        data-testid="product-stock-progress-bar-container"
+      >
+        <AnimatePresence>{isLoading ? <ProgressBar duration={5} /> : null}</AnimatePresence>
       </div>
       <RouteFocusModal data-testid="product-stock-modal">
         <RouteFocusModal.Title asChild>
-          <span className="sr-only">{t("products.stock.heading")}</span>
+          <span className="sr-only">{t('products.stock.heading')}</span>
         </RouteFocusModal.Title>
         <RouteFocusModal.Description asChild>
-          <span className="sr-only">{t("products.stock.description")}</span>
+          <span className="sr-only">{t('products.stock.description')}</span>
         </RouteFocusModal.Description>
         <Suspense fallback={<ProductStockFallback />}>
           <Await resolve={data.data}>
@@ -96,9 +92,7 @@ const ProductStockFallback = () => (
         <Skeleton className="h-7 w-7" />
       </div>
       <div className="flex-1 overflow-auto">
-        <DataGridSkeleton
-          columns={Array.from({ length: 10 }) as ColumnDef<any>[]}
-        />
+        <DataGridSkeleton columns={Array.from({ length: 10 }) as ColumnDef<any>[]} />
       </div>
       <div className="flex items-center justify-end gap-x-2 bg-ui-bg-base p-4">
         <Skeleton className="h-7 w-[59px]" />

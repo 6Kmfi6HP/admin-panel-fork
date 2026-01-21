@@ -1,16 +1,13 @@
-import { Divider, Heading } from "@medusajs/ui";
+import { Divider, Heading } from '@medusajs/ui';
+import { useExtension } from '@providers/extension-provider';
+import { ProductCreateGeneralSection } from '@routes/products/product-create/components/product-create-details-form/components/product-create-details-general-section';
+import { ProductCreateMediaSection } from '@routes/products/product-create/components/product-create-details-form/components/product-create-details-media-section';
+import { ProductCreateVariantsSection } from '@routes/products/product-create/components/product-create-details-form/components/product-create-details-variant-section';
+import type { ProductCreateSchemaType } from '@routes/products/product-create/types';
+import type { UseFormReturn } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
-import type { UseFormReturn } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-
-import { ProductCreateGeneralSection } from "@routes/products/product-create/components/product-create-details-form/components/product-create-details-general-section";
-import { ProductCreateMediaSection } from "@routes/products/product-create/components/product-create-details-form/components/product-create-details-media-section";
-import { ProductCreateVariantsSection } from "@routes/products/product-create/components/product-create-details-form/components/product-create-details-variant-section";
-import type { ProductCreateSchemaType } from "@routes/products/product-create/types";
-
-import { useExtension } from "@providers/extension-provider";
-
-import { FormExtensionZone } from "@/dashboard-app";
+import { FormExtensionZone } from '@/dashboard-app';
 
 type ProductAttributesProps = {
   form: UseFormReturn<ProductCreateSchemaType>;
@@ -18,15 +15,27 @@ type ProductAttributesProps = {
 
 export const ProductCreateDetailsForm = ({ form }: ProductAttributesProps) => {
   const { getFormFields } = useExtension();
-  const fields = getFormFields("product", "create", "general");
+  const fields = getFormFields('product', 'create', 'general');
 
   return (
-    <div className="flex flex-col items-center p-16" data-testid="product-create-details-form">
-      <div className="flex w-full max-w-[720px] flex-col gap-y-8" data-testid="product-create-details-form-content">
+    <div
+      className="flex flex-col items-center p-16"
+      data-testid="product-create-details-form"
+    >
+      <div
+        className="flex w-full max-w-[720px] flex-col gap-y-8"
+        data-testid="product-create-details-form-content"
+      >
         <Header />
-        <div className="flex flex-col gap-y-6" data-testid="product-create-details-form-sections">
+        <div
+          className="flex flex-col gap-y-6"
+          data-testid="product-create-details-form-sections"
+        >
           <ProductCreateGeneralSection form={form} />
-          <FormExtensionZone fields={fields} form={form} />
+          <FormExtensionZone
+            fields={fields}
+            form={form}
+          />
           <ProductCreateMediaSection form={form} />
         </div>
         <Divider data-testid="product-create-details-form-divider" />
@@ -40,8 +49,13 @@ const Header = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col" data-testid="product-create-details-form-header">
-      <Heading data-testid="product-create-details-form-heading">{t("products.create.header")}</Heading>
+    <div
+      className="flex flex-col"
+      data-testid="product-create-details-form-header"
+    >
+      <Heading data-testid="product-create-details-form-heading">
+        {t('products.create.header')}
+      </Heading>
     </div>
   );
 };

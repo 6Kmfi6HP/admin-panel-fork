@@ -1,10 +1,8 @@
-import type { HttpTypes } from "@medusajs/types";
+import { useOrder } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import type { UIMatch } from 'react-router-dom';
 
-import type { UIMatch } from "react-router-dom";
-
-import { useOrder } from "@hooks/api";
-
-import { DEFAULT_FIELDS } from "./constants";
+import { DEFAULT_FIELDS } from './constants';
 
 type OrderDetailBreadcrumbProps = UIMatch<HttpTypes.AdminOrderResponse>;
 
@@ -14,12 +12,12 @@ export const OrderDetailBreadcrumb = (props: OrderDetailBreadcrumbProps) => {
   const { order } = useOrder(
     id!,
     {
-      fields: DEFAULT_FIELDS,
+      fields: DEFAULT_FIELDS
     },
     {
       initialData: props.data,
-      enabled: Boolean(id),
-    },
+      enabled: Boolean(id)
+    }
   );
 
   if (!order) {

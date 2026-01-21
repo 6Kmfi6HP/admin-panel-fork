@@ -1,29 +1,24 @@
-import type { HttpTypes } from "@medusajs/types";
+import { useProductVariant } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import type { UIMatch } from 'react-router-dom';
 
-import type { UIMatch } from "react-router-dom";
+import { VARIANT_DETAIL_FIELDS } from './constants';
 
-import { useProductVariant } from "@hooks/api";
+type ProductVariantDetailBreadcrumbProps = UIMatch<HttpTypes.AdminProductVariantResponse>;
 
-import { VARIANT_DETAIL_FIELDS } from "./constants";
-
-type ProductVariantDetailBreadcrumbProps =
-  UIMatch<HttpTypes.AdminProductVariantResponse>;
-
-export const ProductVariantDetailBreadcrumb = (
-  props: ProductVariantDetailBreadcrumbProps,
-) => {
+export const ProductVariantDetailBreadcrumb = (props: ProductVariantDetailBreadcrumbProps) => {
   const { id, variant_id } = props.params || {};
 
   const { variant } = useProductVariant(
     id!,
     variant_id!,
     {
-      fields: VARIANT_DETAIL_FIELDS,
+      fields: VARIANT_DETAIL_FIELDS
     },
     {
       initialData: props.data,
-      enabled: Boolean(id) && Boolean(variant_id),
-    },
+      enabled: Boolean(id) && Boolean(variant_id)
+    }
   );
 
   if (!variant) {

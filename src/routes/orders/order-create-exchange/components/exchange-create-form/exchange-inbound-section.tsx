@@ -1,45 +1,35 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 
-import type {
-  AdminExchange,
-  AdminOrder,
-  AdminOrderPreview,
-  AdminReturn,
-  InventoryLevelDTO,
-} from "@medusajs/types";
-import type { HttpTypes } from "@medusajs/types";
-import { Alert, Button, Heading, Text, toast } from "@medusajs/ui";
-
-import type { UseFormReturn } from "react-hook-form";
-import { useFieldArray } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-
-import { Form } from "@components/common/form";
-import { Combobox } from "@components/inputs/combobox";
-import {
-  RouteFocusModal,
-  StackedFocusModal,
-  useStackedModal,
-} from "@components/modals";
-
-import { useShippingOptions, useStockLocations } from "@hooks/api";
+import { Form } from '@components/common/form';
+import { Combobox } from '@components/inputs/combobox';
+import { RouteFocusModal, StackedFocusModal, useStackedModal } from '@components/modals';
+import { useShippingOptions, useStockLocations } from '@hooks/api';
 import {
   useAddExchangeInboundItems,
   useAddExchangeInboundShipping,
   useDeleteExchangeInboundShipping,
   useRemoveExchangeInboundItem,
-  useUpdateExchangeInboundItem,
-} from "@hooks/api/exchanges";
-import { useUpdateReturn } from "@hooks/api/returns";
+  useUpdateExchangeInboundItem
+} from '@hooks/api/exchanges';
+import { useUpdateReturn } from '@hooks/api/returns';
+import { sdk } from '@lib/client';
+import type {
+  AdminExchange,
+  AdminOrder,
+  AdminOrderPreview,
+  AdminReturn,
+  HttpTypes,
+  InventoryLevelDTO
+} from '@medusajs/types';
+import { Alert, Button, Heading, Text, toast } from '@medusajs/ui';
+import { ReturnShippingPlaceholder } from '@routes/orders/common/placeholders';
+import { ItemPlaceholder } from '@routes/orders/order-create-claim/components/claim-create-form/item-placeholder';
+import { AddExchangeInboundItemsTable } from '@routes/orders/order-create-exchange/components/add-exchange-inbound-items-table';
+import { useFieldArray, type UseFormReturn } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
-import { sdk } from "@lib/client";
-
-import { ReturnShippingPlaceholder } from "@routes/orders/common/placeholders";
-import { ItemPlaceholder } from "@routes/orders/order-create-claim/components/claim-create-form/item-placeholder";
-import { AddExchangeInboundItemsTable } from "@routes/orders/order-create-exchange/components/add-exchange-inbound-items-table";
-
-import { ExchangeInboundItem } from "./exchange-inbound-item";
-import type { CreateExchangeSchemaType } from "./schema";
+import { ExchangeInboundItem } from './exchange-inbound-item';
+import type { CreateExchangeSchemaType } from './schema';
 
 type ExchangeInboundSectionProps = {
   order: AdminOrder;
@@ -57,7 +47,7 @@ export const ExchangeInboundSection = ({
   preview,
   exchange,
   form,
-  orderReturn,
+  orderReturn
 }: ExchangeInboundSectionProps) => {
   const { t } = useTranslation();
 
@@ -65,62 +55,44 @@ export const ExchangeInboundSection = ({
    * STATE
    */
   const { setIsOpen } = useStackedModal();
-  const [inventoryMap, setInventoryMap] = useState<
-    Record<string, InventoryLevelDTO[]>
-  >({});
+  const [inventoryMap, setInventoryMap] = useState<Record<string, InventoryLevelDTO[]>>({});
 
   /**
    * MUTATIONS
    */
   const { mutateAsync: updateReturn } = useUpdateReturn(
     preview?.order_change?.return_id!,
-    order.id,
+    order.id
   );
 
-  const { mutateAsync: addInboundShipping } = useAddExchangeInboundShipping(
+  const { mutateAsync: addInboundShipping } = useAddExchangeInboundShipping(exchange.id, order.id);
+
+  const { mutateAsync: deleteInboundShipping } = useDeleteExchangeInboundShipping(
     exchange.id,
-    order.id,
+    order.id
   );
 
-  const { mutateAsync: deleteInboundShipping } =
-    useDeleteExchangeInboundShipping(exchange.id, order.id);
+  const { mutateAsync: addInboundItem } = useAddExchangeInboundItems(exchange.id, order.id);
 
-  const { mutateAsync: addInboundItem } = useAddExchangeInboundItems(
-    exchange.id,
-    order.id,
-  );
+  const { mutateAsync: updateInboundItem } = useUpdateExchangeInboundItem(exchange.id, order.id);
 
-  const { mutateAsync: updateInboundItem } = useUpdateExchangeInboundItem(
-    exchange.id,
-    order.id,
-  );
-
-  const { mutateAsync: removeInboundItem } = useRemoveExchangeInboundItem(
-    exchange.id,
-    order.id,
-  );
+  const { mutateAsync: removeInboundItem } = useRemoveExchangeInboundItem(exchange.id, order.id);
 
   /**
    * Only consider items that belong to this exchange.
    */
   const previewInboundItems = useMemo(
-    () =>
-      preview?.items?.filter(
-        (i) => !!i.actions?.find((a) => a.exchange_id === exchange.id),
-      ),
-    [preview.items],
+    () => preview?.items?.filter(i => !!i.actions?.find(a => a.exchange_id === exchange.id)),
+    [preview.items]
   );
 
   const inboundPreviewItems = previewInboundItems.filter(
-    (item) => !!item.actions?.find((a) => a.action === "RETURN_ITEM"),
+    item => !!item.actions?.find(a => a.action === 'RETURN_ITEM')
   );
 
-  const itemsMap = useMemo(
-    () => new Map(order?.items?.map((i) => [i.id, i])),
-    [order.items],
-  );
+  const itemsMap = useMemo(() => new Map(order?.items?.map(i => [i.id, i])), [order.items]);
 
-  const locationId = form.watch("location_id");
+  const locationId = form.watch('location_id');
 
   /**
    * HOOKS
@@ -129,61 +101,57 @@ export const ExchangeInboundSection = ({
   const { shipping_options = [] } = useShippingOptions(
     {
       limit: 999,
-      fields: "*prices,+service_zone.fulfillment_set.location.id",
-      stock_location_id: locationId,
+      fields: '*prices,+service_zone.fulfillment_set.location.id',
+      stock_location_id: locationId
     },
     {
-      enabled: !!locationId,
-    },
+      enabled: !!locationId
+    }
   );
 
   const inboundShippingOptions = shipping_options.filter(
-    (shippingOption) =>
-      !!shippingOption.rules.find(
-        (r) => r.attribute === "is_return" && r.value === "true",
-      ),
+    shippingOption =>
+      !!shippingOption.rules.find(r => r.attribute === 'is_return' && r.value === 'true')
   );
 
   const {
     fields: inboundItems,
     append,
     remove,
-    update,
+    update
   } = useFieldArray({
-    name: "inbound_items",
-    control: form.control,
+    name: 'inbound_items',
+    control: form.control
   });
 
   const inboundItemsMap = useMemo(
-    () => new Map(previewInboundItems.map((i) => [i.id, i])),
-    [previewInboundItems, inboundItems],
+    () => new Map(previewInboundItems.map(i => [i.id, i])),
+    [previewInboundItems, inboundItems]
   );
 
   useEffect(() => {
     const existingItemsMap: Record<string, boolean> = {};
 
-    inboundPreviewItems.forEach((i) => {
-      const ind = inboundItems.findIndex((field) => field.item_id === i.id);
+    inboundPreviewItems.forEach(i => {
+      const ind = inboundItems.findIndex(field => field.item_id === i.id);
 
       existingItemsMap[i.id] = true;
 
       if (ind > -1) {
         if (inboundItems[ind].quantity !== i.detail.return_requested_quantity) {
-          const returnItemAction = i.actions?.find(
-            (a) => a.action === "RETURN_ITEM",
-          );
+          const returnItemAction = i.actions?.find(a => a.action === 'RETURN_ITEM');
 
           update(ind, {
             ...inboundItems[ind],
             quantity: i.detail.return_requested_quantity,
             note: returnItemAction?.internal_note,
-            reason_id: returnItemAction?.details?.reason_id as string,
+            reason_id: returnItemAction?.details?.reason_id as string
           });
         }
       } else {
         append(
           { item_id: i.id, quantity: i.detail.return_requested_quantity },
-          { shouldFocus: false },
+          { shouldFocus: false }
         );
       }
     });
@@ -196,22 +164,19 @@ export const ExchangeInboundSection = ({
   }, [previewInboundItems]);
 
   useEffect(() => {
-    const inboundShippingMethod = preview.shipping_methods.find((s) =>
-      s.actions?.find((a) => a.action === "SHIPPING_ADD" && !!a.return_id),
+    const inboundShippingMethod = preview.shipping_methods.find(s =>
+      s.actions?.find(a => a.action === 'SHIPPING_ADD' && !!a.return_id)
     );
 
     if (inboundShippingMethod) {
-      form.setValue(
-        "inbound_option_id",
-        inboundShippingMethod.shipping_option_id,
-      );
+      form.setValue('inbound_option_id', inboundShippingMethod.shipping_option_id);
     } else {
-      form.setValue("inbound_option_id", "");
+      form.setValue('inbound_option_id', '');
     }
   }, [preview.shipping_methods]);
 
   useEffect(() => {
-    form.setValue("location_id", orderReturn?.location_id);
+    form.setValue('location_id', orderReturn?.location_id);
   }, [orderReturn]);
 
   const showInboundItemsPlaceholder = !inboundItems.length;
@@ -220,57 +185,53 @@ export const ExchangeInboundSection = ({
     itemsToAdd.length &&
       (await addInboundItem(
         {
-          items: itemsToAdd.map((id) => ({
+          items: itemsToAdd.map(id => ({
             id,
-            quantity: 1,
-          })),
+            quantity: 1
+          }))
         },
         {
-          onError: (error) => {
+          onError: error => {
             toast.error(error.message);
-          },
-        },
+          }
+        }
       ));
 
     for (const itemToRemove of itemsToRemove) {
       const actionId = previewInboundItems
-        .find((i) => i.id === itemToRemove)
-        ?.actions?.find((a) => a.action === "RETURN_ITEM")?.id;
+        .find(i => i.id === itemToRemove)
+        ?.actions?.find(a => a.action === 'RETURN_ITEM')?.id;
 
       if (actionId) {
         await removeInboundItem(actionId, {
-          onError: (error) => {
+          onError: error => {
             toast.error(error.message);
-          },
+          }
         });
       }
     }
 
-    setIsOpen("inbound-items", false);
+    setIsOpen('inbound-items', false);
   };
 
   const onLocationChange = async (selectedLocationId?: string | null) => {
     await updateReturn({ location_id: selectedLocationId });
   };
 
-  const onShippingOptionChange = async (
-    selectedOptionId: string | undefined,
-  ) => {
-    const inboundShippingMethods = preview.shipping_methods.filter((s) =>
-      s.actions?.find((a) => a.action === "SHIPPING_ADD" && !!a.return_id),
+  const onShippingOptionChange = async (selectedOptionId: string | undefined) => {
+    const inboundShippingMethods = preview.shipping_methods.filter(s =>
+      s.actions?.find(a => a.action === 'SHIPPING_ADD' && !!a.return_id)
     );
 
-    const promises = inboundShippingMethods
-      .filter(Boolean)
-      .map((inboundShippingMethod) => {
-        const action = inboundShippingMethod.actions?.find(
-          (a) => a.action === "SHIPPING_ADD" && !!a.return_id,
-        );
+    const promises = inboundShippingMethods.filter(Boolean).map(inboundShippingMethod => {
+      const action = inboundShippingMethod.actions?.find(
+        a => a.action === 'SHIPPING_ADD' && !!a.return_id
+      );
 
-        if (action) {
-          return deleteInboundShipping(action.id);
-        }
-      });
+      if (action) {
+        return deleteInboundShipping(action.id);
+      }
+    });
 
     await Promise.all(promises);
 
@@ -278,10 +239,10 @@ export const ExchangeInboundSection = ({
       await addInboundShipping(
         { shipping_option_id: selectedOptionId },
         {
-          onError: (error) => {
+          onError: error => {
             toast.error(error.message);
-          },
-        },
+          }
+        }
       );
     }
   };
@@ -292,7 +253,7 @@ export const ExchangeInboundSection = ({
     }
 
     const allItemsHaveLocation = inboundItems
-      .map((_i) => {
+      .map(_i => {
         const item = itemsMap.get(_i.item_id);
         if (!item?.variant_id || !item?.variant) {
           return true;
@@ -302,9 +263,7 @@ export const ExchangeInboundSection = ({
           return true;
         }
 
-        return inventoryMap[item.variant_id]?.find(
-          (l) => l.location_id === locationId,
-        );
+        return inventoryMap[item.variant_id]?.find(l => l.location_id === locationId);
       })
       .every(Boolean);
 
@@ -319,25 +278,23 @@ export const ExchangeInboundSection = ({
         return ret;
       }
 
-      const variantIds = inboundItems
-        .map((item) => item?.variant_id)
-        .filter(Boolean);
+      const variantIds = inboundItems.map(item => item?.variant_id).filter(Boolean);
 
       const variants = (
         await sdk.admin.productVariant.list({
           id: variantIds,
-          fields: "*inventory.location_levels",
+          fields: '*inventory.location_levels'
         })
       ).variants;
 
-      variants.forEach((variant) => {
+      variants.forEach(variant => {
         ret[variant.id] = variant.inventory?.[0]?.location_levels || [];
       });
 
       return ret;
     };
 
-    getInventoryMap().then((map) => {
+    getInventoryMap().then(map => {
       setInventoryMap(map);
     });
   }, [inboundItems]);
@@ -345,12 +302,12 @@ export const ExchangeInboundSection = ({
   return (
     <div>
       <div className="mt-8 flex items-center justify-between">
-        <Heading level="h2">{t("orders.returns.inbound")}</Heading>
+        <Heading level="h2">{t('orders.returns.inbound')}</Heading>
 
         <StackedFocusModal id="inbound-items">
           <StackedFocusModal.Trigger asChild>
             <a className="txt-compact-small-plus cursor-pointer text-blue-500 outline-none transition-fg hover:text-blue-400 focus-visible:shadow-borders-focus">
-              {t("actions.addItems")}
+              {t('actions.addItems')}
             </a>
           </StackedFocusModal.Trigger>
 
@@ -359,16 +316,16 @@ export const ExchangeInboundSection = ({
 
             <AddExchangeInboundItemsTable
               items={order.items!}
-              selectedItems={inboundItems.map((i) => i.item_id)}
+              selectedItems={inboundItems.map(i => i.item_id)}
               currencyCode={order.currency_code}
-              onSelectionChange={(finalSelection) => {
-                const alreadySelected = inboundItems.map((i) => i.item_id);
+              onSelectionChange={finalSelection => {
+                const alreadySelected = inboundItems.map(i => i.item_id);
 
                 itemsToAdd = finalSelection.filter(
-                  (selection) => !alreadySelected.includes(selection),
+                  selection => !alreadySelected.includes(selection)
                 );
                 itemsToRemove = alreadySelected.filter(
-                  (selection) => !finalSelection.includes(selection),
+                  selection => !finalSelection.includes(selection)
                 );
               }}
             />
@@ -377,8 +334,12 @@ export const ExchangeInboundSection = ({
               <div className="flex w-full items-center justify-end gap-x-4">
                 <div className="flex items-center justify-end gap-x-2">
                   <RouteFocusModal.Close asChild>
-                    <Button type="button" variant="secondary" size="small">
-                      {t("actions.cancel")}
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="small"
+                    >
+                      {t('actions.cancel')}
                     </Button>
                   </RouteFocusModal.Close>
                   <Button
@@ -389,7 +350,7 @@ export const ExchangeInboundSection = ({
                     role="button"
                     onClick={async () => await onItemsSelected()}
                   >
-                    {t("actions.save")}
+                    {t('actions.save')}
                   </Button>
                 </div>
               </div>
@@ -412,53 +373,51 @@ export const ExchangeInboundSection = ({
               form={form}
               onRemove={() => {
                 const actionId = previewInboundItems
-                  .find((i) => i.id === item.item_id)
-                  ?.actions?.find((a) => a.action === "RETURN_ITEM")?.id;
+                  .find(i => i.id === item.item_id)
+                  ?.actions?.find(a => a.action === 'RETURN_ITEM')?.id;
 
                 if (actionId) {
                   removeInboundItem(actionId, {
-                    onError: (error) => {
+                    onError: error => {
                       toast.error(error.message);
-                    },
+                    }
                   });
                 }
               }}
               onUpdate={(payload: HttpTypes.AdminUpdateReturnItems) => {
                 const action = previewInboundItems
-                  .find((i) => i.id === item.item_id)
-                  ?.actions?.find((a) => a.action === "RETURN_ITEM");
+                  .find(i => i.id === item.item_id)
+                  ?.actions?.find(a => a.action === 'RETURN_ITEM');
 
                 if (action) {
                   updateInboundItem(
                     { ...payload, actionId: action.id },
                     {
-                      onError: (error) => {
+                      onError: error => {
                         if (action.details?.quantity && payload.quantity) {
                           form.setValue(
                             `inbound_items.${index}.quantity`,
-                            action.details?.quantity as number,
+                            action.details?.quantity as number
                           );
                         }
 
                         toast.error(error.message);
-                      },
-                    },
+                      }
+                    }
                   );
                 }
               }}
               index={index}
             />
-          ),
+          )
       )}
       {!showInboundItemsPlaceholder && (
         <div className="mt-8 flex flex-col gap-y-4">
           {/*LOCATION*/}
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <div>
-              <Form.Label>{t("orders.returns.location")}</Form.Label>
-              <Form.Hint className="!mt-1">
-                {t("orders.returns.locationHint")}
-              </Form.Hint>
+              <Form.Label>{t('orders.returns.location')}</Form.Label>
+              <Form.Hint className="!mt-1">{t('orders.returns.locationHint')}</Form.Hint>
             </div>
 
             <Form.Field
@@ -471,16 +430,14 @@ export const ExchangeInboundSection = ({
                       <Combobox
                         {...field}
                         value={value ?? undefined}
-                        onChange={(v) => {
+                        onChange={v => {
                           onChange(v);
                           onLocationChange(v);
                         }}
-                        options={(stock_locations ?? []).map(
-                          (stockLocation) => ({
-                            label: stockLocation.name,
-                            value: stockLocation.id,
-                          }),
-                        )}
+                        options={(stock_locations ?? []).map(stockLocation => ({
+                          label: stockLocation.name,
+                          value: stockLocation.id
+                        }))}
                       />
                     </Form.Control>
                   </Form.Item>
@@ -493,19 +450,17 @@ export const ExchangeInboundSection = ({
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <div>
               <Form.Label>
-                {t("orders.returns.inboundShipping")}
+                {t('orders.returns.inboundShipping')}
                 <Text
                   size="small"
                   leading="compact"
                   className="ml-1 inline text-ui-fg-muted"
                 >
-                  ({t("fields.optional")})
+                  ({t('fields.optional')})
                 </Text>
               </Form.Label>
 
-              <Form.Hint className="!mt-1">
-                {t("orders.returns.inboundShippingHint")}
-              </Form.Hint>
+              <Form.Hint className="!mt-1">{t('orders.returns.inboundShippingHint')}</Form.Hint>
             </div>
 
             <Form.Field
@@ -518,14 +473,14 @@ export const ExchangeInboundSection = ({
                       <Combobox
                         allowClear
                         value={value ?? undefined}
-                        onChange={(val) => {
+                        onChange={val => {
                           onChange(val);
                           onShippingOptionChange(val);
                         }}
                         {...field}
-                        options={inboundShippingOptions.map((so) => ({
+                        options={inboundShippingOptions.map(so => ({
                           label: so.name,
-                          value: so.id,
+                          value: so.id
                         }))}
                         disabled={!locationId}
                         noResultsPlaceholder={<ReturnShippingPlaceholder />}
@@ -539,12 +494,16 @@ export const ExchangeInboundSection = ({
         </div>
       )}
       {showLevelsWarning && (
-        <Alert variant="warning" dismissible className="mt-4 p-5">
+        <Alert
+          variant="warning"
+          dismissible
+          className="mt-4 p-5"
+        >
           <div className="txt-small pb-2 font-medium leading-[20px] text-ui-fg-subtle">
-            {t("orders.returns.noInventoryLevel")}
+            {t('orders.returns.noInventoryLevel')}
           </div>
           <Text className="txt-small leading-normal text-ui-fg-subtle">
-            {t("orders.returns.noInventoryLevelDesc")}
+            {t('orders.returns.noInventoryLevelDesc')}
           </Text>
         </Alert>
       )}

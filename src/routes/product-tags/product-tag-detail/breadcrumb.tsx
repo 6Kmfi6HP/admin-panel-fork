@@ -1,20 +1,15 @@
-import type { HttpTypes } from "@medusajs/types";
+import { useProductTag } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import type { UIMatch } from 'react-router-dom';
 
-import type { UIMatch } from "react-router-dom";
+type ProductTagDetailBreadcrumbProps = UIMatch<HttpTypes.AdminProductTagResponse>;
 
-import { useProductTag } from "@hooks/api";
-
-type ProductTagDetailBreadcrumbProps =
-  UIMatch<HttpTypes.AdminProductTagResponse>;
-
-export const ProductTagDetailBreadcrumb = (
-  props: ProductTagDetailBreadcrumbProps,
-) => {
+export const ProductTagDetailBreadcrumb = (props: ProductTagDetailBreadcrumbProps) => {
   const { id } = props.params || {};
 
   const { product_tag } = useProductTag(id!, undefined, {
     initialData: props.data,
-    enabled: Boolean(id),
+    enabled: Boolean(id)
   });
 
   if (!product_tag) {

@@ -1,18 +1,14 @@
-import type { HttpTypes } from "@medusajs/types";
-import { toast, usePrompt } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-
-import { useDeleteProductTag } from "@hooks/api";
+import { useDeleteProductTag } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import { toast, usePrompt } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 type UseDeleteProductTagActionProps = {
   productTag: HttpTypes.AdminProductTag;
 };
 
-export const useDeleteProductTagAction = ({
-  productTag,
-}: UseDeleteProductTagActionProps) => {
+export const useDeleteProductTagAction = ({ productTag }: UseDeleteProductTagActionProps) => {
   const { t } = useTranslation();
   const prompt = usePrompt();
   const navigate = useNavigate();
@@ -21,12 +17,12 @@ export const useDeleteProductTagAction = ({
 
   const handleDelete = async () => {
     const confirmed = await prompt({
-      title: t("general.areYouSure"),
-      description: t("productTags.delete.confirmation", {
-        value: productTag.value,
+      title: t('general.areYouSure'),
+      description: t('productTags.delete.confirmation', {
+        value: productTag.value
       }),
-      confirmText: t("actions.delete"),
-      cancelText: t("actions.cancel"),
+      confirmText: t('actions.delete'),
+      cancelText: t('actions.cancel')
     });
 
     if (!confirmed) {
@@ -36,17 +32,17 @@ export const useDeleteProductTagAction = ({
     await mutateAsync(undefined, {
       onSuccess: () => {
         toast.success(
-          t("productTags.delete.successToast", {
-            value: productTag.value,
-          }),
+          t('productTags.delete.successToast', {
+            value: productTag.value
+          })
         );
-        navigate("/settings/product-tags", {
-          replace: true,
+        navigate('/settings/product-tags', {
+          replace: true
         });
       },
-      onError: (error) => {
+      onError: error => {
         toast.error(error.message);
-      },
+      }
     });
   };
 

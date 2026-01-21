@@ -1,11 +1,9 @@
-import { PencilSquare, ShoppingBag } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
-import { Container, Heading } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { SidebarLink } from "@components/common/sidebar-link/sidebar-link.tsx";
+import { ActionMenu } from '@components/common/action-menu';
+import { SidebarLink } from '@components/common/sidebar-link/sidebar-link.tsx';
+import { PencilSquare, ShoppingBag } from '@medusajs/icons';
+import type { HttpTypes } from '@medusajs/types';
+import { Container, Heading } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
 
 type ProductShippingProfileSectionProps = {
   product: HttpTypes.AdminProduct & {
@@ -13,28 +11,37 @@ type ProductShippingProfileSectionProps = {
   };
 };
 
-export const ProductShippingProfileSection = ({
-  product,
-}: ProductShippingProfileSectionProps) => {
+export const ProductShippingProfileSection = ({ product }: ProductShippingProfileSectionProps) => {
   const { t } = useTranslation();
 
   const shippingProfile = product.shipping_profile;
 
   return (
-    <Container className="p-0" data-testid="product-shipping-profile-section">
-      <div className="flex items-center justify-between px-6 py-4" data-testid="product-shipping-profile-header">
-        <Heading level="h2" data-testid="product-shipping-profile-title">{t("products.shippingProfile.header")}</Heading>
+    <Container
+      className="p-0"
+      data-testid="product-shipping-profile-section"
+    >
+      <div
+        className="flex items-center justify-between px-6 py-4"
+        data-testid="product-shipping-profile-header"
+      >
+        <Heading
+          level="h2"
+          data-testid="product-shipping-profile-title"
+        >
+          {t('products.shippingProfile.header')}
+        </Heading>
         <ActionMenu
           groups={[
             {
               actions: [
                 {
-                  label: t("actions.edit"),
-                  to: "shipping-profile",
-                  icon: <PencilSquare />,
-                },
-              ],
-            },
+                  label: t('actions.edit'),
+                  to: 'shipping-profile',
+                  icon: <PencilSquare />
+                }
+              ]
+            }
           ]}
           data-testid="product-shipping-profile-action-menu"
         />

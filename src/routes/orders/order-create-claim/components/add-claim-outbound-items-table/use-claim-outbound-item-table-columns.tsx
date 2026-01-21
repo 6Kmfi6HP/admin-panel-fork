@@ -1,14 +1,9 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import { Checkbox } from "@medusajs/ui";
-
-import { createColumnHelper } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-
-import {
-  ProductCell,
-  ProductHeader,
-} from "@components/table/table-cells/product/product-cell";
+import { ProductCell, ProductHeader } from '@components/table/table-cells/product/product-cell';
+import { Checkbox } from '@medusajs/ui';
+import { createColumnHelper } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 
 // @todo fix any type
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,17 +15,13 @@ export const useClaimOutboundItemTableColumns = (currencyCode: string) => {
   return useMemo(
     () => [
       columnHelper.display({
-        id: "select",
+        id: 'select',
         header: ({ table }) => (
           <Checkbox
             checked={
-              table.getIsSomePageRowsSelected()
-                ? "indeterminate"
-                : table.getIsAllPageRowsSelected()
+              table.getIsSomePageRowsSelected() ? 'indeterminate' : table.getIsAllPageRowsSelected()
             }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
+            onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
           />
         ),
         cell: ({ row }) => {
@@ -40,27 +31,27 @@ export const useClaimOutboundItemTableColumns = (currencyCode: string) => {
             <Checkbox
               disabled={!isSelectable}
               checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              onClick={(e) => {
+              onCheckedChange={value => row.toggleSelected(!!value)}
+              onClick={e => {
                 e.stopPropagation();
               }}
             />
           );
-        },
+        }
       }),
       columnHelper.display({
-        id: "product",
+        id: 'product',
         header: () => <ProductHeader />,
-        cell: ({ row }) => <ProductCell product={row.original.product} />,
+        cell: ({ row }) => <ProductCell product={row.original.product} />
       }),
-      columnHelper.accessor("sku", {
-        header: t("fields.sku"),
-        cell: ({ getValue }) => getValue() || "-",
+      columnHelper.accessor('sku', {
+        header: t('fields.sku'),
+        cell: ({ getValue }) => getValue() || '-'
       }),
-      columnHelper.accessor("title", {
-        header: t("fields.title"),
-      }),
+      columnHelper.accessor('title', {
+        header: t('fields.title')
+      })
     ],
-    [t, currencyCode],
+    [t, currencyCode]
   );
 };

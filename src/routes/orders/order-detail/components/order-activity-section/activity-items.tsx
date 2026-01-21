@@ -1,22 +1,13 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import type {
-  AdminClaim,
-  AdminExchange,
-  AdminOrderLineItem,
-  AdminReturn,
-} from "@medusajs/types";
-import { Popover, Text } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-
-import { Thumbnail } from "@components/common/thumbnail";
+import { Thumbnail } from '@components/common/thumbnail';
+import type { AdminClaim, AdminExchange, AdminOrderLineItem, AdminReturn } from '@medusajs/types';
+import { Popover, Text } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
 
 type ActivityItemsProps = {
-  itemsToSend?:
-    | AdminClaim["additional_items"]
-    | AdminExchange["additional_items"];
-  itemsToReturn?: AdminReturn["items"];
+  itemsToSend?: AdminClaim['additional_items'] | AdminExchange['additional_items'];
+  itemsToReturn?: AdminReturn['items'];
   itemsMap?: Map<string, AdminOrderLineItem>;
   title: string;
 };
@@ -49,7 +40,11 @@ function ActivityItems(props: ActivityItemsProps) {
         autoFocus={false}
         className="focus-visible:outline-none"
       >
-        <Text size="small" leading="compact" weight="plus">
+        <Text
+          size="small"
+          leading="compact"
+          weight="plus"
+        >
           {title}
         </Text>
       </Popover.Trigger>
@@ -63,16 +58,22 @@ function ActivityItems(props: ActivityItemsProps) {
           {!!itemsToSend?.length && (
             <div className="p-3">
               <div className="txt-compact-small-plus mb-1">
-                {t("orders.activity.events.common.toSend")}
+                {t('orders.activity.events.common.toSend')}
               </div>
 
               <div className="flex flex-col">
-                {itemsToSend?.map((item) => {
+                {itemsToSend?.map(item => {
                   const originalItem = itemsMap?.get(item.item_id)!;
 
                   return (
-                    <div className="flex items-center gap-x-3" key={item.id}>
-                      <Text size="small" className="text-ui-fg-subtle">
+                    <div
+                      className="flex items-center gap-x-3"
+                      key={item.id}
+                    >
+                      <Text
+                        size="small"
+                        className="text-ui-fg-subtle"
+                      >
                         {item.quantity}x
                       </Text>
 
@@ -93,16 +94,22 @@ function ActivityItems(props: ActivityItemsProps) {
           {!!itemsToReturn?.length && (
             <div className="border-t-2 border-dotted p-3">
               <div className="txt-compact-small-plus mb-1">
-                {t("orders.activity.events.common.toReturn")}
+                {t('orders.activity.events.common.toReturn')}
               </div>
 
               <div className="flex flex-col">
-                {itemsToReturn?.map((item) => {
+                {itemsToReturn?.map(item => {
                   const originalItem = itemsMap?.get(item.item_id)!;
 
                   return (
-                    <div className="flex items-center gap-x-3" key={item.id}>
-                      <Text size="small" className="text-ui-fg-subtle">
+                    <div
+                      className="flex items-center gap-x-3"
+                      key={item.id}
+                    >
+                      <Text
+                        size="small"
+                        className="text-ui-fg-subtle"
+                      >
                         {item.quantity}x
                       </Text>
 

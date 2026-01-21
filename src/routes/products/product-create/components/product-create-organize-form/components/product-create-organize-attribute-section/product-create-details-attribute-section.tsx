@@ -1,34 +1,30 @@
-import { Heading, Input } from "@medusajs/ui";
-
-import type { UseFormReturn } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-
-import { Form } from "@components/common/form";
-import { CountrySelect } from "@components/inputs/country-select";
-
-import type { ProductCreateSchemaType } from "@routes/products/product-create/types.ts";
+import { Form } from '@components/common/form';
+import { CountrySelect } from '@components/inputs/country-select';
+import { Heading, Input } from '@medusajs/ui';
+import type { ProductCreateSchemaType } from '@routes/products/product-create/types.ts';
+import type { UseFormReturn } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 type ProductCreateAttributeSectionProps = {
   form: UseFormReturn<ProductCreateSchemaType>;
 };
 
-export const ProductCreateAttributeSection = ({
-  form,
-}: ProductCreateAttributeSectionProps) => {
+export const ProductCreateAttributeSection = ({ form }: ProductCreateAttributeSectionProps) => {
   const { t } = useTranslation();
 
   return (
-    <div id="attributes" className="flex flex-col gap-y-8">
-      <Heading level="h2">{t("products.attributes")}</Heading>
+    <div
+      id="attributes"
+      className="flex flex-col gap-y-8"
+    >
+      <Heading level="h2">{t('products.attributes')}</Heading>
       <div className="grid grid-cols-2 gap-x-4 gap-y-8">
         <Form.Field
           control={form.control}
           name="origin_country"
           render={({ field }) => (
             <Form.Item>
-              <Form.Label optional>
-                {t("products.fields.countryOrigin.label")}
-              </Form.Label>
+              <Form.Label optional>{t('products.fields.countryOrigin.label')}</Form.Label>
               <Form.Control>
                 <CountrySelect {...field} />
               </Form.Control>
@@ -40,9 +36,7 @@ export const ProductCreateAttributeSection = ({
           name="material"
           render={({ field }) => (
             <Form.Item>
-              <Form.Label optional>
-                {t("products.fields.material.label")}
-              </Form.Label>
+              <Form.Label optional>{t('products.fields.material.label')}</Form.Label>
               <Form.Control>
                 <Input {...field} />
               </Form.Control>
@@ -56,11 +50,13 @@ export const ProductCreateAttributeSection = ({
           name="width"
           render={({ field }) => (
             <Form.Item>
-              <Form.Label optional>
-                {t("products.fields.width.label")}
-              </Form.Label>
+              <Form.Label optional>{t('products.fields.width.label')}</Form.Label>
               <Form.Control>
-                <Input {...field} type="number" min={0} />
+                <Input
+                  {...field}
+                  type="number"
+                  min={0}
+                />
               </Form.Control>
             </Form.Item>
           )}
@@ -70,11 +66,13 @@ export const ProductCreateAttributeSection = ({
           name="length"
           render={({ field }) => (
             <Form.Item>
-              <Form.Label optional>
-                {t("products.fields.length.label")}
-              </Form.Label>
+              <Form.Label optional>{t('products.fields.length.label')}</Form.Label>
               <Form.Control>
-                <Input {...field} type="number" min={0} />
+                <Input
+                  {...field}
+                  type="number"
+                  min={0}
+                />
               </Form.Control>
             </Form.Item>
           )}
@@ -84,11 +82,13 @@ export const ProductCreateAttributeSection = ({
           name="height"
           render={({ field }) => (
             <Form.Item>
-              <Form.Label optional>
-                {t("products.fields.height.label")}
-              </Form.Label>
+              <Form.Label optional>{t('products.fields.height.label')}</Form.Label>
               <Form.Control>
-                <Input {...field} type="number" min={0} />
+                <Input
+                  {...field}
+                  type="number"
+                  min={0}
+                />
               </Form.Control>
             </Form.Item>
           )}
@@ -98,11 +98,13 @@ export const ProductCreateAttributeSection = ({
           name="weight"
           render={({ field }) => (
             <Form.Item>
-              <Form.Label optional>
-                {t("products.fields.weight.label")}
-              </Form.Label>
+              <Form.Label optional>{t('products.fields.weight.label')}</Form.Label>
               <Form.Control>
-                <Input {...field} type="number" min={0} />
+                <Input
+                  {...field}
+                  type="number"
+                  min={0}
+                />
               </Form.Control>
             </Form.Item>
           )}
@@ -112,9 +114,7 @@ export const ProductCreateAttributeSection = ({
           name="mid_code"
           render={({ field }) => (
             <Form.Item>
-              <Form.Label optional>
-                {t("products.fields.mid_code.label")}
-              </Form.Label>
+              <Form.Label optional>{t('products.fields.mid_code.label')}</Form.Label>
               <Form.Control>
                 <Input {...field} />
               </Form.Control>
@@ -126,9 +126,7 @@ export const ProductCreateAttributeSection = ({
           name="hs_code"
           render={({ field }) => (
             <Form.Item>
-              <Form.Label optional>
-                {t("products.fields.hs_code.label")}
-              </Form.Label>
+              <Form.Label optional>{t('products.fields.hs_code.label')}</Form.Label>
               <Form.Control>
                 <Input {...field} />
               </Form.Control>

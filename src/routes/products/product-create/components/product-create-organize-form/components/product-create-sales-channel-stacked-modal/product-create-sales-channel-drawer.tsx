@@ -1,21 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 
-import type { HttpTypes } from "@medusajs/types";
-import type { DataTableRowSelectionState } from "@medusajs/ui";
-import { Button, createDataTableColumnHelper } from "@medusajs/ui";
-
-import { keepPreviousData } from "@tanstack/react-query";
-import type { UseFormReturn } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-
-import { DataTable } from "@components/data-table";
-import * as hooks from "@components/data-table/helpers/sales-channels";
-import { StackedFocusModal, useStackedModal } from "@components/modals";
-
-import { useSalesChannels } from "@hooks/api";
-
-import { SC_STACKED_MODAL_ID } from "@routes/products/product-create/components/product-create-organize-form/constants";
-import type { ProductCreateSchemaType } from "@routes/products/product-create/types";
+import { DataTable } from '@components/data-table';
+import * as hooks from '@components/data-table/helpers/sales-channels';
+import { StackedFocusModal, useStackedModal } from '@components/modals';
+import { useSalesChannels } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, createDataTableColumnHelper, type DataTableRowSelectionState } from '@medusajs/ui';
+import { SC_STACKED_MODAL_ID } from '@routes/products/product-create/components/product-create-organize-form/constants';
+import type { ProductCreateSchemaType } from '@routes/products/product-create/types';
+import { keepPreviousData } from '@tanstack/react-query';
+import type { UseFormReturn } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 type ProductCreateSalesChannelStackedModalProps = {
   form: UseFormReturn<ProductCreateSchemaType>;
@@ -24,27 +19,22 @@ type ProductCreateSalesChannelStackedModalProps = {
 const PAGE_SIZE = 20;
 
 export const ProductCreateSalesChannelStackedModal = ({
-  form,
+  form
 }: ProductCreateSalesChannelStackedModalProps) => {
   const { t } = useTranslation();
   const { getValues, setValue } = form;
   const { setIsOpen, getIsOpen } = useStackedModal();
 
-  const [rowSelection, setRowSelection] = useState<DataTableRowSelectionState>(
-    {},
-  );
+  const [rowSelection, setRowSelection] = useState<DataTableRowSelectionState>({});
   const [state, setState] = useState<{ id: string; name: string }[]>([]);
 
   const searchParams = hooks.useSalesChannelTableQuery({
     pageSize: PAGE_SIZE,
-    prefix: SC_STACKED_MODAL_ID,
+    prefix: SC_STACKED_MODAL_ID
   });
-  const { sales_channels, count, isLoading, isError, error } = useSalesChannels(
-    searchParams,
-    {
-      placeholderData: keepPreviousData,
-    },
-  );
+  const { sales_channels, count, isLoading, isError, error } = useSalesChannels(searchParams, {
+    placeholderData: keepPreviousData
+  });
 
   const open = getIsOpen(SC_STACKED_MODAL_ID);
 
@@ -53,24 +43,24 @@ export const ProductCreateSalesChannelStackedModal = ({
       return;
     }
 
-    const salesChannels = getValues("sales_channels");
+    const salesChannels = getValues('sales_channels');
 
     if (salesChannels) {
       setState(
-        salesChannels.map((channel) => ({
+        salesChannels.map(channel => ({
           id: channel.id,
-          name: channel.name,
-        })),
+          name: channel.name
+        }))
       );
 
       setRowSelection(
         salesChannels.reduce(
           (acc, channel) => ({
             ...acc,
-            [channel.id]: true,
+            [channel.id]: true
           }),
-          {},
-        ),
+          {}
+        )
       );
     }
   }, [open, getValues]);
@@ -78,19 +68,16 @@ export const ProductCreateSalesChannelStackedModal = ({
   const onRowSelectionChange = (state: DataTableRowSelectionState) => {
     const ids = Object.keys(state);
 
-    const addedIdsSet = new Set(
-      ids.filter((id) => state[id] && !rowSelection[id]),
-    );
+    const addedIdsSet = new Set(ids.filter(id => state[id] && !rowSelection[id]));
 
     let addedSalesChannels: { id: string; name: string }[] = [];
 
     if (addedIdsSet.size > 0) {
-      addedSalesChannels =
-        sales_channels?.filter((channel) => addedIdsSet.has(channel.id)) ?? [];
+      addedSalesChannels = sales_channels?.filter(channel => addedIdsSet.has(channel.id)) ?? [];
     }
 
-    setState((prev) => {
-      const filteredPrev = prev.filter((channel) => state[channel.id]);
+    setState(prev => {
+      const filteredPrev = prev.filter(channel => state[channel.id]);
 
       return Array.from(new Set([...filteredPrev, ...addedSalesChannels]));
     });
@@ -98,9 +85,9 @@ export const ProductCreateSalesChannelStackedModal = ({
   };
 
   const handleAdd = () => {
-    setValue("sales_channels", state, {
+    setValue('sales_channels', state, {
       shouldDirty: true,
-      shouldTouch: true,
+      shouldTouch: true
     });
     setIsOpen(SC_STACKED_MODAL_ID, false);
   };
@@ -124,10 +111,10 @@ export const ProductCreateSalesChannelStackedModal = ({
           emptyState={emptyState}
           rowCount={count}
           pageSize={PAGE_SIZE}
-          getRowId={(row) => row.id}
+          getRowId={row => row.id}
           rowSelection={{
             state: rowSelection,
-            onRowSelectionChange,
+            onRowSelectionChange
           }}
           isLoading={isLoading}
           layout="fill"
@@ -137,12 +124,20 @@ export const ProductCreateSalesChannelStackedModal = ({
       <StackedFocusModal.Footer>
         <div className="flex items-center justify-end gap-x-2">
           <StackedFocusModal.Close asChild>
-            <Button size="small" variant="secondary" type="button">
-              {t("actions.cancel")}
+            <Button
+              size="small"
+              variant="secondary"
+              type="button"
+            >
+              {t('actions.cancel')}
             </Button>
           </StackedFocusModal.Close>
-          <Button size="small" onClick={handleAdd} type="button">
-            {t("actions.save")}
+          <Button
+            size="small"
+            onClick={handleAdd}
+            type="button"
+          >
+            {t('actions.save')}
           </Button>
         </div>
       </StackedFocusModal.Footer>

@@ -1,55 +1,57 @@
-import { PencilSquare, Trash } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
-import {
-  Badge,
-  Container,
-  Heading,
-  Text,
-  toast,
-  usePrompt,
-} from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { ListSummary } from "@components/common/list-summary";
-import { SectionRow } from "@components/common/section";
-
-import { useDeleteRegion } from "@hooks/api";
-
-import { currencies } from "@lib/data/currencies";
-import { formatProvider } from "@lib/format-provider";
+import { ActionMenu } from '@components/common/action-menu';
+import { ListSummary } from '@components/common/list-summary';
+import { SectionRow } from '@components/common/section';
+import { useDeleteRegion } from '@hooks/api';
+import { currencies } from '@lib/data/currencies';
+import { formatProvider } from '@lib/format-provider';
+import { PencilSquare, Trash } from '@medusajs/icons';
+import type { HttpTypes } from '@medusajs/types';
+import { Badge, Container, Heading, Text, toast, usePrompt } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 type RegionGeneralSectionProps = {
   region: HttpTypes.AdminRegion;
   pricePreferences: HttpTypes.AdminPricePreference[];
 };
 
-export const RegionGeneralSection = ({
-  region,
-  pricePreferences,
-}: RegionGeneralSectionProps) => {
+export const RegionGeneralSection = ({ region, pricePreferences }: RegionGeneralSectionProps) => {
   const { t } = useTranslation();
   const pricePreferenceForRegion = pricePreferences?.find(
-    (preference) =>
-      preference.attribute === "region_id" && preference.value === region.id,
+    preference => preference.attribute === 'region_id' && preference.value === region.id
   );
 
   return (
-    <Container className="divide-y p-0" data-testid="region-general-section-container">
-      <div className="flex items-center justify-between px-6 py-4" data-testid="region-general-section-header">
+    <Container
+      className="divide-y p-0"
+      data-testid="region-general-section-container"
+    >
+      <div
+        className="flex items-center justify-between px-6 py-4"
+        data-testid="region-general-section-header"
+      >
         <Heading data-testid="region-general-section-name">{region.name}</Heading>
         <RegionActions region={region} />
       </div>
       <SectionRow
-        title={t("fields.currency")}
+        title={t('fields.currency')}
         value={
-          <div className="flex items-center gap-x-2" data-testid="region-general-section-currency-value">
-            <Badge size="2xsmall" className="uppercase" data-testid="region-general-section-currency-badge">
+          <div
+            className="flex items-center gap-x-2"
+            data-testid="region-general-section-currency-value"
+          >
+            <Badge
+              size="2xsmall"
+              className="uppercase"
+              data-testid="region-general-section-currency-badge"
+            >
               {region.currency_code}
             </Badge>
-            <Text size="small" leading="compact" data-testid="region-general-section-currency-name">
+            <Text
+              size="small"
+              leading="compact"
+              data-testid="region-general-section-currency-name"
+            >
               {currencies[region.currency_code.toUpperCase()].name}
             </Text>
           </div>
@@ -58,31 +60,28 @@ export const RegionGeneralSection = ({
       />
 
       <SectionRow
-        title={t("fields.automaticTaxes")}
-        value={region.automatic_taxes ? t("fields.true") : t("fields.false")}
+        title={t('fields.automaticTaxes')}
+        value={region.automatic_taxes ? t('fields.true') : t('fields.false')}
         data-testid="region-general-section-automatic-taxes"
       />
 
       <SectionRow
-        title={t("fields.taxInclusivePricing")}
-        value={
-          pricePreferenceForRegion?.is_tax_inclusive
-            ? t("fields.true")
-            : t("fields.false")
-        }
+        title={t('fields.taxInclusivePricing')}
+        value={pricePreferenceForRegion?.is_tax_inclusive ? t('fields.true') : t('fields.false')}
         data-testid="region-general-section-tax-inclusive-pricing"
       />
 
       <SectionRow
-        title={t("fields.paymentProviders")}
+        title={t('fields.paymentProviders')}
         value={
-          <div className="inline-flex" data-testid="region-general-section-payment-providers-value">
+          <div
+            className="inline-flex"
+            data-testid="region-general-section-payment-providers-value"
+          >
             {region.payment_providers?.length ? (
-              <ListSummary
-                list={region.payment_providers.map((p) => formatProvider(p.id))}
-              />
+              <ListSummary list={region.payment_providers.map(p => formatProvider(p.id))} />
             ) : (
-              "-"
+              '-'
             )}
           </div>
         }
@@ -100,14 +99,14 @@ const RegionActions = ({ region }: { region: HttpTypes.AdminRegion }) => {
 
   const handleDelete = async () => {
     const res = await prompt({
-      title: t("general.areYouSure"),
-      description: t("regions.deleteRegionWarning", {
-        name: region.name,
+      title: t('general.areYouSure'),
+      description: t('regions.deleteRegionWarning', {
+        name: region.name
       }),
       verificationText: region.name,
-      verificationInstruction: t("general.typeToConfirm"),
-      confirmText: t("actions.delete"),
-      cancelText: t("actions.cancel"),
+      verificationInstruction: t('general.typeToConfirm'),
+      confirmText: t('actions.delete'),
+      cancelText: t('actions.cancel')
     });
 
     if (!res) {
@@ -116,12 +115,12 @@ const RegionActions = ({ region }: { region: HttpTypes.AdminRegion }) => {
 
     await mutateAsync(undefined, {
       onSuccess: () => {
-        toast.success(t("regions.toast.delete"));
-        navigate("/settings/regions", { replace: true });
+        toast.success(t('regions.toast.delete'));
+        navigate('/settings/regions', { replace: true });
       },
-      onError: (e) => {
+      onError: e => {
         toast.error(e.message);
-      },
+      }
     });
   };
 
@@ -132,20 +131,20 @@ const RegionActions = ({ region }: { region: HttpTypes.AdminRegion }) => {
           actions: [
             {
               icon: <PencilSquare />,
-              label: t("actions.edit"),
-              to: `/settings/regions/${region.id}/edit`,
-            },
-          ],
+              label: t('actions.edit'),
+              to: `/settings/regions/${region.id}/edit`
+            }
+          ]
         },
         {
           actions: [
             {
               icon: <Trash />,
-              label: t("actions.delete"),
-              onClick: handleDelete,
-            },
-          ],
-        },
+              label: t('actions.delete'),
+              onClick: handleDelete
+            }
+          ]
+        }
       ]}
       data-testid="region-general-section-action-menu"
     />

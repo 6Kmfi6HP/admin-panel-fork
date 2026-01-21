@@ -1,15 +1,12 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { CurrencyDollar } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
-import { Button, Container, Heading } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { NoRecords } from "@components/common/empty-table-content";
-
-import { getLocaleAmount } from "@lib/money-amount-helpers";
+import { ActionMenu } from '@components/common/action-menu';
+import { NoRecords } from '@components/common/empty-table-content';
+import { getLocaleAmount } from '@lib/money-amount-helpers';
+import { CurrencyDollar } from '@medusajs/icons';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, Container, Heading } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
 
 type VariantPricesSectionProps = {
   variant: HttpTypes.AdminProductVariant;
@@ -18,7 +15,7 @@ type VariantPricesSectionProps = {
 export function VariantPricesSection({ variant }: VariantPricesSectionProps) {
   const { t } = useTranslation();
   const prices = variant.prices
-    ?.filter((p) => !Object.keys(p.rules || {}).length)
+    ?.filter(p => !Object.keys(p.rules || {}).length)
     .sort((p1, p2) => p1.currency_code?.localeCompare(p2.currency_code));
 
   const hasPrices = !!prices?.length;
@@ -32,39 +29,37 @@ export function VariantPricesSection({ variant }: VariantPricesSectionProps) {
   return (
     <Container className="flex flex-col divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
-        <Heading level="h2">{t("labels.prices")}</Heading>
+        <Heading level="h2">{t('labels.prices')}</Heading>
         <ActionMenu
           groups={[
             {
               actions: [
                 {
-                  label: t("actions.edit"),
+                  label: t('actions.edit'),
                   to: `/products/${variant.product_id}/variants/${variant.id}/prices`,
-                  icon: <CurrencyDollar />,
-                },
-              ],
-            },
+                  icon: <CurrencyDollar />
+                }
+              ]
+            }
           ]}
         />
       </div>
       {!hasPrices && <NoRecords className="h-60" />}
-      {displayPrices?.map((price) => (
+      {displayPrices?.map(price => (
         <div
           key={price.id}
           className="txt-small flex justify-between px-6 py-4 text-ui-fg-subtle"
         >
-          <span className="font-medium">
-            {price.currency_code.toUpperCase()}
-          </span>
+          <span className="font-medium">{price.currency_code.toUpperCase()}</span>
           <span>{getLocaleAmount(price.amount, price.currency_code)}</span>
         </div>
       ))}
       {hasPrices && (
         <div className="txt-small flex items-center justify-between px-6 py-4 text-ui-fg-subtle">
           <span className="font-medium">
-            {t("products.variant.pricesPagination", {
+            {t('products.variant.pricesPagination', {
               total: prices.length,
-              current: Math.min(pageSize, prices.length),
+              current: Math.min(pageSize, prices.length)
             })}
           </span>
           <Button
@@ -73,7 +68,7 @@ export function VariantPricesSection({ variant }: VariantPricesSectionProps) {
             className="-mr-3 text-blue-500"
             variant="transparent"
           >
-            {t("actions.showMore")}
+            {t('actions.showMore')}
           </Button>
         </div>
       )}

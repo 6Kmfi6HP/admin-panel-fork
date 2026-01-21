@@ -1,18 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { toast } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-
-import { RouteFocusModal } from "@components/modals";
-
-import { useOrder, useOrderPreview } from "@hooks/api";
-import { useInitiateReturn, useReturn } from "@hooks/api/returns";
-
-import { ReturnCreateForm } from "@routes/orders/order-create-return/components/return-create-form";
-import { DEFAULT_FIELDS } from "@routes/orders/order-detail/constants";
-
+import { RouteFocusModal } from '@components/modals';
+import { useOrder, useOrderPreview } from '@hooks/api';
+import { useInitiateReturn, useReturn } from '@hooks/api/returns';
+import { toast } from '@medusajs/ui';
+import { ReturnCreateForm } from '@routes/orders/order-create-return/components/return-create-form';
+import { DEFAULT_FIELDS } from '@routes/orders/order-detail/constants';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 
 let IS_REQUEST_RUNNING = false;
 
@@ -23,7 +18,7 @@ export const ReturnCreate = () => {
   const { t } = useTranslation();
 
   const { order } = useOrder(id!, {
-    fields: DEFAULT_FIELDS,
+    fields: DEFAULT_FIELDS
   });
 
   const { order: preview } = useOrderPreview(id!, undefined, {});
@@ -33,7 +28,7 @@ export const ReturnCreate = () => {
   const { mutateAsync: initiateReturn } = useInitiateReturn(order.id);
 
   const { return: activeReturn } = useReturn(activeReturnId, undefined, {
-    enabled: !!activeReturnId,
+    enabled: !!activeReturnId
   });
 
   useEffect(() => {
@@ -43,11 +38,11 @@ export const ReturnCreate = () => {
       }
 
       if (preview.order_change) {
-        if (preview.order_change.change_type === "return_request") {
+        if (preview.order_change.change_type === 'return_request') {
           setActiveReturnId(preview.order_change.return_id);
         } else {
           navigate(`/orders/${order.id}`, { replace: true });
-          toast.error(t("orders.returns.activeChangeError"));
+          toast.error(t('orders.returns.activeChangeError'));
         }
 
         return;

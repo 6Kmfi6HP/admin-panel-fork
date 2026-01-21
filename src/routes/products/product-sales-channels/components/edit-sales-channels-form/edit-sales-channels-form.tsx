@@ -1,43 +1,38 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 
-import type { HttpTypes } from "@medusajs/types";
-import { Button, createDataTableColumnHelper } from "@medusajs/ui";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { keepPreviousData } from "@tanstack/react-query";
-import type { RowSelectionState } from "@tanstack/react-table";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import * as zod from "zod";
-
-import { DataTable } from "@components/data-table";
-import * as hooks from "@components/data-table/helpers/sales-channels";
-import { RouteFocusModal, useRouteModal } from "@components/modals";
-
-import { useSalesChannels, useUpdateProduct } from "@hooks/api";
+import { DataTable } from '@components/data-table';
+import * as hooks from '@components/data-table/helpers/sales-channels';
+import { RouteFocusModal, useRouteModal } from '@components/modals';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useSalesChannels, useUpdateProduct } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, createDataTableColumnHelper } from '@medusajs/ui';
+import { keepPreviousData } from '@tanstack/react-query';
+import type { RowSelectionState } from '@tanstack/react-table';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import * as zod from 'zod';
 
 type EditSalesChannelsFormProps = {
   product: HttpTypes.AdminProduct;
 };
 
 const EditSalesChannelsSchema = zod.object({
-  sales_channels: zod.array(zod.string()).optional(),
+  sales_channels: zod.array(zod.string()).optional()
 });
 
 const PAGE_SIZE = 50;
-const PREFIX = "sc";
+const PREFIX = 'sc';
 
-export const EditSalesChannelsForm = ({
-  product,
-}: EditSalesChannelsFormProps) => {
+export const EditSalesChannelsForm = ({ product }: EditSalesChannelsFormProps) => {
   const { t } = useTranslation();
   const { handleSuccess } = useRouteModal();
 
   const form = useForm<zod.infer<typeof EditSalesChannelsSchema>>({
     defaultValues: {
-      sales_channels: product.sales_channels?.map((sc) => sc.id) ?? [],
+      sales_channels: product.sales_channels?.map(sc => sc.id) ?? []
     },
-    resolver: zodResolver(EditSalesChannelsSchema),
+    resolver: zodResolver(EditSalesChannelsSchema)
   });
 
   const { setValue } = form;
@@ -49,28 +44,27 @@ export const EditSalesChannelsForm = ({
       return acc;
     }, {} as RowSelectionState) ?? {};
 
-  const [rowSelection, setRowSelection] =
-    useState<RowSelectionState>(initialState);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>(initialState);
 
   useEffect(() => {
     const ids = Object.keys(rowSelection);
-    setValue("sales_channels", ids, {
+    setValue('sales_channels', ids, {
       shouldDirty: true,
-      shouldTouch: true,
+      shouldTouch: true
     });
   }, [rowSelection, setValue]);
 
   const searchParams = hooks.useSalesChannelTableQuery({
     pageSize: PAGE_SIZE,
-    prefix: PREFIX,
+    prefix: PREFIX
   });
   const { sales_channels, count, isLoading, isError, error } = useSalesChannels(
     {
-      ...searchParams,
+      ...searchParams
     },
     {
-      placeholderData: keepPreviousData,
-    },
+      placeholderData: keepPreviousData
+    }
   );
 
   const filters = hooks.useSalesChannelTableFilters();
@@ -79,24 +73,24 @@ export const EditSalesChannelsForm = ({
 
   const { mutateAsync, isPending: isMutating } = useUpdateProduct(product.id);
 
-  const handleSubmit = form.handleSubmit(async (data) => {
+  const handleSubmit = form.handleSubmit(async data => {
     const arr = data.sales_channels ?? [];
 
-    const sales_channels = arr.map((id) => {
+    const sales_channels = arr.map(id => {
       return {
-        id,
+        id
       };
     });
 
     await mutateAsync(
       {
-        sales_channels,
+        sales_channels
       },
       {
         onSuccess: () => {
           handleSuccess();
-        },
-      },
+        }
+      }
     );
   });
 
@@ -105,20 +99,29 @@ export const EditSalesChannelsForm = ({
   }
 
   return (
-    <RouteFocusModal.Form form={form} data-testid="product-sales-channels-form">
-      <div className="flex h-full flex-col overflow-hidden" data-testid="product-sales-channels-form-container">
+    <RouteFocusModal.Form
+      form={form}
+      data-testid="product-sales-channels-form"
+    >
+      <div
+        className="flex h-full flex-col overflow-hidden"
+        data-testid="product-sales-channels-form-container"
+      >
         <RouteFocusModal.Header data-testid="product-sales-channels-form-header" />
-        <RouteFocusModal.Body className="flex-1 overflow-hidden" data-testid="product-sales-channels-form-body">
+        <RouteFocusModal.Body
+          className="flex-1 overflow-hidden"
+          data-testid="product-sales-channels-form-body"
+        >
           <DataTable
             data={sales_channels}
             columns={columns}
-            getRowId={(row) => row.id}
+            getRowId={row => row.id}
             rowCount={count}
             isLoading={isLoading}
             filters={filters}
             rowSelection={{
               state: rowSelection,
-              onRowSelectionChange: setRowSelection,
+              onRowSelectionChange: setRowSelection
             }}
             autoFocusSearch
             layout="fill"
@@ -128,14 +131,29 @@ export const EditSalesChannelsForm = ({
           />
         </RouteFocusModal.Body>
         <RouteFocusModal.Footer data-testid="product-sales-channels-form-footer">
-          <div className="flex items-center justify-end gap-x-2" data-testid="product-sales-channels-form-footer-actions">
-            <RouteFocusModal.Close asChild data-testid="product-sales-channels-form-cancel-button-wrapper">
-              <Button size="small" variant="secondary" data-testid="product-sales-channels-form-cancel-button">
-                {t("actions.cancel")}
+          <div
+            className="flex items-center justify-end gap-x-2"
+            data-testid="product-sales-channels-form-footer-actions"
+          >
+            <RouteFocusModal.Close
+              asChild
+              data-testid="product-sales-channels-form-cancel-button-wrapper"
+            >
+              <Button
+                size="small"
+                variant="secondary"
+                data-testid="product-sales-channels-form-cancel-button"
+              >
+                {t('actions.cancel')}
               </Button>
             </RouteFocusModal.Close>
-            <Button size="small" isLoading={isMutating} onClick={handleSubmit} data-testid="product-sales-channels-form-save-button">
-              {t("actions.save")}
+            <Button
+              size="small"
+              isLoading={isMutating}
+              onClick={handleSubmit}
+              data-testid="product-sales-channels-form-save-button"
+            >
+              {t('actions.save')}
             </Button>
           </div>
         </RouteFocusModal.Footer>
@@ -145,9 +163,7 @@ export const EditSalesChannelsForm = ({
 };
 
 const columnHelper =
-  createDataTableColumnHelper<
-    HttpTypes.AdminSalesChannelResponse["sales_channel"]
-  >();
+  createDataTableColumnHelper<HttpTypes.AdminSalesChannelResponse['sales_channel']>();
 
 const useColumns = () => {
   const columns = hooks.useSalesChannelTableColumns();

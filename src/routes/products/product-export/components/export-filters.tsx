@@ -1,10 +1,7 @@
-import { Heading, Text } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-
-import { DataTableFilter } from "@components/table/data-table/data-table-filter";
-
-import { useProductTableFilters } from "@hooks/table/filters";
+import { DataTableFilter } from '@components/table/data-table/data-table-filter';
+import { useProductTableFilters } from '@hooks/table/filters';
+import { Heading, Text } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
 
 export const ExportFilters = () => {
   const { t } = useTranslation();
@@ -12,13 +9,19 @@ export const ExportFilters = () => {
 
   return (
     <div>
-      <Heading level="h2">{t("products.export.filters.title")}</Heading>
-      <Text size="small" className="text-ui-fg-subtle">
-        {t("products.export.filters.description")}
+      <Heading level="h2">{t('products.export.filters.title')}</Heading>
+      <Text
+        size="small"
+        className="text-ui-fg-subtle"
+      >
+        {t('products.export.filters.description')}
       </Text>
 
       <div className="mt-4">
-        <DataTableFilter filters={filters} readonly />
+        <DataTableFilter
+          filters={filters}
+          readonly
+        />
       </div>
     </div>
   );

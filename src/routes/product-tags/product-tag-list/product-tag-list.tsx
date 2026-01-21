@@ -1,8 +1,6 @@
-import { SingleColumnPage } from "@components/layout/pages";
-
-import { ProductTagListTable } from "@routes/product-tags/product-tag-list/components/product-tag-list-table";
-
-import { useExtension } from "@providers/extension-provider";
+import { SingleColumnPage } from '@components/layout/pages';
+import { useExtension } from '@providers/extension-provider';
+import { ProductTagListTable } from '@routes/product-tags/product-tag-list/components/product-tag-list-table';
 
 export const ProductTagList = () => {
   const { getWidgets } = useExtension();
@@ -13,8 +11,8 @@ export const ProductTagList = () => {
       showJSON={false}
       hasOutlet
       widgets={{
-        after: getWidgets("product_tag.list.after"),
-        before: getWidgets("product_tag.list.before"),
+        after: getWidgets('product_tag.list.after'),
+        before: getWidgets('product_tag.list.before')
       }}
     >
       <ProductTagListTable />

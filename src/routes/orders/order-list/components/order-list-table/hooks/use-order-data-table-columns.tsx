@@ -5,7 +5,8 @@ import type { HttpTypes } from '@medusajs/types';
 import { createDataTableColumnHelper, StatusBadge } from '@medusajs/ui';
 
 const columnHelper = createDataTableColumnHelper<HttpTypes.AdminOrder>();
-
+// @todo fix any type
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useOrderDataTableColumns(apiColumns: any[] | undefined) {
   const { getFullDate } = useDate();
 

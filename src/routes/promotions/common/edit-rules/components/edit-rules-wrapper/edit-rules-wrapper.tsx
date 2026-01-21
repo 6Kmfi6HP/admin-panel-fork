@@ -1,24 +1,21 @@
+import { useRouteModal } from '@components/modals';
+import {
+  usePromotionAddRules,
+  usePromotionRemoveRules,
+  usePromotionUpdateRules,
+  useUpdatePromotion
+} from '@hooks/api';
 import type {
   CreatePromotionRuleDTO,
   PromotionDTO,
   PromotionRuleDTO,
   PromotionRuleOperatorValues,
-  PromotionRuleResponse,
-} from "@medusajs/types";
+  PromotionRuleResponse
+} from '@medusajs/types';
+import { EditRulesForm } from '@routes/promotions/common/edit-rules/components/edit-rules-form';
+import type { RuleTypeValues } from '@routes/promotions/common/edit-rules/edit-rules';
 
-import { useRouteModal } from "@components/modals";
-
-import {
-  usePromotionAddRules,
-  usePromotionRemoveRules,
-  usePromotionUpdateRules,
-  useUpdatePromotion,
-} from "@hooks/api";
-
-import { EditRulesForm } from "@routes/promotions/common/edit-rules/components/edit-rules-form";
-import type { RuleTypeValues } from "@routes/promotions/common/edit-rules/edit-rules";
-
-import { getRuleValue } from "./utils";
+import { getRuleValue } from './utils';
 
 type EditPromotionFormProps = {
   promotion: PromotionDTO;
@@ -26,35 +23,26 @@ type EditPromotionFormProps = {
   ruleType: RuleTypeValues;
 };
 
-export const EditRulesWrapper = ({
-  promotion,
-  rules,
-  ruleType,
-}: EditPromotionFormProps) => {
+export const EditRulesWrapper = ({ promotion, rules, ruleType }: EditPromotionFormProps) => {
   const { handleSuccess } = useRouteModal();
   const { mutateAsync: updatePromotion } = useUpdatePromotion(promotion.id);
-  const { mutateAsync: addPromotionRules } = usePromotionAddRules(
-    promotion.id,
-    ruleType,
-  );
+  const { mutateAsync: addPromotionRules } = usePromotionAddRules(promotion.id, ruleType);
 
-  const { mutateAsync: removePromotionRules } = usePromotionRemoveRules(
-    promotion.id,
-    ruleType,
-  );
+  const { mutateAsync: removePromotionRules } = usePromotionRemoveRules(promotion.id, ruleType);
 
-  const { mutateAsync: updatePromotionRules, isPending } =
-    usePromotionUpdateRules(promotion.id, ruleType);
+  const { mutateAsync: updatePromotionRules, isPending } = usePromotionUpdateRules(
+    promotion.id,
+    ruleType
+  );
 
   const handleSubmit = (
-    rulesToRemove?: { id: string; disguised: boolean; attribute: string }[],
+    rulesToRemove?: { id: string; disguised: boolean; attribute: string }[]
   ) => {
     return async function (data: { rules: PromotionRuleResponse[] }) {
       const applicationMethodData: Record<any, any> = {};
       const { rules: allRules = [] } = data;
-      const disguisedRules = allRules.filter((rule) => rule.disguised);
-      const disguisedRulesToRemove =
-        rulesToRemove?.filter((r) => r.disguised) || [];
+      const disguisedRules = allRules.filter(rule => rule.disguised);
+      const disguisedRulesToRemove = rulesToRemove?.filter(r => r.disguised) || [];
 
       // For all the rules that were disguised, convert them to actual values in the
       // database, they are currently all under application_method. If more of these are coming
@@ -69,34 +57,30 @@ export const EditRulesWrapper = ({
 
       // This variable will contain the rules that are actual rule objects, without the disguised
       // objects
-      const rulesData = allRules.filter((rule) => !rule.disguised);
-      const rulesToCreate: CreatePromotionRuleDTO[] = rulesData.filter(
-        (rule) => !("id" in rule),
-      );
-      const rulesToUpdate = rulesData.filter(
-        (rule: { id: string }) => typeof rule.id === "string",
-      );
+      const rulesData = allRules.filter(rule => !rule.disguised);
+      const rulesToCreate: CreatePromotionRuleDTO[] = rulesData.filter(rule => !('id' in rule));
+      const rulesToUpdate = rulesData.filter((rule: { id: string }) => typeof rule.id === 'string');
 
       if (Object.keys(applicationMethodData).length) {
         await updatePromotion({
-          application_method: applicationMethodData,
+          application_method: applicationMethodData
         } as any);
       }
 
       rulesToCreate.length &&
         (await addPromotionRules({
-          rules: rulesToCreate.map((rule) => {
+          rules: rulesToCreate.map(rule => {
             return {
               attribute: rule.attribute,
               operator: rule.operator,
-              values: rule.values,
+              values: rule.values
             } as any;
-          }),
+          })
         }));
 
       rulesToRemove?.length &&
         (await removePromotionRules({
-          rule_ids: rulesToRemove.map((r) => r.id).filter(Boolean),
+          rule_ids: rulesToRemove.map(r => r.id).filter(Boolean)
         }));
 
       rulesToUpdate.length &&
@@ -106,9 +90,9 @@ export const EditRulesWrapper = ({
               id: rule.id!,
               attribute: rule.attribute,
               operator: rule.operator as PromotionRuleOperatorValues,
-              values: rule.values as unknown as string | string[],
+              values: rule.values as unknown as string | string[]
             };
-          }),
+          })
         }));
 
       handleSuccess();

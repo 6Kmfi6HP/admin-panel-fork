@@ -1,25 +1,22 @@
-import { useRef } from "react";
+import { useRef } from 'react';
 
-import type { HttpTypes } from "@medusajs/types";
-import { Button, toast } from "@medusajs/ui";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { z } from "zod";
-
-import { DataGrid } from "@components/data-grid";
-import { RouteFocusModal, useRouteModal } from "@components/modals";
-import { KeyboundForm } from "@components/utilities/keybound-form";
-
-import { useBatchPriceListPrices } from "@hooks/api";
-
-import { castNumber } from "@lib/cast-number";
-
-import { usePriceListGridColumns } from "@routes/price-lists/common/hooks/use-price-list-grid-columns";
-import type { PriceListUpdateProductVariantsSchema } from "@routes/price-lists/common/schemas";
-import { PriceListUpdateProductsSchema } from "@routes/price-lists/common/schemas";
-import { isProductRow } from "@routes/price-lists/common/utils";
+import { DataGrid } from '@components/data-grid';
+import { RouteFocusModal, useRouteModal } from '@components/modals';
+import { KeyboundForm } from '@components/utilities/keybound-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useBatchPriceListPrices } from '@hooks/api';
+import { castNumber } from '@lib/cast-number';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, toast } from '@medusajs/ui';
+import { usePriceListGridColumns } from '@routes/price-lists/common/hooks/use-price-list-grid-columns';
+import {
+  PriceListUpdateProductsSchema,
+  type PriceListUpdateProductVariantsSchema
+} from '@routes/price-lists/common/schemas';
+import { isProductRow } from '@routes/price-lists/common/utils';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
 
 type PriceListPricesEditFormProps = {
   priceList: HttpTypes.AdminPriceList;
@@ -30,7 +27,7 @@ type PriceListPricesEditFormProps = {
 };
 
 const PricingProductPricesSchema = z.object({
-  products: PriceListUpdateProductsSchema,
+  products: PriceListUpdateProductsSchema
 });
 
 export const PriceListPricesEditForm = ({
@@ -38,7 +35,7 @@ export const PriceListPricesEditForm = ({
   products,
   regions,
   currencies,
-  pricePreferences,
+  pricePreferences
 }: PriceListPricesEditFormProps) => {
   const { t } = useTranslation();
   const { handleSuccess, setCloseOnEscape } = useRouteModal();
@@ -47,74 +44,92 @@ export const PriceListPricesEditForm = ({
 
   const form = useForm<z.infer<typeof PricingProductPricesSchema>>({
     defaultValues: {
-      products: initialValue.current,
+      products: initialValue.current
     },
-    resolver: zodResolver(PricingProductPricesSchema),
+    resolver: zodResolver(PricingProductPricesSchema)
   });
 
   const { mutateAsync, isPending } = useBatchPriceListPrices(priceList.id);
 
-  const handleSubmit = form.handleSubmit(async (values) => {
+  const handleSubmit = form.handleSubmit(async values => {
     const { products } = values;
 
     const { pricesToDelete, pricesToCreate, pricesToUpdate } = sortPrices(
       products,
       initialValue.current,
-      regions,
+      regions
     );
 
     mutateAsync(
       {
         delete: pricesToDelete,
         update: pricesToUpdate,
-        create: pricesToCreate,
+        create: pricesToCreate
       },
       {
         onSuccess: () => {
-          toast.success(t("priceLists.products.edit.successToast"));
+          toast.success(t('priceLists.products.edit.successToast'));
 
           handleSuccess();
         },
-        onError: (error) => {
+        onError: error => {
           toast.error(error.message);
-        },
-      },
+        }
+      }
     );
   });
 
   const columns = usePriceListGridColumns({
     currencies,
     regions,
-    pricePreferences,
+    pricePreferences
   });
 
   return (
-    <RouteFocusModal.Form form={form} data-testid="price-list-prices-edit-form">
-      <KeyboundForm onSubmit={handleSubmit} className="flex size-full flex-col">
+    <RouteFocusModal.Form
+      form={form}
+      data-testid="price-list-prices-edit-form"
+    >
+      <KeyboundForm
+        onSubmit={handleSubmit}
+        className="flex size-full flex-col"
+      >
         <RouteFocusModal.Header data-testid="price-list-prices-edit-form-header" />
-        <RouteFocusModal.Body className="flex flex-col overflow-hidden" data-testid="price-list-prices-edit-form-body">
+        <RouteFocusModal.Body
+          className="flex flex-col overflow-hidden"
+          data-testid="price-list-prices-edit-form-body"
+        >
           <DataGrid
             columns={columns}
             data={products}
-            getSubRows={(row) => {
+            getSubRows={row => {
               if (isProductRow(row) && row.variants) {
                 return row.variants;
               }
             }}
             state={form}
-            onEditingChange={(editing) => setCloseOnEscape(!editing)}
+            onEditingChange={editing => setCloseOnEscape(!editing)}
             data-testid="price-list-prices-edit-form-data-grid"
           />
         </RouteFocusModal.Body>
         <RouteFocusModal.Footer data-testid="price-list-prices-edit-form-footer">
           <div className="flex items-center justify-end gap-x-2">
             <RouteFocusModal.Close asChild>
-              <Button size="small" variant="secondary" data-testid="price-list-prices-edit-form-cancel-button">
-                {t("actions.cancel")}
+              <Button
+                size="small"
+                variant="secondary"
+                data-testid="price-list-prices-edit-form-cancel-button"
+              >
+                {t('actions.cancel')}
               </Button>
             </RouteFocusModal.Close>
-            <Button size="small" type="submit" isLoading={isPending} data-testid="price-list-prices-edit-form-save-button">
-              {t("actions.save")}
+            <Button
+              size="small"
+              type="submit"
+              isLoading={isPending}
+              data-testid="price-list-prices-edit-form-save-button"
+            >
+              {t('actions.save')}
             </Button>
           </div>
         </RouteFocusModal.Footer>
@@ -125,7 +140,7 @@ export const PriceListPricesEditForm = ({
 
 function initRecord(
   priceList: HttpTypes.AdminPriceList,
-  products: HttpTypes.AdminProduct[],
+  products: HttpTypes.AdminProduct[]
 ): PriceListUpdateProductsSchema {
   const record: PriceListUpdateProductsSchema = {};
 
@@ -141,16 +156,16 @@ function initRecord(
         ...variantObject.region_prices,
         [regionId]: {
           amount: price.amount.toString(),
-          id: price.id,
-        },
+          id: price.id
+        }
       };
     } else {
       variantObject.currency_prices = {
         ...variantObject.currency_prices,
         [price.currency_code]: {
           amount: price.amount.toString(),
-          id: price.id,
-        },
+          id: price.id
+        }
       };
     }
 
@@ -167,7 +182,7 @@ function initRecord(
           variants[variant.id] = prices;
 
           return variants;
-        }, {} as PriceListUpdateProductVariantsSchema) || {},
+        }, {} as PriceListUpdateProductVariantsSchema) || {}
     };
   }
 
@@ -184,7 +199,7 @@ type PriceObject = {
 
 function convertToPriceArray(
   data: PriceListUpdateProductsSchema,
-  regions: HttpTypes.AdminRegion[],
+  regions: HttpTypes.AdminRegion[]
 ) {
   const prices: PriceObject[] = [];
 
@@ -194,45 +209,34 @@ function convertToPriceArray(
 
       return map;
     },
-    {} as Record<string, string>,
+    {} as Record<string, string>
   );
 
   for (const [_productId, product] of Object.entries(data || {})) {
     const { variants } = product || {};
 
     for (const [variantId, variant] of Object.entries(variants || {})) {
-      const { currency_prices: currencyPrices, region_prices: regionPrices } =
-        variant || {};
+      const { currency_prices: currencyPrices, region_prices: regionPrices } = variant || {};
 
-      for (const [currencyCode, currencyPrice] of Object.entries(
-        currencyPrices || {},
-      )) {
-        if (
-          currencyPrice?.amount !== "" &&
-          typeof currencyPrice?.amount !== "undefined"
-        ) {
+      for (const [currencyCode, currencyPrice] of Object.entries(currencyPrices || {})) {
+        if (currencyPrice?.amount !== '' && typeof currencyPrice?.amount !== 'undefined') {
           prices.push({
             variantId,
             currencyCode,
             amount: castNumber(currencyPrice.amount),
-            id: currencyPrice.id,
+            id: currencyPrice.id
           });
         }
       }
 
-      for (const [regionId, regionPrice] of Object.entries(
-        regionPrices || {},
-      )) {
-        if (
-          regionPrice?.amount !== "" &&
-          typeof regionPrice?.amount !== "undefined"
-        ) {
+      for (const [regionId, regionPrice] of Object.entries(regionPrices || {})) {
+        if (regionPrice?.amount !== '' && typeof regionPrice?.amount !== 'undefined') {
           prices.push({
             variantId,
             regionId,
             currencyCode: regionCurrencyMap[regionId],
             amount: castNumber(regionPrice.amount),
-            id: regionPrice.id,
+            id: regionPrice.id
           });
         }
       }
@@ -243,9 +247,7 @@ function convertToPriceArray(
 }
 
 function createMapKey(obj: PriceObject) {
-  return `${obj.variantId}-${obj.currencyCode}-${obj.regionId || "none"}-${
-    obj.id || "none"
-  }`;
+  return `${obj.variantId}-${obj.currencyCode}-${obj.regionId || 'none'}-${obj.id || 'none'}`;
 }
 
 function comparePrices(initialPrices: PriceObject[], newPrices: PriceObject[]) {
@@ -259,7 +261,7 @@ function comparePrices(initialPrices: PriceObject[], newPrices: PriceObject[]) {
 
       return map;
     },
-    {} as Record<string, (typeof initialPrices)[0]>,
+    {} as Record<string, (typeof initialPrices)[0]>
   );
 
   const newPriceMap = newPrices.reduce(
@@ -268,13 +270,10 @@ function comparePrices(initialPrices: PriceObject[], newPrices: PriceObject[]) {
 
       return map;
     },
-    {} as Record<string, (typeof newPrices)[0]>,
+    {} as Record<string, (typeof newPrices)[0]>
   );
 
-  const keys = new Set([
-    ...Object.keys(initialPriceMap),
-    ...Object.keys(newPriceMap),
-  ]);
+  const keys = new Set([...Object.keys(initialPriceMap), ...Object.keys(newPriceMap)]);
 
   for (const key of keys) {
     const initialPrice = initialPriceMap[key];
@@ -290,10 +289,8 @@ function comparePrices(initialPrices: PriceObject[], newPrices: PriceObject[]) {
           id: newPrice.id,
           variant_id: newPrice.variantId,
           currency_code: newPrice.currencyCode,
-          rules: newPrice.regionId
-            ? { region_id: newPrice.regionId }
-            : undefined,
-          amount: newPrice.amount,
+          rules: newPrice.regionId ? { region_id: newPrice.regionId } : undefined,
+          amount: newPrice.amount
         });
       }
     }
@@ -303,7 +300,7 @@ function comparePrices(initialPrices: PriceObject[], newPrices: PriceObject[]) {
         variant_id: newPrice.variantId,
         currency_code: newPrice.currencyCode,
         rules: newPrice.regionId ? { region_id: newPrice.regionId } : undefined,
-        amount: newPrice.amount,
+        amount: newPrice.amount
       });
     }
 
@@ -318,7 +315,7 @@ function comparePrices(initialPrices: PriceObject[], newPrices: PriceObject[]) {
 function sortPrices(
   data: PriceListUpdateProductsSchema,
   initialValue: PriceListUpdateProductsSchema,
-  regions: HttpTypes.AdminRegion[],
+  regions: HttpTypes.AdminRegion[]
 ) {
   const initialPrices = convertToPriceArray(initialValue, regions);
   const newPrices = convertToPriceArray(data, regions);

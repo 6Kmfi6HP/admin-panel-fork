@@ -1,17 +1,14 @@
-import { ChatBubble, DocumentText, XCircle, XMark } from "@medusajs/icons";
-import type { AdminOrderLineItem, HttpTypes } from "@medusajs/types";
-import { IconButton, Input, Text } from "@medusajs/ui";
-
-import type { UseFormReturn } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { Form } from "@components/common/form";
-import { Thumbnail } from "@components/common/thumbnail";
-import { Combobox } from "@components/inputs/combobox";
-import { MoneyAmountCell } from "@components/table/table-cells/common/money-amount-cell";
-
-import { useReturnReasons } from "@hooks/api/return-reasons";
+import { ActionMenu } from '@components/common/action-menu';
+import { Form } from '@components/common/form';
+import { Thumbnail } from '@components/common/thumbnail';
+import { Combobox } from '@components/inputs/combobox';
+import { MoneyAmountCell } from '@components/table/table-cells/common/money-amount-cell';
+import { useReturnReasons } from '@hooks/api/return-reasons';
+import { ChatBubble, DocumentText, XCircle, XMark } from '@medusajs/icons';
+import type { AdminOrderLineItem, HttpTypes } from '@medusajs/types';
+import { IconButton, Input, Text } from '@medusajs/ui';
+import type { UseFormReturn } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 type OrderEditItemProps = {
   item: AdminOrderLineItem;
@@ -32,14 +29,14 @@ function ClaimInboundItem({
   form,
   onRemove,
   onUpdate,
-  index,
+  index
 }: OrderEditItemProps) {
   const { t } = useTranslation();
-  const { return_reasons = [] } = useReturnReasons({ fields: "+label" });
+  const { return_reasons = [] } = useReturnReasons({ fields: '+label' });
 
   const formItem = form.watch(`inbound_items.${index}`);
-  const showReturnReason = typeof formItem.reason_id === "string";
-  const showNote = typeof formItem.note === "string";
+  const showReturnReason = typeof formItem.reason_id === 'string';
+  const showNote = typeof formItem.note === 'string';
 
   return (
     <div className="my-2 rounded-xl bg-ui-bg-subtle shadow-elevation-card-rest">
@@ -49,13 +46,20 @@ function ClaimInboundItem({
 
           <div className="flex flex-col">
             <div>
-              <Text className="txt-small" as="span" weight="plus">
-                {item.title}{" "}
+              <Text
+                className="txt-small"
+                as="span"
+                weight="plus"
+              >
+                {item.title}{' '}
               </Text>
 
               {item.variant_sku && <span>({item.variant_sku})</span>}
             </div>
-            <Text as="div" className="txt-small text-ui-fg-subtle">
+            <Text
+              as="div"
+              className="txt-small text-ui-fg-subtle"
+            >
               {item.product_title}
             </Text>
           </div>
@@ -75,9 +79,9 @@ function ClaimInboundItem({
                       min={1}
                       max={item.quantity}
                       type="number"
-                      onBlur={(e) => {
+                      onBlur={e => {
                         const val = e.target.value;
-                        const payload = val === "" ? null : Number(val);
+                        const payload = val === '' ? null : Number(val);
 
                         field.onChange(payload);
 
@@ -91,9 +95,7 @@ function ClaimInboundItem({
                 </Form.Item>
               )}
             />
-            <Text className="txt-small text-ui-fg-subtle">
-              {t("fields.qty")}
-            </Text>
+            <Text className="txt-small text-ui-fg-subtle">{t('fields.qty')}</Text>
           </div>
 
           <div className="txt-small mr-2 flex flex-shrink-0 text-ui-fg-subtle">
@@ -108,24 +110,22 @@ function ClaimInboundItem({
               {
                 actions: [
                   !showReturnReason && {
-                    label: t("actions.addReason"),
-                    onClick: () =>
-                      form.setValue(`inbound_items.${index}.reason_id`, ""),
-                    icon: <ChatBubble />,
+                    label: t('actions.addReason'),
+                    onClick: () => form.setValue(`inbound_items.${index}.reason_id`, ''),
+                    icon: <ChatBubble />
                   },
                   !showNote && {
-                    label: t("actions.addNote"),
-                    onClick: () =>
-                      form.setValue(`inbound_items.${index}.note`, ""),
-                    icon: <DocumentText />,
+                    label: t('actions.addNote'),
+                    onClick: () => form.setValue(`inbound_items.${index}.note`, ''),
+                    icon: <DocumentText />
                   },
                   {
-                    label: t("actions.remove"),
+                    label: t('actions.remove'),
                     onClick: onRemove,
-                    icon: <XCircle />,
-                  },
-                ].filter(Boolean),
-              },
+                    icon: <XCircle />
+                  }
+                ].filter(Boolean)
+              }
             ]}
           />
         </div>
@@ -135,10 +135,8 @@ function ClaimInboundItem({
         {showReturnReason && (
           <div className="grid grid-cols-1 gap-2 p-3 md:grid-cols-2">
             <div>
-              <Form.Label>{t("orders.returns.reason")}</Form.Label>
-              <Form.Hint className="!mt-1">
-                {t("orders.returns.reasonHint")}
-              </Form.Hint>
+              <Form.Label>{t('orders.returns.reason')}</Form.Label>
+              <Form.Hint className="!mt-1">{t('orders.returns.reasonHint')}</Form.Hint>
             </div>
 
             <div className="flex items-center gap-1">
@@ -152,14 +150,14 @@ function ClaimInboundItem({
                         <Combobox
                           className="bg-ui-bg-field-component hover:bg-ui-bg-field-component-hover"
                           value={value}
-                          onChange={(v) => {
+                          onChange={v => {
                             onUpdate({ reason_id: v });
                             onChange(v);
                           }}
                           {...field}
-                          options={return_reasons.map((reason) => ({
+                          options={return_reasons.map(reason => ({
                             label: reason.label,
-                            value: reason.id,
+                            value: reason.id
                           }))}
                         />
                       </Form.Control>
@@ -188,10 +186,8 @@ function ClaimInboundItem({
         {showNote && (
           <div className="grid grid-cols-1 gap-2 p-3 md:grid-cols-2">
             <div>
-              <Form.Label>{t("orders.returns.note")}</Form.Label>
-              <Form.Hint className="!mt-1">
-                {t("orders.returns.noteHint")}
-              </Form.Hint>
+              <Form.Label>{t('orders.returns.note')}</Form.Label>
+              <Form.Hint className="!mt-1">{t('orders.returns.noteHint')}</Form.Hint>
             </div>
 
             <div className="flex items-center gap-1">

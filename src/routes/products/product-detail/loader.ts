@@ -1,16 +1,13 @@
-import type { LoaderFunctionArgs } from "react-router-dom";
+import { productsQueryKeys } from '@hooks/api';
+import { sdk } from '@lib/client';
+import { queryClient } from '@lib/query-client';
+import type { LoaderFunctionArgs } from 'react-router-dom';
 
-import { productsQueryKeys } from "@hooks/api";
-
-import { sdk } from "@lib/client";
-import { queryClient } from "@lib/query-client";
-
-import { PRODUCT_DETAIL_FIELDS } from "./constants";
+import { PRODUCT_DETAIL_FIELDS } from './constants';
 
 const productDetailQuery = (id: string) => ({
   queryKey: productsQueryKeys.detail(id, { fields: PRODUCT_DETAIL_FIELDS }),
-  queryFn: async () =>
-    sdk.admin.product.retrieve(id, { fields: PRODUCT_DETAIL_FIELDS }),
+  queryFn: async () => sdk.admin.product.retrieve(id, { fields: PRODUCT_DETAIL_FIELDS })
 });
 
 export const productLoader = async ({ params }: LoaderFunctionArgs) => {
@@ -19,6 +16,6 @@ export const productLoader = async ({ params }: LoaderFunctionArgs) => {
 
   return await queryClient.ensureQueryData({
     ...query,
-    staleTime: 90000,
+    staleTime: 90000
   });
 };

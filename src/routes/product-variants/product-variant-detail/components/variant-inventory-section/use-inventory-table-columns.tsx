@@ -1,13 +1,11 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import type { InventoryNext, ProductVariantDTO } from "@medusajs/types";
+import { PlaceholderCell } from '@components/table/table-cells/common/placeholder-cell';
+import type { InventoryNext, ProductVariantDTO } from '@medusajs/types';
+import { createColumnHelper } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 
-import { createColumnHelper } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-
-import { PlaceholderCell } from "@components/table/table-cells/common/placeholder-cell";
-
-import { InventoryActions } from "./inventory-actions";
+import { InventoryActions } from './inventory-actions';
 
 interface ExtendedInventoryItem extends InventoryNext.InventoryItemDTO {
   variants: ProductVariantDTO[];
@@ -20,8 +18,8 @@ export const useInventoryTableColumns = () => {
 
   return useMemo(
     () => [
-      columnHelper.accessor("title", {
-        header: t("fields.title"),
+      columnHelper.accessor('title', {
+        header: t('fields.title'),
         cell: ({ getValue }) => {
           const title = getValue();
 
@@ -34,10 +32,10 @@ export const useInventoryTableColumns = () => {
               <span className="truncate">{title}</span>
             </div>
           );
-        },
+        }
       }),
-      columnHelper.accessor("sku", {
-        header: t("fields.sku"),
+      columnHelper.accessor('sku', {
+        header: t('fields.sku'),
         cell: ({ getValue }) => {
           const sku = getValue() as string;
 
@@ -50,10 +48,10 @@ export const useInventoryTableColumns = () => {
               <span className="truncate">{sku}</span>
             </div>
           );
-        },
+        }
       }),
-      columnHelper.accessor("required_quantity", {
-        header: t("fields.requiredQuantity"),
+      columnHelper.accessor('required_quantity', {
+        header: t('fields.requiredQuantity'),
         cell: ({ getValue }) => {
           const quantity = getValue();
 
@@ -66,11 +64,11 @@ export const useInventoryTableColumns = () => {
               <span className="truncate">{quantity}</span>
             </div>
           );
-        },
+        }
       }),
       columnHelper.display({
-        id: "inventory_quantity",
-        header: t("fields.inventory"),
+        id: 'inventory_quantity',
+        header: t('fields.inventory'),
         cell: ({ row: { original: inventory } }) => {
           if (!inventory.location_levels?.length) {
             return <PlaceholderCell />;
@@ -79,7 +77,7 @@ export const useInventoryTableColumns = () => {
           let quantity = 0;
           let locations = 0;
 
-          inventory.location_levels.forEach((level) => {
+          inventory.location_levels.forEach(level => {
             quantity += level.available_quantity;
             locations += 1;
           });
@@ -87,21 +85,21 @@ export const useInventoryTableColumns = () => {
           return (
             <div className="flex size-full items-center overflow-hidden">
               <span className="truncate">
-                {t("products.variant.tableItem", {
+                {t('products.variant.tableItem', {
                   availableCount: quantity,
                   locationCount: locations,
-                  count: locations,
+                  count: locations
                 })}
               </span>
             </div>
           );
-        },
+        }
       }),
       columnHelper.display({
-        id: "actions",
-        cell: ({ row }) => <InventoryActions item={row.original} />,
-      }),
+        id: 'actions',
+        cell: ({ row }) => <InventoryActions item={row.original} />
+      })
     ],
-    [t],
+    [t]
   );
 };

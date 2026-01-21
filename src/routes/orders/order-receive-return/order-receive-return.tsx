@@ -1,20 +1,12 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-import { Heading, toast } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-
-import { RouteDrawer } from "@components/modals";
-
-import { useOrder, useOrderPreview } from "@hooks/api";
-import {
-  useAddReceiveItems,
-  useInitiateReceiveReturn,
-  useReturn,
-} from "@hooks/api/returns";
-
-import { OrderReceiveReturnForm } from "@routes/orders/order-receive-return/components/order-receive-return-form";
+import { RouteDrawer } from '@components/modals';
+import { useOrder, useOrderPreview } from '@hooks/api';
+import { useAddReceiveItems, useInitiateReceiveReturn, useReturn } from '@hooks/api/returns';
+import { Heading, toast } from '@medusajs/ui';
+import { OrderReceiveReturnForm } from '@routes/orders/order-receive-return/components/order-receive-return-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 
 let IS_REQUEST_RUNNING = false;
 
@@ -27,20 +19,17 @@ export function OrderReceiveReturn() {
    * HOOKS
    */
 
-  const { order } = useOrder(id!, { fields: "+currency_code,*items" });
+  const { order } = useOrder(id!, { fields: '+currency_code,*items' });
   const { order: preview } = useOrderPreview(id!);
   const { return: orderReturn } = useReturn(return_id, {
-    fields: "*items.item,*items.item.variant,*items.item.variant.product",
+    fields: '*items.item,*items.item.variant,*items.item.variant.product'
   }); // TODO: fix API needs to return 404 if return not exists and not an empty object
 
   /**
    * MUTATIONS
    */
 
-  const { mutateAsync: initiateReceiveReturn } = useInitiateReceiveReturn(
-    return_id,
-    id,
-  );
+  const { mutateAsync: initiateReceiveReturn } = useInitiateReceiveReturn(return_id, id);
 
   const { mutateAsync: addReceiveItems } = useAddReceiveItems(return_id, id);
 
@@ -51,9 +40,9 @@ export function OrderReceiveReturn() {
       }
 
       if (preview.order_change) {
-        if (preview.order_change.change_type !== "return_receive") {
+        if (preview.order_change.change_type !== 'return_receive') {
           navigate(`/orders/${id}`, { replace: true });
-          toast.error(t("orders.returns.activeChangeError"));
+          toast.error(t('orders.returns.activeChangeError'));
         }
 
         return;
@@ -65,10 +54,10 @@ export function OrderReceiveReturn() {
         const { return: _return } = await initiateReceiveReturn({});
 
         await addReceiveItems({
-          items: _return.items.map((i) => ({
+          items: _return.items.map(i => ({
             id: i.item_id,
-            quantity: i.quantity,
-          })),
+            quantity: i.quantity
+          }))
         });
       } catch (e) {
         toast.error(e.message);
@@ -84,8 +73,8 @@ export function OrderReceiveReturn() {
     <RouteDrawer data-testid="order-receive-return-drawer">
       <RouteDrawer.Header data-testid="order-receive-return-header">
         <Heading data-testid="order-receive-return-heading">
-          {t("orders.returns.receive.title", {
-            returnId: return_id?.slice(-7),
+          {t('orders.returns.receive.title', {
+            returnId: return_id?.slice(-7)
           })}
         </Heading>
       </RouteDrawer.Header>

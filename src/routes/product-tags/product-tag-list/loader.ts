@@ -1,15 +1,12 @@
-import type { HttpTypes } from "@medusajs/types";
-
-import type { LoaderFunctionArgs } from "react-router-dom";
-
-import { productTagsQueryKeys } from "@hooks/api";
-
-import { sdk } from "@lib/client";
-import { queryClient } from "@lib/query-client";
+import { productTagsQueryKeys } from '@hooks/api';
+import { sdk } from '@lib/client';
+import { queryClient } from '@lib/query-client';
+import type { HttpTypes } from '@medusajs/types';
+import type { LoaderFunctionArgs } from 'react-router-dom';
 
 const productTagListQuery = (query?: HttpTypes.AdminProductTagListParams) => ({
   queryKey: productTagsQueryKeys.list(query),
-  queryFn: async () => sdk.admin.productTag.list(query),
+  queryFn: async () => sdk.admin.productTag.list(query)
 });
 
 export const productTagListLoader = async ({ request }: LoaderFunctionArgs) => {
@@ -25,12 +22,7 @@ export const productTagListLoader = async ({ request }: LoaderFunctionArgs) => {
     }
   });
 
-  const query = productTagListQuery(
-    queryObject as HttpTypes.AdminProductTagListParams,
-  );
+  const query = productTagListQuery(queryObject as HttpTypes.AdminProductTagListParams);
 
-  return (
-    queryClient.getQueryData<any>(query.queryKey) ??
-    (await queryClient.fetchQuery(query))
-  );
+  return queryClient.getQueryData<any>(query.queryKey) ?? (await queryClient.fetchQuery(query));
 };

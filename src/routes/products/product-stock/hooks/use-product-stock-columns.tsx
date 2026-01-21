@@ -1,23 +1,19 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from 'react';
 
-import { InformationCircle } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
-import { Switch, Tooltip } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-
-import { Thumbnail } from "@components/common/thumbnail";
-import { createDataGridHelper } from "@components/data-grid";
-import { DataGridReadOnlyCell } from "@components/data-grid/components";
-import { DataGridDuplicateCell } from "@components/data-grid/components/data-grid-duplicate-cell";
-import { DataGridTogglableNumberCell } from "@components/data-grid/components/data-grid-toggleable-number-cell";
-
-import type { ProductStockSchema } from "@routes/products/product-stock/schema";
-import { isProductVariant } from "@routes/products/product-stock/utils";
+import { Thumbnail } from '@components/common/thumbnail';
+import { createDataGridHelper } from '@components/data-grid';
+import { DataGridReadOnlyCell } from '@components/data-grid/components';
+import { DataGridDuplicateCell } from '@components/data-grid/components/data-grid-duplicate-cell';
+import { DataGridTogglableNumberCell } from '@components/data-grid/components/data-grid-toggleable-number-cell';
+import { InformationCircle } from '@medusajs/icons';
+import type { HttpTypes } from '@medusajs/types';
+import { Switch, Tooltip } from '@medusajs/ui';
+import type { ProductStockSchema } from '@routes/products/product-stock/schema';
+import { isProductVariant } from '@routes/products/product-stock/utils';
+import { useTranslation } from 'react-i18next';
 
 const helper = createDataGridHelper<
-  | HttpTypes.AdminProductVariant
-  | HttpTypes.AdminProductVariantInventoryItemLink,
+  HttpTypes.AdminProductVariant | HttpTypes.AdminProductVariantInventoryItemLink,
   ProductStockSchema
 >();
 
@@ -34,7 +30,7 @@ type DisabledResult =
 
 export const useProductStockColumns = (
   locations: HttpTypes.AdminStockLocation[] = [],
-  disabled: Record<string, DisabledItem> = {},
+  disabled: Record<string, DisabledItem> = {}
 ) => {
   const { t } = useTranslation();
   const getIsDisabled = useCallback(
@@ -45,33 +41,36 @@ export const useProductStockColumns = (
       if (!isDisabled) {
         return {
           isDisabled: false,
-          item: undefined,
+          item: undefined
         };
       }
 
       return {
         isDisabled,
-        item: disabledItem,
+        item: disabledItem
       };
     },
-    [disabled],
+    [disabled]
   );
 
   return useMemo(
     () => [
       helper.column({
-        id: "title",
-        name: "Title",
-        header: "Title",
-        cell: (context) => {
+        id: 'title',
+        name: 'Title',
+        header: 'Title',
+        cell: context => {
           const item = context.row.original;
 
           if (isProductVariant(item)) {
             return (
               <DataGridReadOnlyCell context={context}>
                 <div className="flex items-center gap-x-2">
-                  <Thumbnail size="small" src={item.product?.thumbnail} />
-                  <span>{item.title || "-"}</span>
+                  <Thumbnail
+                    size="small"
+                    src={item.product?.thumbnail}
+                  />
+                  <span>{item.title || '-'}</span>
                 </div>
               </DataGridReadOnlyCell>
             );
@@ -81,23 +80,26 @@ export const useProductStockColumns = (
 
           if (isDisabled) {
             return (
-              <DataGridReadOnlyCell context={context} color="normal">
+              <DataGridReadOnlyCell
+                context={context}
+                color="normal"
+              >
                 <div className="flex size-full items-center justify-between gap-x-2">
                   <span
                     title={item.inventory?.title || undefined}
                     className="text-ui-fg-disabled"
                   >
-                    {item.inventory?.title || "-"}
+                    {item.inventory?.title || '-'}
                   </span>
                   <Tooltip
                     content={
                       disabledItem.sku
-                        ? t("products.stock.tooltips.alreadyManagedWithSku", {
+                        ? t('products.stock.tooltips.alreadyManagedWithSku', {
                             title: disabledItem.title,
-                            sku: disabledItem.sku,
+                            sku: disabledItem.sku
                           })
-                        : t("products.stock.tooltips.alreadyManaged", {
-                            title: disabledItem.title,
+                        : t('products.stock.tooltips.alreadyManaged', {
+                            title: disabledItem.title
                           })
                     }
                   >
@@ -109,54 +111,57 @@ export const useProductStockColumns = (
           }
 
           return (
-            <DataGridReadOnlyCell context={context} color="normal">
-              {item.inventory?.title || "-"}
+            <DataGridReadOnlyCell
+              context={context}
+              color="normal"
+            >
+              {item.inventory?.title || '-'}
             </DataGridReadOnlyCell>
           );
         },
-        disableHiding: true,
+        disableHiding: true
       }),
       helper.column({
-        id: "sku",
-        name: "SKU",
-        header: "SKU",
-        cell: (context) => {
+        id: 'sku',
+        name: 'SKU',
+        header: 'SKU',
+        cell: context => {
           const item = context.row.original;
 
           if (isProductVariant(item)) {
-            return (
-              <DataGridReadOnlyCell context={context}>
-                {item.sku || "-"}
-              </DataGridReadOnlyCell>
-            );
+            return <DataGridReadOnlyCell context={context}>{item.sku || '-'}</DataGridReadOnlyCell>;
           }
 
           const { isDisabled } = getIsDisabled(item);
 
           if (isDisabled) {
             return (
-              <DataGridReadOnlyCell context={context} color="normal">
-                <span className="text-ui-fg-disabled">
-                  {item.inventory?.sku || "-"}
-                </span>
+              <DataGridReadOnlyCell
+                context={context}
+                color="normal"
+              >
+                <span className="text-ui-fg-disabled">{item.inventory?.sku || '-'}</span>
               </DataGridReadOnlyCell>
             );
           }
 
           return (
-            <DataGridReadOnlyCell context={context} color="normal">
-              {item.inventory?.sku || "-"}
+            <DataGridReadOnlyCell
+              context={context}
+              color="normal"
+            >
+              {item.inventory?.sku || '-'}
             </DataGridReadOnlyCell>
           );
         },
-        disableHiding: true,
+        disableHiding: true
       }),
-      ...locations.map((location) =>
+      ...locations.map(location =>
         helper.column({
           id: `location_${location.id}`,
           name: location.name,
           header: location.name,
-          field: (context) => {
+          field: context => {
             const item = context.row.original;
 
             if (isProductVariant(item)) {
@@ -171,8 +176,8 @@ export const useProductStockColumns = (
 
             return `variants.${item.variant_id}.inventory_items.${item.inventory_item_id}.locations.${location.id}` as const;
           },
-          type: "togglable-number",
-          cell: (context) => {
+          type: 'togglable-number',
+          cell: context => {
             const item = context.row.original;
 
             if (isProductVariant(item)) {
@@ -215,16 +220,14 @@ export const useProductStockColumns = (
             return (
               <DataGridTogglableNumberCell
                 context={context}
-                disabledToggleTooltip={t(
-                  "inventory.stock.disabledToggleTooltip",
-                )}
-                placeholder={t("inventory.stock.placeholder")}
+                disabledToggleTooltip={t('inventory.stock.disabledToggleTooltip')}
+                placeholder={t('inventory.stock.placeholder')}
               />
             );
-          },
-        }),
-      ),
+          }
+        })
+      )
     ],
-    [locations, getIsDisabled, t],
+    [locations, getIsDisabled, t]
   );
 };

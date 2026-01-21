@@ -1,48 +1,42 @@
-import { Heading } from "@medusajs/ui";
+import { RouteDrawer } from '@components/modals';
+import { useProduct, useProductVariant } from '@hooks/api';
+import { Heading } from '@medusajs/ui';
+import { ProductEditVariantForm } from '@routes/product-variants/product-variant-edit/components/product-edit-variant-form';
+import { useTranslation } from 'react-i18next';
+import { useLoaderData, useParams, useSearchParams } from 'react-router-dom';
 
-import { useTranslation } from "react-i18next";
-import { useLoaderData, useParams, useSearchParams } from "react-router-dom";
-
-import { RouteDrawer } from "@components/modals";
-
-import { useProduct, useProductVariant } from "@hooks/api";
-
-import { ProductEditVariantForm } from "@routes/product-variants/product-variant-edit/components/product-edit-variant-form";
-
-import type { editProductVariantLoader } from "./loader";
+import type { editProductVariantLoader } from './loader';
 
 export const ProductVariantEdit = () => {
-  const initialData = useLoaderData() as Awaited<
-    ReturnType<typeof editProductVariantLoader>
-  >;
+  const initialData = useLoaderData() as Awaited<ReturnType<typeof editProductVariantLoader>>;
 
   const { t } = useTranslation();
   const { id, variant_id } = useParams();
   const [URLSearchParms] = useSearchParams();
-  const searchVariantId = URLSearchParms.get("variant_id");
+  const searchVariantId = URLSearchParms.get('variant_id');
 
   const { variant, isPending, isError, error } = useProductVariant(
     id!,
     variant_id || searchVariantId!,
     undefined,
     {
-      initialData,
-    },
+      initialData
+    }
   );
 
   const {
     product,
     isPending: isProductPending,
     isError: isProductError,
-    error: productError,
+    error: productError
   } = useProduct(
     variant?.product_id!,
     {
-      fields: "-variants",
+      fields: '-variants'
     },
     {
-      enabled: !!variant?.product_id,
-    },
+      enabled: !!variant?.product_id
+    }
   );
 
   const ready = !isPending && !!variant && !isProductPending && !!product;
@@ -58,11 +52,21 @@ export const ProductVariantEdit = () => {
   return (
     <RouteDrawer data-testid="product-variant-edit-drawer">
       <RouteDrawer.Header data-testid="product-variant-edit-drawer-header">
-        <RouteDrawer.Title asChild data-testid="product-variant-edit-drawer-title">
-          <Heading data-testid="product-variant-edit-drawer-title-text">{t("products.variant.edit.header")}</Heading>
+        <RouteDrawer.Title
+          asChild
+          data-testid="product-variant-edit-drawer-title"
+        >
+          <Heading data-testid="product-variant-edit-drawer-title-text">
+            {t('products.variant.edit.header')}
+          </Heading>
         </RouteDrawer.Title>
       </RouteDrawer.Header>
-      {ready && <ProductEditVariantForm variant={variant} product={product} />}
+      {ready && (
+        <ProductEditVariantForm
+          variant={variant}
+          product={product}
+        />
+      )}
     </RouteDrawer>
   );
 };

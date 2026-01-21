@@ -1,28 +1,18 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
+import { RouteFocusModal } from '@components/modals';
+import { useUpdateProduct } from '@hooks/api';
 import {
   ArrowDownTray,
   ThumbnailBadge,
   Trash,
   TriangleLeftMini,
-  TriangleRightMini,
-} from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
-import {
-  Button,
-  IconButton,
-  Text,
-  Tooltip,
-  clx,
-  usePrompt,
-} from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { Link, useLocation } from "react-router-dom";
-
-import { RouteFocusModal } from "@components/modals";
-
-import { useUpdateProduct } from "@hooks/api";
+  TriangleRightMini
+} from '@medusajs/icons';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, clx, IconButton, Text, Tooltip, usePrompt } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
+import { Link, useLocation } from 'react-router-dom';
 
 type ProductMediaGalleryProps = {
   product: HttpTypes.AdminProduct;
@@ -43,7 +33,7 @@ export const ProductMediaGallery = ({ product }: ProductMediaGalleryProps) => {
       return;
     }
 
-    setCurr((prev) => (prev + 1) % media.length);
+    setCurr(prev => (prev + 1) % media.length);
   }, [media, isPending]);
 
   const prev = useCallback(() => {
@@ -51,7 +41,7 @@ export const ProductMediaGallery = ({ product }: ProductMediaGalleryProps) => {
       return;
     }
 
-    setCurr((prev) => (prev - 1 + media.length) % media.length);
+    setCurr(prev => (prev - 1 + media.length) % media.length);
   }, [media, isPending]);
 
   const goTo = useCallback(
@@ -62,7 +52,7 @@ export const ProductMediaGallery = ({ product }: ProductMediaGalleryProps) => {
 
       setCurr(index);
     },
-    [isPending],
+    [isPending]
   );
 
   const handleDownloadCurrent = () => {
@@ -70,13 +60,13 @@ export const ProductMediaGallery = ({ product }: ProductMediaGalleryProps) => {
       return;
     }
 
-    const a = document.createElement("a") as HTMLAnchorElement & {
+    const a = document.createElement('a') as HTMLAnchorElement & {
       download: string;
     };
 
     a.href = media[curr].url;
-    a.download = "image";
-    a.target = "_blank";
+    a.download = 'image';
+    a.target = '_blank';
 
     a.click();
   };
@@ -85,12 +75,12 @@ export const ProductMediaGallery = ({ product }: ProductMediaGalleryProps) => {
     const current = media[curr];
 
     const res = await prompt({
-      title: t("general.areYouSure"),
+      title: t('general.areYouSure'),
       description: current.isThumbnail
-        ? t("products.media.deleteWarningWithThumbnail", { count: 1 })
-        : t("products.media.deleteWarning", { count: 1 }),
-      confirmText: t("actions.delete"),
-      cancelText: t("actions.cancel"),
+        ? t('products.media.deleteWarningWithThumbnail', { count: 1 })
+        : t('products.media.deleteWarning', { count: 1 }),
+      confirmText: t('actions.delete'),
+      cancelText: t('actions.cancel')
     });
 
     if (!res) {
@@ -98,33 +88,31 @@ export const ProductMediaGallery = ({ product }: ProductMediaGalleryProps) => {
     }
 
     const mediaToKeep =
-      product.images
-        ?.filter((i) => i.id !== current.id)
-        .map((i) => ({ url: i.url })) || [];
+      product.images?.filter(i => i.id !== current.id).map(i => ({ url: i.url })) || [];
 
     if (curr === media.length - 1) {
-      setCurr((prev) => prev - 1);
+      setCurr(prev => prev - 1);
     }
 
     await mutateAsync({
       images: mediaToKeep,
-      thumbnail: current.isThumbnail ? "" : undefined,
+      thumbnail: current.isThumbnail ? '' : undefined
     });
   };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") {
+      if (e.key === 'ArrowRight') {
         next();
-      } else if (e.key === "ArrowLeft") {
+      } else if (e.key === 'ArrowLeft') {
         prev();
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [next, prev]);
 
@@ -141,9 +129,7 @@ export const ProductMediaGallery = ({ product }: ProductMediaGalleryProps) => {
             disabled={noMedia}
           >
             <Trash />
-            <span className="sr-only">
-              {t("products.media.deleteImageLabel")}
-            </span>
+            <span className="sr-only">{t('products.media.deleteImageLabel')}</span>
           </IconButton>
           <IconButton
             size="small"
@@ -152,19 +138,22 @@ export const ProductMediaGallery = ({ product }: ProductMediaGalleryProps) => {
             disabled={noMedia}
           >
             <ArrowDownTray />
-            <span className="sr-only">
-              {t("products.media.downloadImageLabel")}
-            </span>
+            <span className="sr-only">{t('products.media.downloadImageLabel')}</span>
           </IconButton>
-          <Button variant="secondary" size="small" asChild>
-            <Link to={{ pathname: ".", search: "view=edit" }}>
-              {t("actions.edit")}
-            </Link>
+          <Button
+            variant="secondary"
+            size="small"
+            asChild
+          >
+            <Link to={{ pathname: '.', search: 'view=edit' }}>{t('actions.edit')}</Link>
           </Button>
         </div>
       </RouteFocusModal.Header>
       <RouteFocusModal.Body className="flex flex-col overflow-hidden">
-        <Canvas curr={curr} media={media} />
+        <Canvas
+          curr={curr}
+          media={media}
+        />
         <Preview
           curr={curr}
           media={media}
@@ -190,14 +179,21 @@ const Canvas = ({ media, curr }: { media: Media[]; curr: number }) => {
             weight="plus"
             className="text-ui-fg-subtle"
           >
-            {t("products.media.emptyState.header")}
+            {t('products.media.emptyState.header')}
           </Text>
-          <Text size="small" className="text-ui-fg-muted">
-            {t("products.media.emptyState.description")}
+          <Text
+            size="small"
+            className="text-ui-fg-muted"
+          >
+            {t('products.media.emptyState.description')}
           </Text>
         </div>
-        <Button size="small" variant="secondary" asChild>
-          <Link to="?view=edit">{t("products.media.emptyState.action")}</Link>
+        <Button
+          size="small"
+          variant="secondary"
+          asChild
+        >
+          <Link to="?view=edit">{t('products.media.emptyState.action')}</Link>
         </Button>
       </div>
     );
@@ -209,7 +205,7 @@ const Canvas = ({ media, curr }: { media: Media[]; curr: number }) => {
         <div className="relative inline-block max-h-full max-w-full">
           {media[curr].isThumbnail && (
             <div className="absolute left-2 top-2">
-              <Tooltip content={t("products.media.thumbnailTooltip")}>
+              <Tooltip content={t('products.media.thumbnailTooltip')}>
                 <ThumbnailBadge />
               </Tooltip>
             </div>
@@ -232,7 +228,7 @@ const Preview = ({
   curr,
   prev,
   next,
-  goTo,
+  goTo
 }: {
   media: Media[];
   curr: number;
@@ -274,23 +270,24 @@ const Preview = ({
         <TriangleLeftMini className="rtl:rotate-180" />
       </IconButton>
       <div className="flex items-center gap-x-2">
-        {visibleItems.map((item) => {
+        {visibleItems.map(item => {
           const isCurrentImage = item.id === media[curr].id;
-          const originalIndex = media.findIndex((i) => i.id === item.id);
+          const originalIndex = media.findIndex(i => i.id === item.id);
 
           return (
             <button
               type="button"
               onClick={() => goTo(originalIndex)}
-              className={clx(
-                "size-7 overflow-hidden rounded-[4px] outline-none transition-fg",
-                {
-                  "shadow-borders-focus": isCurrentImage,
-                },
-              )}
+              className={clx('size-7 overflow-hidden rounded-[4px] outline-none transition-fg', {
+                'shadow-borders-focus': isCurrentImage
+              })}
               key={item.id}
             >
-              <img src={item.url} alt="" className="size-full object-cover" />
+              <img
+                src={item.url}
+                alt=""
+                className="size-full object-cover"
+              />
             </button>
           );
         })}
@@ -314,22 +311,19 @@ type Media = {
   isThumbnail: boolean;
 };
 
-const getMedia = (
-  images: HttpTypes.AdminProductImage[] | null,
-  thumbnail: string | null,
-) => {
+const getMedia = (images: HttpTypes.AdminProductImage[] | null, thumbnail: string | null) => {
   const media: Media[] =
-    images?.map((image) => ({
+    images?.map(image => ({
       id: image.id,
       url: image.url,
-      isThumbnail: image.url === thumbnail,
+      isThumbnail: image.url === thumbnail
     })) || [];
 
-  if (thumbnail && !media.some((mediaItem) => mediaItem.isThumbnail)) {
+  if (thumbnail && !media.some(mediaItem => mediaItem.isThumbnail)) {
     media.unshift({
-      id: "thumbnail_only",
+      id: 'thumbnail_only',
       url: thumbnail,
-      isThumbnail: true,
+      isThumbnail: true
     });
   }
 

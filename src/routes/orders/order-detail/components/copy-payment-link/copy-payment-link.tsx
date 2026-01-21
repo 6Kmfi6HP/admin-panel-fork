@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { CheckCircleSolid, SquareTwoStack } from "@medusajs/icons";
-import type { AdminOrder, AdminPaymentCollection } from "@medusajs/types";
-import { Button, Tooltip } from "@medusajs/ui";
-
-import copy from "copy-to-clipboard";
-import { useTranslation } from "react-i18next";
-
-import { getStylizedAmount } from "@lib/money-amount-helpers";
-import { MEDUSA_STOREFRONT_URL } from "@lib/storefront";
+import { getStylizedAmount } from '@lib/money-amount-helpers';
+import { MEDUSA_STOREFRONT_URL } from '@lib/storefront';
+import { CheckCircleSolid, SquareTwoStack } from '@medusajs/icons';
+import type { AdminOrder, AdminPaymentCollection } from '@medusajs/types';
+import { Button, Tooltip } from '@medusajs/ui';
+import copy from 'copy-to-clipboard';
+import { useTranslation } from 'react-i18next';
 
 type CopyPaymentLinkProps = {
   paymentCollection: AdminPaymentCollection;
@@ -22,20 +20,16 @@ const CopyPaymentLink = React.forwardRef<any, CopyPaymentLinkProps>(
   ({ paymentCollection, order }: CopyPaymentLinkProps, ref) => {
     const [done, setDone] = useState(false);
     const [open, setOpen] = useState(false);
-    const [text, setText] = useState("CopyPaymentLink");
+    const [text, setText] = useState('CopyPaymentLink');
     const { t } = useTranslation();
 
     const copyToClipboard = async (
-      e:
-        | React.MouseEvent<HTMLElement, MouseEvent>
-        | React.MouseEvent<HTMLButtonElement, MouseEvent>,
+      e: React.MouseEvent<HTMLElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) => {
       e.stopPropagation();
 
       setDone(true);
-      copy(
-        `${MEDUSA_STOREFRONT_URL}/payment-collection/${paymentCollection.id}`,
-      );
+      copy(`${MEDUSA_STOREFRONT_URL}/payment-collection/${paymentCollection.id}`);
 
       setTimeout(() => {
         setDone(false);
@@ -44,18 +38,22 @@ const CopyPaymentLink = React.forwardRef<any, CopyPaymentLinkProps>(
 
     React.useEffect(() => {
       if (done) {
-        setText(t("actions.copied"));
+        setText(t('actions.copied'));
 
         return;
       }
 
       setTimeout(() => {
-        setText(t("actions.copy"));
+        setText(t('actions.copy'));
       }, 500);
     }, [done]);
 
     return (
-      <Tooltip content={text} open={done || open} onOpenChange={setOpen}>
+      <Tooltip
+        content={text}
+        open={done || open}
+        onOpenChange={setOpen}
+      >
         <Button
           ref={ref}
           variant="secondary"
@@ -63,22 +61,15 @@ const CopyPaymentLink = React.forwardRef<any, CopyPaymentLinkProps>(
           aria-label="CopyPaymentLink code snippet"
           onClick={copyToClipboard}
         >
-          {done ? (
-            <CheckCircleSolid className="inline" />
-          ) : (
-            <SquareTwoStack className="inline" />
-          )}
-          {t("orders.payment.paymentLink", {
-            amount: getStylizedAmount(
-              paymentCollection.amount as number,
-              order?.currency_code,
-            ),
+          {done ? <CheckCircleSolid className="inline" /> : <SquareTwoStack className="inline" />}
+          {t('orders.payment.paymentLink', {
+            amount: getStylizedAmount(paymentCollection.amount as number, order?.currency_code)
           })}
         </Button>
       </Tooltip>
     );
-  },
+  }
 );
-CopyPaymentLink.displayName = "CopyPaymentLink";
+CopyPaymentLink.displayName = 'CopyPaymentLink';
 
 export { CopyPaymentLink };

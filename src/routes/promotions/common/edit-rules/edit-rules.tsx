@@ -1,32 +1,24 @@
-import type { PromotionRuleDTO } from "@medusajs/types";
-import { Heading } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-
-import { RouteDrawer } from "@components/modals";
-
-import { usePromotion } from "@hooks/api";
-
-import { EditRulesWrapper } from "@routes/promotions/common/edit-rules/components/edit-rules-wrapper";
+import { RouteDrawer } from '@components/modals';
+import { usePromotion } from '@hooks/api';
+import type { PromotionRuleDTO } from '@medusajs/types';
+import { Heading } from '@medusajs/ui';
+import { EditRulesWrapper } from '@routes/promotions/common/edit-rules/components/edit-rules-wrapper';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 export enum RuleType {
-  RULES = "rules",
-  BUY_RULES = "buy-rules",
-  TARGET_RULES = "target-rules",
+  RULES = 'rules',
+  BUY_RULES = 'buy-rules',
+  TARGET_RULES = 'target-rules'
 }
-export type RuleTypeValues = "rules" | "buy-rules" | "target-rules";
+export type RuleTypeValues = 'rules' | 'buy-rules' | 'target-rules';
 
 export const EditRules = () => {
   const params = useParams();
-  const allowedParams: string[] = [
-    RuleType.RULES,
-    RuleType.BUY_RULES,
-    RuleType.TARGET_RULES,
-  ];
+  const allowedParams: string[] = [RuleType.RULES, RuleType.BUY_RULES, RuleType.TARGET_RULES];
 
   if (!allowedParams.includes(params.ruleType!)) {
-    throw "invalid page";
+    throw 'invalid page';
   }
 
   const { t } = useTranslation();
@@ -52,7 +44,9 @@ export const EditRules = () => {
   return (
     <RouteDrawer data-testid={`promotion-edit-rules-${ruleType}`}>
       <RouteDrawer.Header data-testid={`promotion-edit-rules-header-${ruleType}`}>
-        <Heading data-testid={`promotion-edit-rules-heading-${ruleType}`}>{t(`promotions.edit.${ruleType}.title`)}</Heading>
+        <Heading data-testid={`promotion-edit-rules-heading-${ruleType}`}>
+          {t(`promotions.edit.${ruleType}.title`)}
+        </Heading>
       </RouteDrawer.Header>
 
       {!isLoading && promotion && (

@@ -1,30 +1,24 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 
-import type { HttpTypes } from "@medusajs/types";
-import { Button, Checkbox } from "@medusajs/ui";
-
-import { keepPreviousData } from "@tanstack/react-query";
-import type { OnChangeFn, RowSelectionState } from "@tanstack/react-table";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-
-import { StackedDrawer } from "@components/modals";
-import { StackedFocusModal } from "@components/modals";
-import { _DataTable } from "@components/table/data-table";
-
-import { useCustomerGroups } from "@hooks/api";
-import { useCustomerGroupTableColumns } from "@hooks/table/columns";
-import { useCustomerGroupTableFilters } from "@hooks/table/filters";
-import { useCustomerGroupTableQuery } from "@hooks/table/query";
-import { useDataTable } from "@hooks/use-data-table";
-
-import type { PriceListCustomerGroup } from "@routes/price-lists/common/schemas";
+import { StackedDrawer, StackedFocusModal } from '@components/modals';
+import { _DataTable } from '@components/table/data-table';
+import { useCustomerGroups } from '@hooks/api';
+import { useCustomerGroupTableColumns } from '@hooks/table/columns';
+import { useCustomerGroupTableFilters } from '@hooks/table/filters';
+import { useCustomerGroupTableQuery } from '@hooks/table/query';
+import { useDataTable } from '@hooks/use-data-table';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, Checkbox } from '@medusajs/ui';
+import type { PriceListCustomerGroup } from '@routes/price-lists/common/schemas';
+import { keepPreviousData } from '@tanstack/react-query';
+import { createColumnHelper, type OnChangeFn, type RowSelectionState } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 
 const PAGE_SIZE = 50;
-const PREFIX = "cg";
+const PREFIX = 'cg';
 
 type PriceListCustomerGroupRuleFormProps = {
-  type: "focus" | "drawer";
+  type: 'focus' | 'drawer';
   state: PriceListCustomerGroup[];
   setState: (state: PriceListCustomerGroup[]) => void;
 };
@@ -40,15 +34,12 @@ const initRowSelection = (state: PriceListCustomerGroup[]) => {
 export const PriceListCustomerGroupRuleForm = ({
   state,
   setState,
-  type,
+  type
 }: PriceListCustomerGroupRuleFormProps) => {
   const { t } = useTranslation();
 
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>(
-    initRowSelection(state),
-  );
-  const [intermediate, setIntermediate] =
-    useState<PriceListCustomerGroup[]>(state);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>(initRowSelection(state));
+  const [intermediate, setIntermediate] = useState<PriceListCustomerGroup[]>(state);
 
   useEffect(() => {
     // If the selected customer groups change outside of the drawer,
@@ -59,33 +50,30 @@ export const PriceListCustomerGroupRuleForm = ({
 
   const { searchParams, raw } = useCustomerGroupTableQuery({
     pageSize: PAGE_SIZE,
-    prefix: PREFIX,
+    prefix: PREFIX
   });
-  const { customer_groups, count, isLoading, isError, error } =
-    useCustomerGroups(
-      { ...searchParams, fields: "id,name,customers.id" },
-      {
-        placeholderData: keepPreviousData,
-      },
-    );
+  const { customer_groups, count, isLoading, isError, error } = useCustomerGroups(
+    { ...searchParams, fields: 'id,name,customers.id' },
+    {
+      placeholderData: keepPreviousData
+    }
+  );
 
-  const updater: OnChangeFn<RowSelectionState> = (value) => {
-    const state = typeof value === "function" ? value(rowSelection) : value;
+  const updater: OnChangeFn<RowSelectionState> = value => {
+    const state = typeof value === 'function' ? value(rowSelection) : value;
     const currentIds = Object.keys(rowSelection);
 
     const ids = Object.keys(state);
 
-    const newIds = ids.filter((id) => !currentIds.includes(id));
-    const removedIds = currentIds.filter((id) => !ids.includes(id));
+    const newIds = ids.filter(id => !currentIds.includes(id));
+    const removedIds = currentIds.filter(id => !ids.includes(id));
 
     const newCustomerGroups =
       customer_groups
-        ?.filter((cg) => newIds.includes(cg.id))
-        .map((cg) => ({ id: cg.id, name: cg.name! })) || [];
+        ?.filter(cg => newIds.includes(cg.id))
+        .map(cg => ({ id: cg.id, name: cg.name! })) || [];
 
-    const filteredIntermediate = intermediate.filter(
-      (cg) => !removedIds.includes(cg.id),
-    );
+    const filteredIntermediate = intermediate.filter(cg => !removedIds.includes(cg.id));
 
     setIntermediate([...filteredIntermediate, ...newCustomerGroups]);
     setRowSelection(state);
@@ -104,16 +92,16 @@ export const PriceListCustomerGroupRuleForm = ({
     count,
     enablePagination: true,
     enableRowSelection: true,
-    getRowId: (row) => row.id,
+    getRowId: row => row.id,
     rowSelection: {
       state: rowSelection,
-      updater,
+      updater
     },
     pageSize: PAGE_SIZE,
-    prefix: PREFIX,
+    prefix: PREFIX
   });
 
-  const Component = type === "focus" ? StackedFocusModal : StackedDrawer;
+  const Component = type === 'focus' ? StackedFocusModal : StackedDrawer;
 
   if (isError) {
     throw error;
@@ -130,9 +118,9 @@ export const PriceListCustomerGroupRuleForm = ({
           isLoading={isLoading}
           filters={filters}
           orderBy={[
-            { key: "name", label: t("fields.name") },
-            { key: "created_at", label: t("fields.createdAt") },
-            { key: "updated_at", label: t("fields.updatedAt") },
+            { key: 'name', label: t('fields.name') },
+            { key: 'created_at', label: t('fields.createdAt') },
+            { key: 'updated_at', label: t('fields.updatedAt') }
           ]}
           layout="fill"
           pagination
@@ -143,12 +131,20 @@ export const PriceListCustomerGroupRuleForm = ({
       </Component.Body>
       <Component.Footer>
         <Component.Close asChild>
-          <Button variant="secondary" size="small" type="button">
-            {t("actions.cancel")}
+          <Button
+            variant="secondary"
+            size="small"
+            type="button"
+          >
+            {t('actions.cancel')}
           </Button>
         </Component.Close>
-        <Button type="button" size="small" onClick={handleSave}>
-          {t("actions.save")}
+        <Button
+          type="button"
+          size="small"
+          onClick={handleSave}
+        >
+          {t('actions.save')}
         </Button>
       </Component.Footer>
     </div>
@@ -163,18 +159,16 @@ const useColumns = () => {
   return useMemo(
     () => [
       columnHelper.display({
-        id: "select",
+        id: 'select',
         header: ({ table }) => {
           return (
             <Checkbox
               checked={
                 table.getIsSomePageRowsSelected()
-                  ? "indeterminate"
+                  ? 'indeterminate'
                   : table.getIsAllPageRowsSelected()
               }
-              onCheckedChange={(value) =>
-                table.toggleAllPageRowsSelected(!!value)
-              }
+              onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
             />
           );
         },
@@ -182,16 +176,16 @@ const useColumns = () => {
           return (
             <Checkbox
               checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              onClick={(e) => {
+              onCheckedChange={value => row.toggleSelected(!!value)}
+              onClick={e => {
                 e.stopPropagation();
               }}
             />
           );
-        },
+        }
       }),
-      ...base,
+      ...base
     ],
-    [base],
+    [base]
   );
 };

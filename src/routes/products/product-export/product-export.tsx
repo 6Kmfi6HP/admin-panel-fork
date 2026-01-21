@@ -1,13 +1,9 @@
-import { Button, Heading, toast } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-
-import { RouteDrawer, useRouteModal } from "@components/modals";
-
-import { useExportProducts } from "@hooks/api";
-import { useProductTableQuery } from "@hooks/table/query";
-
-import { ExportFilters } from "@routes/products/product-export/components/export-filters";
+import { RouteDrawer, useRouteModal } from '@components/modals';
+import { useExportProducts } from '@hooks/api';
+import { useProductTableQuery } from '@hooks/table/query';
+import { Button, Heading, toast } from '@medusajs/ui';
+import { ExportFilters } from '@routes/products/product-export/components/export-filters';
+import { useTranslation } from 'react-i18next';
 
 export const ProductExport = () => {
   const { t } = useTranslation();
@@ -16,10 +12,10 @@ export const ProductExport = () => {
     <RouteDrawer>
       <RouteDrawer.Header>
         <RouteDrawer.Title asChild>
-          <Heading>{t("products.export.header")}</Heading>
+          <Heading>{t('products.export.header')}</Heading>
         </RouteDrawer.Title>
         <RouteDrawer.Description className="sr-only">
-          {t("products.export.description")}
+          {t('products.export.description')}
         </RouteDrawer.Description>
       </RouteDrawer.Header>
       <ProductExportContent />
@@ -37,14 +33,14 @@ const ProductExportContent = () => {
   const handleExportRequest = async () => {
     await mutateAsync(searchParams, {
       onSuccess: () => {
-        toast.info(t("products.export.success.title"), {
-          description: t("products.export.success.description"),
+        toast.info(t('products.export.success.title'), {
+          description: t('products.export.success.description')
         });
         handleSuccess();
       },
-      onError: (err) => {
+      onError: err => {
         toast.error(err.message);
-      },
+      }
     });
   };
 
@@ -57,12 +53,18 @@ const ProductExportContent = () => {
       <RouteDrawer.Footer>
         <div className="flex items-center gap-x-2">
           <RouteDrawer.Close asChild>
-            <Button size="small" variant="secondary">
-              {t("actions.cancel")}
+            <Button
+              size="small"
+              variant="secondary"
+            >
+              {t('actions.cancel')}
             </Button>
           </RouteDrawer.Close>
-          <Button onClick={handleExportRequest} size="small">
-            {t("actions.export")}
+          <Button
+            onClick={handleExportRequest}
+            size="small"
+          >
+            {t('actions.export')}
           </Button>
         </div>
       </RouteDrawer.Footer>

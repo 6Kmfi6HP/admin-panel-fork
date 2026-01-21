@@ -1,44 +1,32 @@
-import { useState } from "react";
+import { useState } from 'react';
 
+import { ActionMenu } from '@components/common/action-menu';
 import {
-  DotsSix,
-  StackPerspective,
-  ThumbnailBadge,
-  Trash,
-  XMark,
-} from "@medusajs/icons";
-import { IconButton, Text } from "@medusajs/ui";
-
-import type {
-  DragEndEvent,
-  DragStartEvent,
-  DropAnimation,
-  UniqueIdentifier,
-} from "@dnd-kit/core";
-import {
+  defaultDropAnimationSideEffects,
   DndContext,
   DragOverlay,
   KeyboardSensor,
   PointerSensor,
-  defaultDropAnimationSideEffects,
   useSensor,
   useSensors,
-} from "@dnd-kit/core";
+  type DragEndEvent,
+  type DragStartEvent,
+  type DropAnimation,
+  type UniqueIdentifier
+} from '@dnd-kit/core';
 import {
-  SortableContext,
   arrayMove,
+  SortableContext,
   sortableKeyboardCoordinates,
-  useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import type { UseFormReturn } from "react-hook-form";
-import { useFieldArray } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-
-import { ActionMenu } from "@components/common/action-menu";
-
-import { UploadMediaFormItem } from "@routes/products/common/components/upload-media-form-item";
-import type { ProductCreateSchemaType } from "@routes/products/product-create/types";
+  useSortable
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { DotsSix, StackPerspective, ThumbnailBadge, Trash, XMark } from '@medusajs/icons';
+import { IconButton, Text } from '@medusajs/ui';
+import { UploadMediaFormItem } from '@routes/products/common/components/upload-media-form-item';
+import type { ProductCreateSchemaType } from '@routes/products/product-create/types';
+import { useFieldArray, type UseFormReturn } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 type ProductCreateMediaSectionProps = {
   form: UseFormReturn<ProductCreateSchemaType>;
@@ -48,19 +36,17 @@ const dropAnimationConfig: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
     styles: {
       active: {
-        opacity: "0.4",
-      },
-    },
-  }),
+        opacity: '0.4'
+      }
+    }
+  })
 };
 
-export const ProductCreateMediaSection = ({
-  form,
-}: ProductCreateMediaSectionProps) => {
+export const ProductCreateMediaSection = ({ form }: ProductCreateMediaSectionProps) => {
   const { fields, append, remove } = useFieldArray({
-    name: "media",
+    name: 'media',
     control: form.control,
-    keyName: "field_id",
+    keyName: 'field_id'
   });
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
@@ -68,8 +54,8 @@ export const ProductCreateMediaSection = ({
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
+      coordinateGetter: sortableKeyboardCoordinates
+    })
   );
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -81,12 +67,12 @@ export const ProductCreateMediaSection = ({
     const { active, over } = event;
 
     if (active.id !== over?.id) {
-      const oldIndex = fields.findIndex((item) => item.field_id === active.id);
-      const newIndex = fields.findIndex((item) => item.field_id === over?.id);
+      const oldIndex = fields.findIndex(item => item.field_id === active.id);
+      const newIndex = fields.findIndex(item => item.field_id === over?.id);
 
-      form.setValue("media", arrayMove(fields, oldIndex, newIndex), {
+      form.setValue('media', arrayMove(fields, oldIndex, newIndex), {
         shouldDirty: true,
-        shouldTouch: true,
+        shouldTouch: true
       });
     }
   };
@@ -106,13 +92,13 @@ export const ProductCreateMediaSection = ({
       const newFields = fields.map((field, i) => {
         return {
           ...field,
-          isThumbnail: i === index,
+          isThumbnail: i === index
         };
       });
 
-      form.setValue("media", newFields, {
+      form.setValue('media', newFields, {
         shouldDirty: true,
-        shouldTouch: true,
+        shouldTouch: true
       });
     };
   };
@@ -120,13 +106,22 @@ export const ProductCreateMediaSection = ({
   const getItemHandlers = (index: number) => {
     return {
       onDelete: getOnDelete(index),
-      onMakeThumbnail: getMakeThumbnail(index),
+      onMakeThumbnail: getMakeThumbnail(index)
     };
   };
 
   return (
-    <div id="media" className="flex flex-col gap-y-2" data-testid="product-create-media-section">
-      <UploadMediaFormItem form={form} append={append} showHint={false} data-testid="product-create-media-section-upload" />
+    <div
+      id="media"
+      className="flex flex-col gap-y-2"
+      data-testid="product-create-media-section"
+    >
+      <UploadMediaFormItem
+        form={form}
+        append={append}
+        showHint={false}
+        data-testid="product-create-media-section-upload"
+      />
       <DndContext
         sensors={sensors}
         onDragEnd={handleDragEnd}
@@ -135,13 +130,14 @@ export const ProductCreateMediaSection = ({
       >
         <DragOverlay dropAnimation={dropAnimationConfig}>
           {activeId ? (
-            <MediaGridItemOverlay
-              field={fields.find((m) => m.field_id === activeId)!}
-            />
+            <MediaGridItemOverlay field={fields.find(m => m.field_id === activeId)!} />
           ) : null}
         </DragOverlay>
-        <ul className="flex flex-col gap-y-2" data-testid="product-create-media-section-list">
-          <SortableContext items={fields.map((field) => field.field_id)}>
+        <ul
+          className="flex flex-col gap-y-2"
+          data-testid="product-create-media-section-list"
+        >
+          <SortableContext items={fields.map(field => field.field_id)}>
             {fields.map((field, index) => {
               const { onDelete, onMakeThumbnail } = getItemHandlers(index);
 
@@ -185,13 +181,13 @@ const MediaItem = ({ field, onDelete, onMakeThumbnail }: MediaItemProps) => {
     setActivatorNodeRef,
     transform,
     transition,
-    isDragging,
+    isDragging
   } = useSortable({ id: field.field_id });
 
   const style = {
     opacity: isDragging ? 0.4 : undefined,
     transform: CSS.Translate.toString(transform),
-    transition,
+    transition
   };
 
   if (!field.file) {
@@ -222,7 +218,10 @@ const MediaItem = ({ field, onDelete, onMakeThumbnail }: MediaItemProps) => {
             <ThumbnailPreview url={field.url} />
           </div>
           <div className="flex flex-col">
-            <Text size="small" leading="compact">
+            <Text
+              size="small"
+              leading="compact"
+            >
               {field.file.name}
             </Text>
             <div className="flex items-center gap-x-1">
@@ -244,21 +243,21 @@ const MediaItem = ({ field, onDelete, onMakeThumbnail }: MediaItemProps) => {
             {
               actions: [
                 {
-                  label: t("products.media.makeThumbnail"),
+                  label: t('products.media.makeThumbnail'),
                   icon: <StackPerspective />,
-                  onClick: onMakeThumbnail,
-                },
-              ],
+                  onClick: onMakeThumbnail
+                }
+              ]
             },
             {
               actions: [
                 {
                   icon: <Trash />,
-                  label: t("actions.delete"),
-                  onClick: onDelete,
-                },
-              ],
-            },
+                  label: t('actions.delete'),
+                  onClick: onDelete
+                }
+              ]
+            }
           ]}
           data-testid={`product-create-media-section-item-menu-${field.field_id}`}
         />
@@ -292,7 +291,10 @@ const MediaGridItemOverlay = ({ field }: { field: MediaField }) => {
             <ThumbnailPreview url={field.url} />
           </div>
           <div className="flex flex-col">
-            <Text size="small" leading="compact">
+            <Text
+              size="small"
+              leading="compact"
+            >
               {field.file?.name}
             </Text>
             <div className="flex items-center gap-x-1">
@@ -329,20 +331,22 @@ const ThumbnailPreview = ({ url }: { url?: string | null }) => {
   }
 
   return (
-    <img src={url} alt="" className="size-full object-cover object-center" />
+    <img
+      src={url}
+      alt=""
+      className="size-full object-cover object-center"
+    />
   );
 };
 
 function formatFileSize(bytes: number, decimalPlaces: number = 2): string {
   if (bytes === 0) {
-    return "0 Bytes";
+    return '0 Bytes';
   }
 
   const k = 1024;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return (
-    parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPlaces)) + " " + sizes[i]
-  );
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPlaces)) + ' ' + sizes[i];
 }
