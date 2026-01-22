@@ -1,41 +1,40 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { useLoaderData, useParams } from "react-router-dom";
+import { SingleColumnPageSkeleton } from '@components/common/skeleton';
+import { SingleColumnPage } from '@components/layout/pages';
+import { useTaxRegion } from '@hooks/api';
+import { useExtension } from '@providers/extension-provider';
+import { TaxRegionDetailSection } from '@routes/tax-regions/tax-region-detail/components/tax-region-detail-section';
+import { TaxRegionOverrideSection } from '@routes/tax-regions/tax-region-detail/components/tax-region-override-section';
+import { TaxRegionProvinceSection } from '@routes/tax-regions/tax-region-detail/components/tax-region-province-section';
+import { TaxRegionSublevelAlert } from '@routes/tax-regions/tax-region-detail/components/tax-region-sublevel-alert';
+import type { taxRegionLoader } from '@routes/tax-regions/tax-region-detail/loader';
+import { useLoaderData, useParams } from 'react-router-dom';
 
-import { SingleColumnPageSkeleton } from "@components/common/skeleton";
-import { SingleColumnPage } from "@components/layout/pages";
-
-import { useTaxRegion } from "@hooks/api";
-
-import { TaxRegionDetailSection } from "@routes/tax-regions/tax-region-detail/components/tax-region-detail-section";
-import { TaxRegionOverrideSection } from "@routes/tax-regions/tax-region-detail/components/tax-region-override-section";
-import { TaxRegionProvinceSection } from "@routes/tax-regions/tax-region-detail/components/tax-region-province-section";
-import { TaxRegionSublevelAlert } from "@routes/tax-regions/tax-region-detail/components/tax-region-sublevel-alert";
-import type { taxRegionLoader } from "@routes/tax-regions/tax-region-detail/loader";
-
-import { useExtension } from "@providers/extension-provider";
-
-import { TaxRegionProviderSection } from "./tax-region-provider-section";
+import { TaxRegionProviderSection } from './tax-region-provider-section';
 
 export const TaxRegionDetail = () => {
   const { id } = useParams();
   const [showSublevelRegions, setShowSublevelRegions] = useState(false);
 
-  const initialData = useLoaderData() as Awaited<
-    ReturnType<typeof taxRegionLoader>
-  >;
+  const initialData = useLoaderData() as Awaited<ReturnType<typeof taxRegionLoader>>;
 
   const {
     tax_region: taxRegion,
     isLoading,
     isError,
-    error,
+    error
   } = useTaxRegion(id!, undefined, { initialData });
 
   const { getWidgets } = useExtension();
 
   if (isLoading || !taxRegion) {
-    return <SingleColumnPageSkeleton sections={4} showJSON />;
+    return (
+      <SingleColumnPageSkeleton
+        sections={4}
+        showJSON
+      />
+    );
   }
 
   if (isError) {
@@ -48,8 +47,8 @@ export const TaxRegionDetail = () => {
       showJSON
       showMetadata
       widgets={{
-        after: getWidgets("tax.details.after"),
-        before: getWidgets("tax.details.before"),
+        after: getWidgets('tax.details.after'),
+        before: getWidgets('tax.details.before')
       }}
     >
       <TaxRegionSublevelAlert

@@ -1,6 +1,6 @@
 export type ReviewDTO = {
   id: string;
-  reference: "product" | "seller";
+  reference: 'product' | 'seller';
   rating: number;
   customer_note: string | null;
   customer_id: string;

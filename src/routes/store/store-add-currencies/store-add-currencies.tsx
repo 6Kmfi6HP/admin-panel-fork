@@ -1,9 +1,7 @@
-import { RouteFocusModal } from "@components/modals";
-
-import { useStore } from "@hooks/api";
-import { usePricePreferences } from "@hooks/api/price-preferences";
-
-import { AddCurrenciesForm } from "@routes/store/store-add-currencies/components/add-currencies-form/add-currencies-form";
+import { RouteFocusModal } from '@components/modals';
+import { useStore } from '@hooks/api';
+import { usePricePreferences } from '@hooks/api/price-preferences';
+import { AddCurrenciesForm } from '@routes/store/store-add-currencies/components/add-currencies-form/add-currencies-form';
 
 export const StoreAddCurrencies = () => {
   const { store, isPending, isError, error } = useStore();
@@ -12,19 +10,18 @@ export const StoreAddCurrencies = () => {
     price_preferences: pricePreferences,
     isPending: isPricePreferencesPending,
     isError: isPricePreferencesError,
-    error: pricePreferencesError,
+    error: pricePreferencesError
   } = usePricePreferences(
     {
-      attribute: "currency_code",
-      value: store?.supported_currencies?.map((c) => c.currency_code),
+      attribute: 'currency_code',
+      value: store?.supported_currencies?.map(c => c.currency_code)
     },
     {
-      enabled: !!store,
-    },
+      enabled: !!store
+    }
   );
 
-  const ready =
-    !!store && !isPending && !!pricePreferences && !isPricePreferencesPending;
+  const ready = !!store && !isPending && !!pricePreferences && !isPricePreferencesPending;
 
   if (isError) {
     throw error;
@@ -37,7 +34,10 @@ export const StoreAddCurrencies = () => {
   return (
     <RouteFocusModal>
       {ready && (
-        <AddCurrenciesForm store={store} pricePreferences={pricePreferences} />
+        <AddCurrenciesForm
+          store={store}
+          pricePreferences={pricePreferences}
+        />
       )}
     </RouteFocusModal>
   );

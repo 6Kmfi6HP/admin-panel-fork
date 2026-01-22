@@ -1,15 +1,12 @@
-import { Container, Heading, Text } from "@medusajs/ui";
+import { _DataTable } from '@components/table/data-table';
+import { useWorkflowExecutions } from '@hooks/api';
+import { useDataTable } from '@hooks/use-data-table';
+import { Container, Heading, Text } from '@medusajs/ui';
+import { keepPreviousData } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
-import { keepPreviousData } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
-
-import { _DataTable } from "@components/table/data-table";
-
-import { useWorkflowExecutions } from "@hooks/api";
-import { useDataTable } from "@hooks/use-data-table";
-
-import { useWorkflowExecutionTableColumns } from "./use-workflow-execution-table-columns";
-import { useWorkflowExecutionTableQuery } from "./use-workflow-execution-table-query";
+import { useWorkflowExecutionTableColumns } from './use-workflow-execution-table-columns';
+import { useWorkflowExecutionTableQuery } from './use-workflow-execution-table-query';
 
 const PAGE_SIZE = 20;
 
@@ -17,17 +14,16 @@ export const WorkflowExecutionListTable = () => {
   const { t } = useTranslation();
 
   const { searchParams, raw } = useWorkflowExecutionTableQuery({
-    pageSize: PAGE_SIZE,
+    pageSize: PAGE_SIZE
   });
-  const { workflow_executions, count, isLoading, isError, error } =
-    useWorkflowExecutions(
-      {
-        ...searchParams,
-      },
-      {
-        placeholderData: keepPreviousData,
-      },
-    );
+  const { workflow_executions, count, isLoading, isError, error } = useWorkflowExecutions(
+    {
+      ...searchParams
+    },
+    {
+      placeholderData: keepPreviousData
+    }
+  );
 
   const columns = useWorkflowExecutionTableColumns();
 
@@ -37,7 +33,7 @@ export const WorkflowExecutionListTable = () => {
     count: count,
     pageSize: PAGE_SIZE,
     enablePagination: true,
-    getRowId: (row) => row.id,
+    getRowId: row => row.id
   });
 
   if (isError) {
@@ -45,11 +41,21 @@ export const WorkflowExecutionListTable = () => {
   }
 
   return (
-    <Container className="divide-y p-0" data-testid="workflows-container">
-      <div className="flex items-center justify-between px-6 py-4" data-testid="workflows-header">
+    <Container
+      className="divide-y p-0"
+      data-testid="workflows-container"
+    >
+      <div
+        className="flex items-center justify-between px-6 py-4"
+        data-testid="workflows-header"
+      >
         <div>
-          <Heading data-testid="workflows-heading">{t("workflowExecutions.domain")}</Heading>
-          <Text className="text-ui-fg-subtle" size="small" data-testid="workflows-description">
+          <Heading data-testid="workflows-heading">{t('workflowExecutions.domain')}</Heading>
+          <Text
+            className="text-ui-fg-subtle"
+            size="small"
+            data-testid="workflows-description"
+          >
             {t(`workflowExecutions.subtitle`)}
           </Text>
         </div>
@@ -61,12 +67,12 @@ export const WorkflowExecutionListTable = () => {
           count={count}
           isLoading={isLoading}
           pageSize={PAGE_SIZE}
-          navigateTo={(row) => `${row.id}`}
+          navigateTo={row => `${row.id}`}
           search
           pagination
           queryObject={raw}
           noRecords={{
-            message: t("workflowExecutions.list.noRecordsMessage"),
+            message: t('workflowExecutions.list.noRecordsMessage')
           }}
         />
       </div>

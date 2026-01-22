@@ -1,20 +1,17 @@
-import type { HttpTypes } from "@medusajs/types";
+import { useShippingOptionType } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import type { UIMatch } from 'react-router-dom';
 
-import type { UIMatch } from "react-router-dom";
-
-import { useShippingOptionType } from "@hooks/api";
-
-type ShippingOptionTypeDetailBreadcrumbProps =
-  UIMatch<HttpTypes.AdminShippingOptionTypeResponse>;
+type ShippingOptionTypeDetailBreadcrumbProps = UIMatch<HttpTypes.AdminShippingOptionTypeResponse>;
 
 export const ShippingOptionTypeDetailBreadcrumb = (
-  props: ShippingOptionTypeDetailBreadcrumbProps,
+  props: ShippingOptionTypeDetailBreadcrumbProps
 ) => {
   const { id } = props.params || {};
 
   const { shipping_option_type } = useShippingOptionType(id!, undefined, {
     initialData: props.data,
-    enabled: Boolean(id),
+    enabled: Boolean(id)
   });
 
   if (!shipping_option_type) {

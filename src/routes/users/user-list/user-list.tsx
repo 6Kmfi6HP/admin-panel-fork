@@ -1,8 +1,6 @@
-import { SingleColumnPage } from "@components/layout/pages";
-
-import { UserListTable } from "@routes/users/user-list/components/user-list-table";
-
-import { useExtension } from "@providers/extension-provider";
+import { SingleColumnPage } from '@components/layout/pages';
+import { useExtension } from '@providers/extension-provider';
+import { UserListTable } from '@routes/users/user-list/components/user-list-table';
 
 export const UserList = () => {
   const { getWidgets } = useExtension();
@@ -10,8 +8,8 @@ export const UserList = () => {
   return (
     <SingleColumnPage
       widgets={{
-        after: getWidgets("user.list.after"),
-        before: getWidgets("user.list.before"),
+        after: getWidgets('user.list.after'),
+        before: getWidgets('user.list.before')
       }}
     >
       <UserListTable />

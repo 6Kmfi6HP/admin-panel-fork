@@ -1,8 +1,6 @@
-import { SingleColumnPage } from "@components/layout/pages";
-
-import { ReservationListTable } from "@routes/reservations/reservation-list/components/reservation-list-table";
-
-import { useExtension } from "@providers/extension-provider";
+import { SingleColumnPage } from '@components/layout/pages';
+import { useExtension } from '@providers/extension-provider';
+import { ReservationListTable } from '@routes/reservations/reservation-list/components/reservation-list-table';
 
 export const ReservationList = () => {
   const { getWidgets } = useExtension();
@@ -10,8 +8,8 @@ export const ReservationList = () => {
   return (
     <SingleColumnPage
       widgets={{
-        before: getWidgets("reservation.list.before"),
-        after: getWidgets("reservation.list.after"),
+        before: getWidgets('reservation.list.before'),
+        after: getWidgets('reservation.list.after')
       }}
     >
       <ReservationListTable />

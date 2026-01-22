@@ -1,14 +1,12 @@
-import type { HttpTypes } from "@medusajs/types";
-import { toast, usePrompt } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-
-import { useDeleteTaxRate, useDeleteTaxRegion } from "@hooks/api";
+import { useDeleteTaxRate, useDeleteTaxRegion } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import { toast, usePrompt } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 export const useDeleteTaxRegionAction = ({
   taxRegion,
-  to = "/settings/tax-regions",
+  to = '/settings/tax-regions'
 }: {
   taxRegion: HttpTypes.AdminTaxRegion;
   to?: string;
@@ -21,10 +19,10 @@ export const useDeleteTaxRegionAction = ({
 
   return async () => {
     const res = await prompt({
-      title: t("general.areYouSure"),
-      description: t("taxRegions.delete.confirmation"),
-      confirmText: t("actions.delete"),
-      cancelText: t("actions.cancel"),
+      title: t('general.areYouSure'),
+      description: t('taxRegions.delete.confirmation'),
+      confirmText: t('actions.delete'),
+      cancelText: t('actions.cancel')
     });
 
     if (!res) {
@@ -33,13 +31,13 @@ export const useDeleteTaxRegionAction = ({
 
     await mutateAsync(undefined, {
       onSuccess: () => {
-        toast.success(t("taxRegions.delete.successToast"));
+        toast.success(t('taxRegions.delete.successToast'));
 
         navigate(to, { replace: true });
       },
-      onError: (e) => {
+      onError: e => {
         toast.error(e.message);
-      },
+      }
     });
   };
 };
@@ -52,12 +50,12 @@ export const useDeleteTaxRateAction = (taxRate: HttpTypes.AdminTaxRate) => {
 
   return async () => {
     const res = await prompt({
-      title: t("general.areYouSure"),
-      description: t("taxRegions.taxRates.delete.confirmation", {
-        name: taxRate.name,
+      title: t('general.areYouSure'),
+      description: t('taxRegions.taxRates.delete.confirmation', {
+        name: taxRate.name
       }),
-      confirmText: t("actions.delete"),
-      cancelText: t("actions.cancel"),
+      confirmText: t('actions.delete'),
+      cancelText: t('actions.cancel')
     });
 
     if (!res) {
@@ -66,11 +64,11 @@ export const useDeleteTaxRateAction = (taxRate: HttpTypes.AdminTaxRate) => {
 
     await mutateAsync(undefined, {
       onSuccess: () => {
-        toast.success(t("taxRegions.taxRates.delete.successToast"));
+        toast.success(t('taxRegions.taxRates.delete.successToast'));
       },
-      onError: (e) => {
+      onError: e => {
         toast.error(e.message);
-      },
+      }
     });
   };
 };

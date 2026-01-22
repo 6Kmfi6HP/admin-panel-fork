@@ -1,27 +1,24 @@
-import type { HttpTypes } from "@medusajs/types";
+import { useWorkflowExecution } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import type { UIMatch } from 'react-router-dom';
 
-import type { UIMatch } from "react-router-dom";
-
-import { useWorkflowExecution } from "@hooks/api";
-
-type WorkflowExecutionDetailBreadcrumbProps =
-  UIMatch<HttpTypes.AdminWorkflowExecutionResponse>;
+type WorkflowExecutionDetailBreadcrumbProps = UIMatch<HttpTypes.AdminWorkflowExecutionResponse>;
 
 export const WorkflowExecutionDetailBreadcrumb = (
-  props: WorkflowExecutionDetailBreadcrumbProps,
+  props: WorkflowExecutionDetailBreadcrumbProps
 ) => {
   const { id } = props.params || {};
 
   const { workflow_execution } = useWorkflowExecution(id!, {
     initialData: props.data,
-    enabled: Boolean(id),
+    enabled: Boolean(id)
   });
 
   if (!workflow_execution) {
     return null;
   }
 
-  const cleanId = workflow_execution.id.replace("wf_exec_", "");
+  const cleanId = workflow_execution.id.replace('wf_exec_', '');
 
   return <span>{cleanId}</span>;
 };

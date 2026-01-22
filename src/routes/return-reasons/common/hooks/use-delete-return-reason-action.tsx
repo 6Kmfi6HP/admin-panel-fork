@@ -1,14 +1,9 @@
-import type { AdminReturnReason } from "@medusajs/types";
-import { toast, usePrompt } from "@medusajs/ui";
+import { useDeleteReturnReason } from '@hooks/api/return-reasons.tsx';
+import type { AdminReturnReason } from '@medusajs/types';
+import { toast, usePrompt } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
 
-import { useTranslation } from "react-i18next";
-
-import { useDeleteReturnReason } from "@hooks/api/return-reasons.tsx";
-
-export const useDeleteReturnReasonAction = ({
-  id,
-  label,
-}: AdminReturnReason) => {
+export const useDeleteReturnReasonAction = ({ id, label }: AdminReturnReason) => {
   const { t } = useTranslation();
   const prompt = usePrompt();
 
@@ -16,12 +11,12 @@ export const useDeleteReturnReasonAction = ({
 
   return async () => {
     const result = await prompt({
-      title: t("general.areYouSure"),
-      description: t("returnReasons.delete.confirmation", {
-        label,
+      title: t('general.areYouSure'),
+      description: t('returnReasons.delete.confirmation', {
+        label
       }),
-      confirmText: t("actions.delete"),
-      cancelText: t("actions.cancel"),
+      confirmText: t('actions.delete'),
+      cancelText: t('actions.cancel')
     });
 
     if (!result) {
@@ -30,11 +25,11 @@ export const useDeleteReturnReasonAction = ({
 
     await mutateAsync(undefined, {
       onSuccess: () => {
-        toast.success(t("returnReasons.delete.successToast", { label }));
+        toast.success(t('returnReasons.delete.successToast', { label }));
       },
-      onError: (e) => {
+      onError: e => {
         toast.error(e.message);
-      },
+      }
     });
   };
 };

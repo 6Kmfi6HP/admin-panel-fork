@@ -1,7 +1,16 @@
-import { MagnifyingGlass } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
+import { Form } from '@components/common/form';
+import { SwitchBox } from '@components/common/switch-box';
+import { PercentageInput } from '@components/inputs/percentage-input';
+import { RouteDrawer, StackedDrawer, useRouteModal, useStackedModal } from '@components/modals';
+import { KeyboundForm } from '@components/utilities/keybound-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useUpdateTaxRate } from '@hooks/api';
+import { useDocumentDirection } from '@hooks/use-document-direction';
+import { MagnifyingGlass } from '@medusajs/icons';
+import type { HttpTypes } from '@medusajs/types';
 import {
   Button,
+  clx,
   Divider,
   Heading,
   Hint,
@@ -9,36 +18,20 @@ import {
   Label,
   Select,
   Text,
-  clx,
-  toast,
-} from "@medusajs/ui";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { z } from "zod";
-
-import { Form } from "@components/common/form";
-import { SwitchBox } from "@components/common/switch-box";
-import { PercentageInput } from "@components/inputs/percentage-input";
+  toast
+} from '@medusajs/ui';
+import { TargetForm } from '@routes/tax-regions/common/components/target-form';
+import { TargetItem } from '@routes/tax-regions/common/components/target-item';
+import { TaxRateRuleReferenceType } from '@routes/tax-regions/common/constants';
 import {
-  RouteDrawer,
-  StackedDrawer,
-  useRouteModal,
-  useStackedModal,
-} from "@components/modals";
-import { KeyboundForm } from "@components/utilities/keybound-form";
-
-import { useUpdateTaxRate } from "@hooks/api";
-import { useDocumentDirection } from "@hooks/use-document-direction";
-
-import { TargetForm } from "@routes/tax-regions/common/components/target-form";
-import { TargetItem } from "@routes/tax-regions/common/components/target-item";
-import { TaxRateRuleReferenceType } from "@routes/tax-regions/common/constants";
-import type { TaxRateRuleReference } from "@routes/tax-regions/common/schemas";
-import { TaxRateRuleReferenceSchema } from "@routes/tax-regions/common/schemas";
-import { createTaxRulePayload } from "@routes/tax-regions/common/utils";
-import type { InitialRuleValues } from "@routes/tax-regions/tax-region-tax-override-edit/types";
+  TaxRateRuleReferenceSchema,
+  type TaxRateRuleReference
+} from '@routes/tax-regions/common/schemas';
+import { createTaxRulePayload } from '@routes/tax-regions/common/utils';
+import type { InitialRuleValues } from '@routes/tax-regions/tax-region-tax-override-edit/types';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
 
 export const DISPLAY_OVERRIDE_ITEMS_LIMIT = 10;
 
@@ -47,29 +40,28 @@ type TaxRegionTaxOverrideEditFormProps = {
   initialValues: InitialRuleValues;
   isCombinable?: boolean;
 };
-const STACKED_MODAL_ID = "tr";
-const getStackedModalId = (type: TaxRateRuleReferenceType) =>
-  `${STACKED_MODAL_ID}-${type}`;
+const STACKED_MODAL_ID = 'tr';
+const getStackedModalId = (type: TaxRateRuleReferenceType) => `${STACKED_MODAL_ID}-${type}`;
 
 const TaxRegionTaxRateEditSchema = z.object({
   name: z.string().min(1),
   code: z.string().min(1),
   rate: z.object({
     float: z.number().optional(),
-    value: z.string().optional(),
+    value: z.string().optional()
   }),
   is_combinable: z.boolean().optional(),
   enabled_rules: z.object({
     product: z.boolean(),
     product_type: z.boolean(),
-    shipping_option: z.boolean(),
+    shipping_option: z.boolean()
     // product_collection: z.boolean(),
     // product_tag: z.boolean(),
     // customer_group: z.boolean(),
   }),
   product: z.array(TaxRateRuleReferenceSchema).optional(),
   product_type: z.array(TaxRateRuleReferenceSchema).optional(),
-  shipping_option: z.array(TaxRateRuleReferenceSchema).optional(),
+  shipping_option: z.array(TaxRateRuleReferenceSchema).optional()
   // product_collection: z.array(TaxRateRuleReferenceSchema).optional(),
   // product_tag: z.array(TaxRateRuleReferenceSchema).optional(),
   // customer_group: z.array(TaxRateRuleReferenceSchema).optional(),
@@ -78,7 +70,7 @@ const TaxRegionTaxRateEditSchema = z.object({
 export const TaxRegionTaxOverrideEditForm = ({
   taxRate,
   isCombinable = false,
-  initialValues,
+  initialValues
 }: TaxRegionTaxOverrideEditFormProps) => {
   const { t } = useTranslation();
   const { handleSuccess } = useRouteModal();
@@ -89,13 +81,13 @@ export const TaxRegionTaxOverrideEditForm = ({
       name: taxRate.name,
       code: taxRate.code,
       rate: {
-        value: taxRate.rate?.toString() || "",
+        value: taxRate.rate?.toString() || ''
       },
       is_combinable: taxRate.is_combinable,
       enabled_rules: {
         product: initialValues.product.length > 0,
         product_type: initialValues.product_type.length > 0,
-        shipping_option: initialValues.shipping_option.length > 0,
+        shipping_option: initialValues.shipping_option.length > 0
         // customer_groups: initialValues.customer_group.length > 0,
         // product_collections:
         //   initialValues.product_collections.length > 0,
@@ -103,21 +95,21 @@ export const TaxRegionTaxOverrideEditForm = ({
       },
       product: initialValues.product,
       product_type: initialValues.product_type,
-      shipping_option: initialValues.shipping_option,
+      shipping_option: initialValues.shipping_option
       // product_collections: initialValues.product_collection,
       // product_tags: initialValues.product_tag,
       // customer_groups: initialValues.customer_group,
     },
-    resolver: zodResolver(TaxRegionTaxRateEditSchema),
+    resolver: zodResolver(TaxRegionTaxRateEditSchema)
   });
 
   const { mutateAsync, isPending } = useUpdateTaxRate(taxRate.id);
 
-  const handleSubmit = form.handleSubmit(async (values) => {
+  const handleSubmit = form.handleSubmit(async values => {
     const {
       product,
       product_type,
-      shipping_option,
+      shipping_option
       // customer_groups,
       // product_collections,
       // product_tags,
@@ -125,15 +117,15 @@ export const TaxRegionTaxOverrideEditForm = ({
 
     const productRules = createTaxRulePayload({
       reference_type: TaxRateRuleReferenceType.PRODUCT,
-      references: product || [],
+      references: product || []
     });
     const productTypeRules = createTaxRulePayload({
       reference_type: TaxRateRuleReferenceType.PRODUCT_TYPE,
-      references: product_type || [],
+      references: product_type || []
     });
     const shippingOptionRules = createTaxRulePayload({
       reference_type: TaxRateRuleReferenceType.SHIPPING_OPTION,
-      references: shipping_option || [],
+      references: shipping_option || []
     });
     // const customerGroupRules = createTaxRulePayload({
     //   reference_type: TaxRateRuleReferenceType.CUSTOMER_GROUP,
@@ -151,47 +143,47 @@ export const TaxRegionTaxOverrideEditForm = ({
     const rules = [
       productRules,
       productTypeRules,
-      shippingOptionRules,
+      shippingOptionRules
       // customerGroupRules,
       // productCollectionRules,
       // productTagRules,
     ]
-      .filter((rule) => Boolean(rule))
-      .flatMap((r) => r) as HttpTypes.AdminCreateTaxRate["rules"];
+      .filter(rule => Boolean(rule))
+      .flatMap(r => r) as HttpTypes.AdminCreateTaxRate['rules'];
 
     await mutateAsync(
       {
         name: values.name,
-        code: values.code || "",
+        code: values.code || '',
         rate: values.rate?.float,
         is_combinable: values.is_combinable,
-        rules,
+        rules
       },
       {
         onSuccess: () => {
-          toast.success(t("taxRegions.taxRates.edit.successToast"));
+          toast.success(t('taxRegions.taxRates.edit.successToast'));
           handleSuccess();
         },
-        onError: (error) => {
+        onError: error => {
           toast.error(error.message);
-        },
-      },
+        }
+      }
     );
   });
 
   const products = useFieldArray({
     control: form.control,
-    name: "product",
+    name: 'product'
   });
 
   const productTypes = useFieldArray({
     control: form.control,
-    name: "product_type",
+    name: 'product_type'
   });
 
   const shippingOptions = useFieldArray({
     control: form.control,
-    name: "shipping_option",
+    name: 'shipping_option'
   });
 
   // const productCollections = useFieldArray({
@@ -230,16 +222,16 @@ export const TaxRegionTaxOverrideEditForm = ({
   const referenceTypeOptions = [
     {
       value: TaxRateRuleReferenceType.PRODUCT,
-      label: t("taxRegions.fields.targets.options.product"),
+      label: t('taxRegions.fields.targets.options.product')
     },
     {
       value: TaxRateRuleReferenceType.PRODUCT_TYPE,
-      label: t("taxRegions.fields.targets.options.productType"),
+      label: t('taxRegions.fields.targets.options.productType')
     },
     {
       value: TaxRateRuleReferenceType.SHIPPING_OPTION,
-      label: t("taxRegions.fields.targets.options.shippingOption"),
-    },
+      label: t('taxRegions.fields.targets.options.shippingOption')
+    }
     // {
     //   value: TaxRateRuleReferenceType.PRODUCT_COLLECTION,
     //   label: t("taxRegions.fields.targets.options.productCollection"),
@@ -255,15 +247,13 @@ export const TaxRegionTaxOverrideEditForm = ({
   ];
 
   const searchPlaceholders = {
-    [TaxRateRuleReferenceType.PRODUCT]: t(
-      "taxRegions.fields.targets.placeholders.product",
-    ),
+    [TaxRateRuleReferenceType.PRODUCT]: t('taxRegions.fields.targets.placeholders.product'),
     [TaxRateRuleReferenceType.PRODUCT_TYPE]: t(
-      "taxRegions.fields.targets.placeholders.productType",
+      'taxRegions.fields.targets.placeholders.productType'
     ),
     [TaxRateRuleReferenceType.SHIPPING_OPTION]: t(
-      "taxRegions.fields.targets.placeholders.shippingOption",
-    ),
+      'taxRegions.fields.targets.placeholders.shippingOption'
+    )
     // [TaxRateRuleReferenceType.PRODUCT_COLLECTION]: t(
     //   "taxRegions.fields.targets.placeholders.productCollection"
     // ),
@@ -282,17 +272,17 @@ export const TaxRegionTaxOverrideEditForm = ({
     return (references: TaxRateRuleReference[]) => {
       if (!references.length) {
         form.setValue(type, [], {
-          shouldDirty: true,
+          shouldDirty: true
         });
         setIsOpen(modalId, false);
 
         return;
       }
 
-      const newIds = references.map((reference) => reference.value);
+      const newIds = references.map(reference => reference.value);
 
       const fieldsToAdd = references.filter(
-        (reference) => !fields.some((field) => field.value === reference.value),
+        reference => !fields.some(field => field.value === reference.value)
       );
 
       for (const field of fields) {
@@ -306,16 +296,14 @@ export const TaxRegionTaxOverrideEditForm = ({
     };
   };
 
-  const displayOrder = new Set<TaxRateRuleReferenceType>([
-    TaxRateRuleReferenceType.PRODUCT,
-  ]);
+  const displayOrder = new Set<TaxRateRuleReferenceType>([TaxRateRuleReferenceType.PRODUCT]);
 
   const disableRule = (type: TaxRateRuleReferenceType) => {
     form.setValue(type, [], {
-      shouldDirty: true,
+      shouldDirty: true
     });
     form.setValue(`enabled_rules.${type}`, false, {
-      shouldDirty: true,
+      shouldDirty: true
     });
 
     displayOrder.delete(type);
@@ -323,10 +311,10 @@ export const TaxRegionTaxOverrideEditForm = ({
 
   const enableRule = (type: TaxRateRuleReferenceType) => {
     form.setValue(`enabled_rules.${type}`, true, {
-      shouldDirty: true,
+      shouldDirty: true
     });
     form.setValue(type, [], {
-      shouldDirty: true,
+      shouldDirty: true
     });
 
     displayOrder.add(type);
@@ -334,12 +322,12 @@ export const TaxRegionTaxOverrideEditForm = ({
 
   const watchedEnabledRules = useWatch({
     control: form.control,
-    name: "enabled_rules",
+    name: 'enabled_rules'
   });
 
   const addRule = () => {
     const firstDisabledRule = Object.keys(watchedEnabledRules).find(
-      (key) => !watchedEnabledRules[key as TaxRateRuleReferenceType],
+      key => !watchedEnabledRules[key as TaxRateRuleReferenceType]
     );
 
     if (firstDisabledRule) {
@@ -348,7 +336,7 @@ export const TaxRegionTaxOverrideEditForm = ({
   };
 
   const visibleRuleTypes = referenceTypeOptions
-    .filter((option) => watchedEnabledRules[option.value])
+    .filter(option => watchedEnabledRules[option.value])
     .sort((a, b) => {
       const orderArray = Array.from(displayOrder);
 
@@ -356,18 +344,15 @@ export const TaxRegionTaxOverrideEditForm = ({
     });
 
   const getAvailableRuleTypes = (type: TaxRateRuleReferenceType) => {
-    return referenceTypeOptions.filter((option) => {
+    return referenceTypeOptions.filter(option => {
       return (
-        !visibleRuleTypes.some(
-          (visibleOption) => visibleOption.value === option.value,
-        ) || option.value === type
+        !visibleRuleTypes.some(visibleOption => visibleOption.value === option.value) ||
+        option.value === type
       );
     });
   };
 
-  const showAddButton = Object.values(watchedEnabledRules).some(
-    (value) => !value,
-  );
+  const showAddButton = Object.values(watchedEnabledRules).some(value => !value);
 
   return (
     <RouteDrawer.Form form={form}>
@@ -383,7 +368,7 @@ export const TaxRegionTaxOverrideEditForm = ({
               render={({ field }) => {
                 return (
                   <Form.Item>
-                    <Form.Label>{t("fields.name")}</Form.Label>
+                    <Form.Label>{t('fields.name')}</Form.Label>
                     <Form.Control>
                       <Input {...field} />
                     </Form.Control>
@@ -398,7 +383,7 @@ export const TaxRegionTaxOverrideEditForm = ({
               render={({ field }) => {
                 return (
                   <Form.Item>
-                    <Form.Label>{t("taxRegions.fields.taxCode")}</Form.Label>
+                    <Form.Label>{t('taxRegions.fields.taxCode')}</Form.Label>
                     <Form.Control>
                       <Input {...field} />
                     </Form.Control>
@@ -413,7 +398,7 @@ export const TaxRegionTaxOverrideEditForm = ({
               render={({ field: { value, onChange, ...field } }) => {
                 return (
                   <Form.Item>
-                    <Form.Label>{t("taxRegions.fields.taxRate")}</Form.Label>
+                    <Form.Label>{t('taxRegions.fields.taxRate')}</Form.Label>
                     <Form.Control>
                       <PercentageInput
                         {...field}
@@ -422,7 +407,7 @@ export const TaxRegionTaxOverrideEditForm = ({
                         onValueChange={(value, _name, values) =>
                           onChange({
                             value: value,
-                            float: values?.float,
+                            float: values?.float
                           })
                         }
                       />
@@ -437,27 +422,33 @@ export const TaxRegionTaxOverrideEditForm = ({
             <SwitchBox
               control={form.control}
               name="is_combinable"
-              label={t("taxRegions.fields.isCombinable.label")}
-              description={t("taxRegions.fields.isCombinable.hint")}
+              label={t('taxRegions.fields.isCombinable.label')}
+              description={t('taxRegions.fields.isCombinable.hint')}
             />
           )}
           <div className="flex flex-col gap-y-3">
             <div className="flex items-center justify-between gap-x-4">
               <div className="flex flex-col">
                 <div className="flex items-center gap-x-1">
-                  <Label id="tax_region_rules_label" htmlFor="tax_region_rules">
-                    {t("taxRegions.fields.targets.label")}
+                  <Label
+                    id="tax_region_rules_label"
+                    htmlFor="tax_region_rules"
+                  >
+                    {t('taxRegions.fields.targets.label')}
                   </Label>
                   <Text
                     size="small"
                     leading="compact"
                     className="text-ui-fg-muted"
                   >
-                    ({t("fields.optional")})
+                    ({t('fields.optional')})
                   </Text>
                 </div>
-                <Hint id="tax_region_rules_description" className="text-pretty">
-                  {t("taxRegions.fields.targets.hint")}
+                <Hint
+                  id="tax_region_rules_description"
+                  className="text-pretty"
+                >
+                  {t('taxRegions.fields.targets.hint')}
                 </Hint>
               </div>
               {showAddButton && (
@@ -468,7 +459,7 @@ export const TaxRegionTaxOverrideEditForm = ({
                   variant="transparent"
                   className="flex-shrink-0 text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
                 >
-                  {t("taxRegions.fields.targets.action")}
+                  {t('taxRegions.fields.targets.action')}
                 </Button>
               )}
             </div>
@@ -501,16 +492,14 @@ export const TaxRegionTaxOverrideEditForm = ({
                     <Form.Field
                       control={form.control}
                       name={ruleType.value}
-                      render={({
-                        field: { value: _value, onChange: _onChange, ...field },
-                      }) => {
+                      render={({ field: { value: _value, onChange: _onChange, ...field } }) => {
                         return (
                           <Form.Item className="space-y-0">
                             <Form.Label className="sr-only">{label}</Form.Label>
                             <div
                               className={clx(
-                                "grid gap-1.5 rounded-xl bg-ui-bg-component py-1.5 shadow-elevation-card-rest transition-fg",
-                                "aria-[invalid='true']:shadow-borders-error",
+                                'grid gap-1.5 rounded-xl bg-ui-bg-component py-1.5 shadow-elevation-card-rest transition-fg',
+                                "aria-[invalid='true']:shadow-borders-error"
                               )}
                               role="application"
                               {...field}
@@ -526,7 +515,7 @@ export const TaxRegionTaxOverrideEditForm = ({
                                       <Select.Value />
                                     </Select.Trigger>
                                     <Select.Content>
-                                      {options.map((option) => {
+                                      {options.map(option => {
                                         return (
                                           <Select.Item
                                             key={option.value}
@@ -544,7 +533,7 @@ export const TaxRegionTaxOverrideEditForm = ({
                                   </div>
                                 )}
                                 <div className="txt-compact-small rounded-md bg-ui-bg-field px-2 py-1.5 shadow-borders-base">
-                                  {t("taxRegions.fields.targets.operators.in")}
+                                  {t('taxRegions.fields.targets.operators.in')}
                                 </div>
                               </div>
                               <div className="flex items-center gap-1.5 px-1.5">
@@ -559,21 +548,17 @@ export const TaxRegionTaxOverrideEditForm = ({
                                     </button>
                                   </StackedDrawer.Trigger>
                                   <StackedDrawer.Trigger asChild>
-                                    <Button variant="secondary">
-                                      {t("actions.browse")}
-                                    </Button>
+                                    <Button variant="secondary">{t('actions.browse')}</Button>
                                   </StackedDrawer.Trigger>
                                   <StackedDrawer.Content>
                                     <StackedDrawer.Header>
                                       <StackedDrawer.Title asChild>
                                         <Heading>
-                                          {t(
-                                            "taxRegions.fields.targets.modal.header",
-                                          )}
+                                          {t('taxRegions.fields.targets.modal.header')}
                                         </Heading>
                                       </StackedDrawer.Title>
                                       <StackedDrawer.Description className="sr-only">
-                                        {t("taxRegions.fields.targets.hint")}
+                                        {t('taxRegions.fields.targets.hint')}
                                       </StackedDrawer.Description>
                                     </StackedDrawer.Header>
                                     <TargetForm
@@ -589,7 +574,7 @@ export const TaxRegionTaxOverrideEditForm = ({
                                   onClick={() => disableRule(type)}
                                   type="button"
                                 >
-                                  {t("actions.delete")}
+                                  {t('actions.delete')}
                                 </Button>
                               </div>
                               {fields.length > 0 ? (
@@ -610,15 +595,12 @@ export const TaxRegionTaxOverrideEditForm = ({
                                         );
                                       })}
                                   </div>
-                                  {fields.length >
-                                    DISPLAY_OVERRIDE_ITEMS_LIMIT && (
+                                  {fields.length > DISPLAY_OVERRIDE_ITEMS_LIMIT && (
                                     <div className="flex flex-col gap-y-1.5 px-1.5">
                                       {/* <Divider variant="dashed" /> */}
                                       <div className="txt-small flex flex-col gap-y-1.5 px-1.5 text-ui-fg-muted">
-                                        {t("general.plusCountMore", {
-                                          count:
-                                            fields.length -
-                                            DISPLAY_OVERRIDE_ITEMS_LIMIT,
+                                        {t('general.plusCountMore', {
+                                          count: fields.length - DISPLAY_OVERRIDE_ITEMS_LIMIT
                                         })}
                                       </div>
                                     </div>
@@ -640,12 +622,19 @@ export const TaxRegionTaxOverrideEditForm = ({
         <RouteDrawer.Footer className="shrink-0">
           <div className="flex items-center justify-end gap-x-2">
             <RouteDrawer.Close asChild>
-              <Button size="small" variant="secondary">
-                {t("actions.cancel")}
+              <Button
+                size="small"
+                variant="secondary"
+              >
+                {t('actions.cancel')}
               </Button>
             </RouteDrawer.Close>
-            <Button size="small" type="submit" isLoading={isPending}>
-              {t("actions.save")}
+            <Button
+              size="small"
+              type="submit"
+              isLoading={isPending}
+            >
+              {t('actions.save')}
             </Button>
           </div>
         </RouteDrawer.Footer>

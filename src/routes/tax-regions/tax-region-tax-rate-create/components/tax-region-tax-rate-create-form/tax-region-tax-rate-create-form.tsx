@@ -1,18 +1,15 @@
-import type { HttpTypes } from "@medusajs/types";
-import { Button, Heading, Input, Text, toast } from "@medusajs/ui";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { z } from "zod";
-
-import { Form } from "@components/common/form";
-import { SwitchBox } from "@components/common/switch-box";
-import { PercentageInput } from "@components/inputs/percentage-input";
-import { RouteFocusModal, useRouteModal } from "@components/modals";
-import { KeyboundForm } from "@components/utilities/keybound-form";
-
-import { useCreateTaxRate } from "@hooks/api";
+import { Form } from '@components/common/form';
+import { SwitchBox } from '@components/common/switch-box';
+import { PercentageInput } from '@components/inputs/percentage-input';
+import { RouteFocusModal, useRouteModal } from '@components/modals';
+import { KeyboundForm } from '@components/utilities/keybound-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useCreateTaxRate } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, Heading, Input, Text, toast } from '@medusajs/ui';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
 
 type TaxRegionTaxRateCreateFormProps = {
   taxRegion: HttpTypes.AdminTaxRegion;
@@ -25,34 +22,34 @@ const TaxRegionTaxRateCreateSchema = z.object({
   rate: z
     .object({
       float: z.number().optional(),
-      value: z.string().optional(),
+      value: z.string().optional()
     })
     .optional(),
-  is_combinable: z.boolean().optional(),
+  is_combinable: z.boolean().optional()
 });
 
 export const TaxRegionTaxRateCreateForm = ({
   taxRegion,
-  isSublevel = false,
+  isSublevel = false
 }: TaxRegionTaxRateCreateFormProps) => {
   const { t } = useTranslation();
   const { handleSuccess } = useRouteModal();
 
   const form = useForm<z.infer<typeof TaxRegionTaxRateCreateSchema>>({
     defaultValues: {
-      name: "",
-      code: "",
+      name: '',
+      code: '',
       rate: {
-        value: "",
+        value: ''
       },
-      is_combinable: false,
+      is_combinable: false
     },
-    resolver: zodResolver(TaxRegionTaxRateCreateSchema),
+    resolver: zodResolver(TaxRegionTaxRateCreateSchema)
   });
 
   const { mutateAsync, isPending } = useCreateTaxRate();
 
-  const handleSubmit = form.handleSubmit(async (values) => {
+  const handleSubmit = form.handleSubmit(async values => {
     await mutateAsync(
       {
         tax_region_id: taxRegion.id,
@@ -60,17 +57,17 @@ export const TaxRegionTaxRateCreateForm = ({
         name: values.name,
         code: values.code,
         rate: values.rate?.float,
-        is_combinable: values.is_combinable,
+        is_combinable: values.is_combinable
       },
       {
         onSuccess: () => {
-          toast.success(t("taxRegions.taxRates.create.successToast"));
+          toast.success(t('taxRegions.taxRates.create.successToast'));
           handleSuccess();
         },
-        onError: (error) => {
+        onError: error => {
           toast.error(error.message);
-        },
-      },
+        }
+      }
     );
   });
 
@@ -86,7 +83,10 @@ export const TaxRegionTaxRateCreateForm = ({
             <div className="flex w-full max-w-[720px] flex-col gap-y-8 px-2 py-16">
               <div>
                 <Heading>{t(`taxRegions.taxRates.create.header`)}</Heading>
-                <Text size="small" className="text-ui-fg-subtle">
+                <Text
+                  size="small"
+                  className="text-ui-fg-subtle"
+                >
                   {t(`taxRegions.taxRates.create.hint`)}
                 </Text>
               </div>
@@ -97,7 +97,7 @@ export const TaxRegionTaxRateCreateForm = ({
                   render={({ field }) => {
                     return (
                       <Form.Item>
-                        <Form.Label>{t("fields.name")}</Form.Label>
+                        <Form.Label>{t('fields.name')}</Form.Label>
                         <Form.Control>
                           <Input {...field} />
                         </Form.Control>
@@ -112,9 +112,7 @@ export const TaxRegionTaxRateCreateForm = ({
                   render={({ field: { value, onChange, ...field } }) => {
                     return (
                       <Form.Item>
-                        <Form.Label>
-                          {t("taxRegions.fields.taxRate")}
-                        </Form.Label>
+                        <Form.Label>{t('taxRegions.fields.taxRate')}</Form.Label>
                         <Form.Control>
                           <PercentageInput
                             {...field}
@@ -123,7 +121,7 @@ export const TaxRegionTaxRateCreateForm = ({
                             onValueChange={(value, _name, values) =>
                               onChange({
                                 value: value,
-                                float: values?.float,
+                                float: values?.float
                               })
                             }
                           />
@@ -139,9 +137,7 @@ export const TaxRegionTaxRateCreateForm = ({
                   render={({ field }) => {
                     return (
                       <Form.Item>
-                        <Form.Label>
-                          {t("taxRegions.fields.taxCode")}
-                        </Form.Label>
+                        <Form.Label>{t('taxRegions.fields.taxCode')}</Form.Label>
                         <Form.Control>
                           <Input {...field} />
                         </Form.Control>
@@ -155,8 +151,8 @@ export const TaxRegionTaxRateCreateForm = ({
                 <SwitchBox
                   control={form.control}
                   name="is_combinable"
-                  label={t("taxRegions.fields.isCombinable.label")}
-                  description={t("taxRegions.fields.isCombinable.hint")}
+                  label={t('taxRegions.fields.isCombinable.label')}
+                  description={t('taxRegions.fields.isCombinable.hint')}
                 />
               )}
             </div>
@@ -165,12 +161,19 @@ export const TaxRegionTaxRateCreateForm = ({
         <RouteFocusModal.Footer>
           <div className="flex items-center justify-end gap-x-2">
             <RouteFocusModal.Close asChild>
-              <Button size="small" variant="secondary">
-                {t("actions.cancel")}
+              <Button
+                size="small"
+                variant="secondary"
+              >
+                {t('actions.cancel')}
               </Button>
             </RouteFocusModal.Close>
-            <Button size="small" type="submit" isLoading={isPending}>
-              {t("actions.save")}
+            <Button
+              size="small"
+              type="submit"
+              isLoading={isPending}
+            >
+              {t('actions.save')}
             </Button>
           </div>
         </RouteFocusModal.Footer>

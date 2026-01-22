@@ -1,14 +1,9 @@
-import { toast, usePrompt } from "@medusajs/ui";
+import { useDeleteShippingOptionType } from '@hooks/api';
+import { toast, usePrompt } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-
-import { useDeleteShippingOptionType } from "@hooks/api";
-
-export const useDeleteShippingOptionTypeAction = (
-  id: string,
-  label: string,
-) => {
+export const useDeleteShippingOptionTypeAction = (id: string, label: string) => {
   const { t } = useTranslation();
   const prompt = usePrompt();
   const navigate = useNavigate();
@@ -17,10 +12,10 @@ export const useDeleteShippingOptionTypeAction = (
 
   const handleDelete = async () => {
     const result = await prompt({
-      title: t("general.areYouSure"),
-      description: t("shippingOptionTypes.delete.confirmation", { label }),
-      confirmText: t("actions.delete"),
-      cancelText: t("actions.cancel"),
+      title: t('general.areYouSure'),
+      description: t('shippingOptionTypes.delete.confirmation', { label }),
+      confirmText: t('actions.delete'),
+      cancelText: t('actions.cancel')
     });
 
     if (!result) {
@@ -29,14 +24,14 @@ export const useDeleteShippingOptionTypeAction = (
 
     await mutateAsync(undefined, {
       onSuccess: () => {
-        navigate("/settings/locations/shipping-option-types", {
-          replace: true,
+        navigate('/settings/locations/shipping-option-types', {
+          replace: true
         });
-        toast.success(t("shippingOptionTypes.delete.successToast", { label }));
+        toast.success(t('shippingOptionTypes.delete.successToast', { label }));
       },
-      onError: (e) => {
+      onError: e => {
         toast.error(e.message);
-      },
+      }
     });
   };
 

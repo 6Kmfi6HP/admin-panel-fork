@@ -1,24 +1,16 @@
-import type { HttpTypes } from "@medusajs/types";
-
-import type { UIMatch } from "react-router-dom";
-
-import { useTaxRegion } from "@hooks/api";
-
-import {
-  getProvinceByIso2,
-  isProvinceInCountry,
-} from "@lib/data/country-states";
+import { useTaxRegion } from '@hooks/api';
+import { getProvinceByIso2, isProvinceInCountry } from '@lib/data/country-states';
+import type { HttpTypes } from '@medusajs/types';
+import type { UIMatch } from 'react-router-dom';
 
 type TaxRegionDetailBreadcrumbProps = UIMatch<HttpTypes.AdminTaxRegionResponse>;
 
-export const TaxRegionDetailBreadcrumb = (
-  props: TaxRegionDetailBreadcrumbProps,
-) => {
+export const TaxRegionDetailBreadcrumb = (props: TaxRegionDetailBreadcrumbProps) => {
   const { province_id } = props.params || {};
 
   const { tax_region } = useTaxRegion(province_id!, undefined, {
     initialData: props.data,
-    enabled: Boolean(province_id),
+    enabled: Boolean(province_id)
   });
 
   if (!tax_region) {
@@ -30,7 +22,5 @@ export const TaxRegionDetailBreadcrumb = (
 
   const isValid = isProvinceInCountry(countryCode, provinceCode);
 
-  return (
-    <span>{isValid ? getProvinceByIso2(provinceCode) : provinceCode}</span>
-  );
+  return <span>{isValid ? getProvinceByIso2(provinceCode) : provinceCode}</span>;
 };

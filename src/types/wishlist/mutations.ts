@@ -1,5 +1,5 @@
 export type CreateWishlistDTO = {
-  reference: "product";
+  reference: 'product';
   reference_id: string;
   customer_id: string;
 };

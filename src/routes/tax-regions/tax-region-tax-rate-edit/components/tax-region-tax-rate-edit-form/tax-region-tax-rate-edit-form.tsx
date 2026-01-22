@@ -1,18 +1,15 @@
-import type { HttpTypes } from "@medusajs/types";
-import { Button, Input, toast } from "@medusajs/ui";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { z } from "zod";
-
-import { Form } from "@components/common/form";
-import { SwitchBox } from "@components/common/switch-box";
-import { PercentageInput } from "@components/inputs/percentage-input";
-import { RouteDrawer, useRouteModal } from "@components/modals";
-import { KeyboundForm } from "@components/utilities/keybound-form";
-
-import { useUpdateTaxRate } from "@hooks/api";
+import { Form } from '@components/common/form';
+import { SwitchBox } from '@components/common/switch-box';
+import { PercentageInput } from '@components/inputs/percentage-input';
+import { RouteDrawer, useRouteModal } from '@components/modals';
+import { KeyboundForm } from '@components/utilities/keybound-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useUpdateTaxRate } from '@hooks/api';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, Input, toast } from '@medusajs/ui';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
 
 type TaxRegionTaxRateEditFormProps = {
   taxRate: HttpTypes.AdminTaxRate;
@@ -24,14 +21,14 @@ const TaxRegionTaxRateEditSchema = z.object({
   code: z.string().optional(),
   rate: z.object({
     float: z.number().optional(),
-    value: z.string().optional(),
+    value: z.string().optional()
   }),
-  is_combinable: z.boolean().optional(),
+  is_combinable: z.boolean().optional()
 });
 
 export const TaxRegionTaxRateEditForm = ({
   taxRate,
-  isSublevel = false,
+  isSublevel = false
 }: TaxRegionTaxRateEditFormProps) => {
   const { t } = useTranslation();
   const { handleSuccess } = useRouteModal();
@@ -41,32 +38,32 @@ export const TaxRegionTaxRateEditForm = ({
       name: taxRate.name,
       code: taxRate.code,
       rate: {
-        value: taxRate.rate?.toString() || "",
+        value: taxRate.rate?.toString() || ''
       },
-      is_combinable: taxRate.is_combinable,
+      is_combinable: taxRate.is_combinable
     },
-    resolver: zodResolver(TaxRegionTaxRateEditSchema),
+    resolver: zodResolver(TaxRegionTaxRateEditSchema)
   });
 
   const { mutateAsync, isPending } = useUpdateTaxRate(taxRate.id);
 
-  const handleSubmit = form.handleSubmit(async (values) => {
+  const handleSubmit = form.handleSubmit(async values => {
     await mutateAsync(
       {
         name: values.name,
-        code: values.code || "",
+        code: values.code || '',
         rate: values.rate?.float,
-        is_combinable: values.is_combinable,
+        is_combinable: values.is_combinable
       },
       {
         onSuccess: () => {
-          toast.success(t("taxRegions.taxRates.edit.successToast"));
+          toast.success(t('taxRegions.taxRates.edit.successToast'));
           handleSuccess();
         },
-        onError: (error) => {
+        onError: error => {
           toast.error(error.message);
-        },
-      },
+        }
+      }
     );
   });
 
@@ -83,7 +80,7 @@ export const TaxRegionTaxRateEditForm = ({
               name="name"
               render={({ field }) => (
                 <Form.Item>
-                  <Form.Label>{t("fields.name")}</Form.Label>
+                  <Form.Label>{t('fields.name')}</Form.Label>
                   <Form.Control>
                     <Input {...field} />
                   </Form.Control>
@@ -96,7 +93,7 @@ export const TaxRegionTaxRateEditForm = ({
               name="code"
               render={({ field }) => (
                 <Form.Item>
-                  <Form.Label>{t("taxRegions.fields.taxCode")}</Form.Label>
+                  <Form.Label>{t('taxRegions.fields.taxCode')}</Form.Label>
                   <Form.Control>
                     <Input {...field} />
                   </Form.Control>
@@ -109,7 +106,7 @@ export const TaxRegionTaxRateEditForm = ({
               name="rate"
               render={({ field: { value, onChange, ...field } }) => (
                 <Form.Item>
-                  <Form.Label>{t("taxRegions.fields.taxRate")}</Form.Label>
+                  <Form.Label>{t('taxRegions.fields.taxRate')}</Form.Label>
                   <Form.Control>
                     <PercentageInput
                       {...field}
@@ -118,7 +115,7 @@ export const TaxRegionTaxRateEditForm = ({
                       onValueChange={(value, _name, values) =>
                         onChange({
                           value: value,
-                          float: values?.float,
+                          float: values?.float
                         })
                       }
                     />
@@ -132,20 +129,27 @@ export const TaxRegionTaxRateEditForm = ({
             <SwitchBox
               control={form.control}
               name="is_combinable"
-              label={t("taxRegions.fields.isCombinable.label")}
-              description={t("taxRegions.fields.isCombinable.hint")}
+              label={t('taxRegions.fields.isCombinable.label')}
+              description={t('taxRegions.fields.isCombinable.hint')}
             />
           )}
         </RouteDrawer.Body>
         <RouteDrawer.Footer className="shrink-0">
           <div className="flex items-center justify-end gap-x-2">
             <RouteDrawer.Close asChild>
-              <Button size="small" variant="secondary">
-                {t("actions.cancel")}
+              <Button
+                size="small"
+                variant="secondary"
+              >
+                {t('actions.cancel')}
               </Button>
             </RouteDrawer.Close>
-            <Button size="small" type="submit" isLoading={isPending}>
-              {t("actions.save")}
+            <Button
+              size="small"
+              type="submit"
+              isLoading={isPending}
+            >
+              {t('actions.save')}
             </Button>
           </div>
         </RouteDrawer.Footer>

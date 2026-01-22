@@ -1,13 +1,9 @@
-import { Heading } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-
-import { RouteDrawer } from "@components/modals";
-
-import { useTaxRate } from "@hooks/api";
-
-import { TaxRegionTaxRateEditForm } from "@routes/tax-regions/tax-region-tax-rate-edit/components/tax-region-tax-rate-edit-form";
+import { RouteDrawer } from '@components/modals';
+import { useTaxRate } from '@hooks/api';
+import { Heading } from '@medusajs/ui';
+import { TaxRegionTaxRateEditForm } from '@routes/tax-regions/tax-region-tax-rate-edit/components/tax-region-tax-rate-edit-form';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 export const TaxRegionEdit = () => {
   const { t } = useTranslation();
@@ -25,10 +21,10 @@ export const TaxRegionEdit = () => {
     <RouteDrawer>
       <RouteDrawer.Header>
         <RouteDrawer.Title asChild>
-          <Heading>{t("taxRegions.taxRates.edit.header")}</Heading>
+          <Heading>{t('taxRegions.taxRates.edit.header')}</Heading>
         </RouteDrawer.Title>
         <RouteDrawer.Description className="sr-only">
-          {t("taxRegions.taxRates.edit.hint")}
+          {t('taxRegions.taxRates.edit.hint')}
         </RouteDrawer.Description>
       </RouteDrawer.Header>
       {ready && (

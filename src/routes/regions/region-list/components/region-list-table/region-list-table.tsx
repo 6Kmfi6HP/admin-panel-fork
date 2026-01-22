@@ -1,29 +1,19 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import { PencilSquare, Trash } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
-import {
-  Button,
-  Container,
-  Heading,
-  Text,
-  toast,
-  usePrompt,
-} from "@medusajs/ui";
-
-import { keepPreviousData } from "@tanstack/react-query";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { _DataTable } from "@components/table/data-table";
-
-import { useDeleteRegion, useRegions } from "@hooks/api";
-import { useRegionTableColumns } from "@hooks/table/columns";
-import { useRegionTableFilters } from "@hooks/table/filters";
-import { useRegionTableQuery } from "@hooks/table/query";
-import { useDataTable } from "@hooks/use-data-table";
+import { ActionMenu } from '@components/common/action-menu';
+import { _DataTable } from '@components/table/data-table';
+import { useDeleteRegion, useRegions } from '@hooks/api';
+import { useRegionTableColumns } from '@hooks/table/columns';
+import { useRegionTableFilters } from '@hooks/table/filters';
+import { useRegionTableQuery } from '@hooks/table/query';
+import { useDataTable } from '@hooks/use-data-table';
+import { PencilSquare, Trash } from '@medusajs/icons';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, Container, Heading, Text, toast, usePrompt } from '@medusajs/ui';
+import { keepPreviousData } from '@tanstack/react-query';
+import { createColumnHelper } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 const PAGE_SIZE = 20;
 
@@ -36,15 +26,15 @@ export const RegionListTable = () => {
     count,
     isPending: isLoading,
     isError,
-    error,
+    error
   } = useRegions(
     {
       ...searchParams,
-      fields: "*payment_providers",
+      fields: '*payment_providers'
     },
     {
-      placeholderData: keepPreviousData,
-    },
+      placeholderData: keepPreviousData
+    }
   );
 
   const filters = useRegionTableFilters();
@@ -55,8 +45,8 @@ export const RegionListTable = () => {
     columns,
     count,
     enablePagination: true,
-    getRowId: (row) => row.id,
-    pageSize: PAGE_SIZE,
+    getRowId: row => row.id,
+    pageSize: PAGE_SIZE
   });
 
   if (isError) {
@@ -64,17 +54,31 @@ export const RegionListTable = () => {
   }
 
   return (
-    <Container className="divide-y p-0" data-testid="region-list-table-container">
-      <div className="flex items-center justify-between px-6 py-4" data-testid="region-list-table-header">
+    <Container
+      className="divide-y p-0"
+      data-testid="region-list-table-container"
+    >
+      <div
+        className="flex items-center justify-between px-6 py-4"
+        data-testid="region-list-table-header"
+      >
         <div>
-          <Heading data-testid="region-list-table-heading">{t("regions.domain")}</Heading>
-          <Text className="text-ui-fg-subtle" size="small" data-testid="region-list-table-subtitle">
-            {t("regions.subtitle")}
+          <Heading data-testid="region-list-table-heading">{t('regions.domain')}</Heading>
+          <Text
+            className="text-ui-fg-subtle"
+            size="small"
+            data-testid="region-list-table-subtitle"
+          >
+            {t('regions.subtitle')}
           </Text>
         </div>
         <Link to="/settings/regions/create">
-          <Button size="small" variant="secondary" data-testid="region-list-table-create-button">
-            {t("actions.create")}
+          <Button
+            size="small"
+            variant="secondary"
+            data-testid="region-list-table-create-button"
+          >
+            {t('actions.create')}
           </Button>
         </Link>
       </div>
@@ -87,16 +91,16 @@ export const RegionListTable = () => {
         isLoading={isLoading}
         filters={filters}
         orderBy={[
-          { key: "name", label: t("fields.name") },
-          { key: "created_at", label: t("fields.createdAt") },
-          { key: "updated_at", label: t("fields.updatedAt") },
+          { key: 'name', label: t('fields.name') },
+          { key: 'created_at', label: t('fields.createdAt') },
+          { key: 'updated_at', label: t('fields.updatedAt') }
         ]}
-        navigateTo={(row) => `${row.original.id}`}
+        navigateTo={row => `${row.original.id}`}
         pagination
         search
         queryObject={raw}
         noRecords={{
-          message: t("regions.list.noRecordsMessage"),
+          message: t('regions.list.noRecordsMessage')
         }}
         data-testid="region-list-table"
       />
@@ -112,14 +116,14 @@ const RegionActions = ({ region }: { region: HttpTypes.AdminRegion }) => {
 
   const handleDelete = async () => {
     const res = await prompt({
-      title: t("general.areYouSure"),
-      description: t("regions.deleteRegionWarning", {
-        name: region.name,
+      title: t('general.areYouSure'),
+      description: t('regions.deleteRegionWarning', {
+        name: region.name
       }),
       verificationText: region.name,
-      verificationInstruction: t("general.typeToConfirm"),
-      confirmText: t("actions.delete"),
-      cancelText: t("actions.cancel"),
+      verificationInstruction: t('general.typeToConfirm'),
+      confirmText: t('actions.delete'),
+      cancelText: t('actions.cancel')
     });
 
     if (!res) {
@@ -128,11 +132,11 @@ const RegionActions = ({ region }: { region: HttpTypes.AdminRegion }) => {
 
     await mutateAsync(undefined, {
       onSuccess: () => {
-        toast.success(t("regions.toast.delete"));
+        toast.success(t('regions.toast.delete'));
       },
-      onError: (e) => {
+      onError: e => {
         toast.error(e.message);
-      },
+      }
     });
   };
 
@@ -142,21 +146,21 @@ const RegionActions = ({ region }: { region: HttpTypes.AdminRegion }) => {
         {
           actions: [
             {
-              label: t("actions.edit"),
+              label: t('actions.edit'),
               to: `/settings/regions/${region.id}/edit`,
-              icon: <PencilSquare />,
-            },
-          ],
+              icon: <PencilSquare />
+            }
+          ]
         },
         {
           actions: [
             {
-              label: t("actions.delete"),
+              label: t('actions.delete'),
               onClick: handleDelete,
-              icon: <Trash />,
-            },
-          ],
-        },
+              icon: <Trash />
+            }
+          ]
+        }
       ]}
       data-testid={`region-list-table-action-menu-${region.id}`}
     />
@@ -172,12 +176,12 @@ const useColumns = () => {
     () => [
       ...base,
       columnHelper.display({
-        id: "actions",
+        id: 'actions',
         cell: ({ row }) => {
           return <RegionActions region={row.original} />;
-        },
-      }),
+        }
+      })
     ],
-    [base],
+    [base]
   );
 };

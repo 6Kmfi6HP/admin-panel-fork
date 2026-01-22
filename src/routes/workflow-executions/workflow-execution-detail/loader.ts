@@ -1,18 +1,14 @@
-import type { LoaderFunctionArgs } from "react-router-dom";
-
-import { workflowExecutionsQueryKeys } from "@hooks/api";
-
-import { sdk } from "@lib/client";
-import { queryClient } from "@lib/query-client";
+import { workflowExecutionsQueryKeys } from '@hooks/api';
+import { sdk } from '@lib/client';
+import { queryClient } from '@lib/query-client';
+import type { LoaderFunctionArgs } from 'react-router-dom';
 
 const executionDetailQuery = (id: string) => ({
   queryKey: workflowExecutionsQueryKeys.detail(id),
-  queryFn: async () => sdk.admin.workflowExecution.retrieve(id),
+  queryFn: async () => sdk.admin.workflowExecution.retrieve(id)
 });
 
-export const workflowExecutionLoader = async ({
-  params,
-}: LoaderFunctionArgs) => {
+export const workflowExecutionLoader = async ({ params }: LoaderFunctionArgs) => {
   const id = params.id;
   const query = executionDetailQuery(id!);
 

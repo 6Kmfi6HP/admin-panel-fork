@@ -1,8 +1,6 @@
-import { SingleColumnPage } from "@components/layout/pages";
-
-import { ReturnReasonListTable } from "@routes/return-reasons/return-reason-list/components/return-reason-list-table";
-
-import { useExtension } from "@providers/extension-provider";
+import { SingleColumnPage } from '@components/layout/pages';
+import { useExtension } from '@providers/extension-provider';
+import { ReturnReasonListTable } from '@routes/return-reasons/return-reason-list/components/return-reason-list-table';
 
 export const ReturnReasonList = () => {
   const { getWidgets } = useExtension();
@@ -13,8 +11,8 @@ export const ReturnReasonList = () => {
       showJSON={false}
       hasOutlet
       widgets={{
-        after: getWidgets("return_reason.list.after"),
-        before: getWidgets("return_reason.list.before"),
+        after: getWidgets('return_reason.list.after'),
+        before: getWidgets('return_reason.list.before')
       }}
     >
       <ReturnReasonListTable />

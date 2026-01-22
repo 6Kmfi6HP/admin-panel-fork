@@ -1,6 +1,5 @@
-import { useTranslation } from "react-i18next";
-
-import type { Filter } from "@components/table/data-table";
+import type { Filter } from '@components/table/data-table';
+import { useTranslation } from 'react-i18next';
 
 export const useShippingProfileTableFilters = () => {
   const { t } = useTranslation();
@@ -8,24 +7,24 @@ export const useShippingProfileTableFilters = () => {
   let filters: Filter[] = [];
 
   filters.push({
-    key: "name",
-    label: t("fields.name"),
-    type: "string",
+    key: 'name',
+    label: t('fields.name'),
+    type: 'string'
   });
 
   filters.push({
-    key: "type",
-    label: t("fields.type"),
-    type: "string",
+    key: 'type',
+    label: t('fields.type'),
+    type: 'string'
   });
 
   const dateFilters: Filter[] = [
-    { label: t("fields.createdAt"), key: "created_at" },
-    { label: t("fields.updatedAt"), key: "updated_at" },
-  ].map((f) => ({
+    { label: t('fields.createdAt'), key: 'created_at' },
+    { label: t('fields.updatedAt'), key: 'updated_at' }
+  ].map(f => ({
     key: f.key,
     label: f.label,
-    type: "date",
+    type: 'date'
   }));
 
   filters = [...filters, ...dateFilters];

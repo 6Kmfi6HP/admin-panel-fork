@@ -1,39 +1,30 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import type { HttpTypes } from "@medusajs/types";
-import { Badge } from "@medusajs/ui";
-
-import type { ColumnDef } from "@tanstack/react-table";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-
-import { StatusCell } from "@components/table/table-cells/common/status-cell";
-
-import { TransactionStepState } from "@routes/workflow-executions/types";
-import {
-  getTransactionState,
-  getTransactionStateColor,
-} from "@routes/workflow-executions/utils";
+import { StatusCell } from '@components/table/table-cells/common/status-cell';
+import type { HttpTypes } from '@medusajs/types';
+import { Badge } from '@medusajs/ui';
+import { TransactionStepState } from '@routes/workflow-executions/types';
+import { getTransactionState, getTransactionStateColor } from '@routes/workflow-executions/utils';
+import { createColumnHelper, type ColumnDef } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 
 const columnHelper =
-  createColumnHelper<
-    HttpTypes.AdminWorkflowExecutionResponse["workflow_execution"]
-  >();
+  createColumnHelper<HttpTypes.AdminWorkflowExecutionResponse['workflow_execution']>();
 
 export const useWorkflowExecutionTableColumns = (): ColumnDef<
-  HttpTypes.AdminWorkflowExecutionResponse["workflow_execution"],
+  HttpTypes.AdminWorkflowExecutionResponse['workflow_execution'],
   any
 >[] => {
   const { t } = useTranslation();
 
   return useMemo(
     () => [
-      columnHelper.accessor("transaction_id", {
-        header: t("workflowExecutions.transactionIdLabel"),
-        cell: ({ getValue }) => <Badge size="2xsmall">{getValue()}</Badge>,
+      columnHelper.accessor('transaction_id', {
+        header: t('workflowExecutions.transactionIdLabel'),
+        cell: ({ getValue }) => <Badge size="2xsmall">{getValue()}</Badge>
       }),
-      columnHelper.accessor("state", {
-        header: t("fields.state"),
+      columnHelper.accessor('state', {
+        header: t('fields.state'),
         cell: ({ getValue }) => {
           const state = getValue();
 
@@ -45,36 +36,34 @@ export const useWorkflowExecutionTableColumns = (): ColumnDef<
               <span className="capitalize">{translatedState}</span>
             </StatusCell>
           );
-        },
+        }
       }),
-      columnHelper.accessor("execution", {
-        header: t("workflowExecutions.progressLabel"),
+      columnHelper.accessor('execution', {
+        header: t('workflowExecutions.progressLabel'),
         cell: ({ getValue }) => {
           const steps = getValue()?.steps as
             | Record<string, HttpTypes.AdminWorkflowExecutionStep>
             | undefined;
 
           if (!steps) {
-            return "0 of 0 steps";
+            return '0 of 0 steps';
           }
 
-          const actionableSteps = Object.values(steps).filter(
-            (step) => step.id !== ROOT_PREFIX,
-          );
+          const actionableSteps = Object.values(steps).filter(step => step.id !== ROOT_PREFIX);
 
           const completedSteps = actionableSteps.filter(
-            (step) => step.invoke.state === TransactionStepState.DONE,
+            step => step.invoke.state === TransactionStepState.DONE
           );
 
-          return t("workflowExecutions.stepsCompletedLabel", {
+          return t('workflowExecutions.stepsCompletedLabel', {
             completed: completedSteps.length,
-            count: actionableSteps.length,
+            count: actionableSteps.length
           });
-        },
-      }),
+        }
+      })
     ],
-    [t],
+    [t]
   );
 };
 
-const ROOT_PREFIX = "_root";
+const ROOT_PREFIX = '_root';

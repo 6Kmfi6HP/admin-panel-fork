@@ -1,29 +1,21 @@
-import { PencilSquare, Trash } from "@medusajs/icons";
-import { usePrompt } from "@medusajs/ui";
+import { ActionMenu } from '@components/common/action-menu';
+import { useDeleteReservationItem } from '@hooks/api';
+import { PencilSquare, Trash } from '@medusajs/icons';
+import { usePrompt } from '@medusajs/ui';
+import type { ExtendedReservationItem } from '@routes/inventory/inventory-detail/components/reservations-table/use-reservation-list-table-columns';
+import { useTranslation } from 'react-i18next';
 
-import { useTranslation } from "react-i18next";
-
-import { ActionMenu } from "@components/common/action-menu";
-
-import { useDeleteReservationItem } from "@hooks/api";
-
-import type { ExtendedReservationItem } from "@routes/inventory/inventory-detail/components/reservations-table/use-reservation-list-table-columns";
-
-export const ReservationActions = ({
-  reservation,
-}: {
-  reservation: ExtendedReservationItem;
-}) => {
+export const ReservationActions = ({ reservation }: { reservation: ExtendedReservationItem }) => {
   const { t } = useTranslation();
   const prompt = usePrompt();
   const { mutateAsync } = useDeleteReservationItem(reservation.id);
 
   const handleDelete = async () => {
     const res = await prompt({
-      title: t("general.areYouSure"),
-      description: t("reservations.deleteWarning"),
-      confirmText: t("actions.delete"),
-      cancelText: t("actions.cancel"),
+      title: t('general.areYouSure'),
+      description: t('reservations.deleteWarning'),
+      confirmText: t('actions.delete'),
+      cancelText: t('actions.cancel')
     });
 
     if (!res) {
@@ -39,21 +31,21 @@ export const ReservationActions = ({
         {
           actions: [
             {
-              label: t("actions.edit"),
+              label: t('actions.edit'),
               to: `${reservation.id}/edit`,
-              icon: <PencilSquare />,
-            },
-          ],
+              icon: <PencilSquare />
+            }
+          ]
         },
         {
           actions: [
             {
-              label: t("actions.delete"),
+              label: t('actions.delete'),
               onClick: handleDelete,
-              icon: <Trash />,
-            },
-          ],
-        },
+              icon: <Trash />
+            }
+          ]
+        }
       ]}
     />
   );

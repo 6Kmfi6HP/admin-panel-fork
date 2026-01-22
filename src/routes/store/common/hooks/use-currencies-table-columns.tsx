@@ -1,14 +1,9 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import type { HttpTypes } from "@medusajs/types";
-
-import { createColumnHelper } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-
-import {
-  TextCell,
-  TextHeader,
-} from "@components/table/table-cells/common/text-cell";
+import { TextCell, TextHeader } from '@components/table/table-cells/common/text-cell';
+import type { HttpTypes } from '@medusajs/types';
+import { createColumnHelper } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 
 const columnHelper = createColumnHelper<HttpTypes.AdminCurrency>();
 
@@ -17,15 +12,15 @@ export const useCurrenciesTableColumns = () => {
 
   return useMemo(
     () => [
-      columnHelper.accessor("code", {
-        header: () => <TextHeader text={t("fields.code")} />,
-        cell: ({ getValue }) => <TextCell text={getValue().toUpperCase()} />,
+      columnHelper.accessor('code', {
+        header: () => <TextHeader text={t('fields.code')} />,
+        cell: ({ getValue }) => <TextCell text={getValue().toUpperCase()} />
       }),
-      columnHelper.accessor("name", {
-        header: () => <TextHeader text={t("fields.name")} />,
-        cell: ({ getValue }) => <TextCell text={getValue()} />,
-      }),
+      columnHelper.accessor('name', {
+        header: () => <TextHeader text={t('fields.name')} />,
+        cell: ({ getValue }) => <TextCell text={getValue()} />
+      })
     ],
-    [t],
+    [t]
   );
 };

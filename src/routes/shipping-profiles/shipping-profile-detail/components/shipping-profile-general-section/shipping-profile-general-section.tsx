@@ -1,22 +1,17 @@
-import { Trash } from "@medusajs/icons";
-import type { AdminShippingProfileResponse } from "@medusajs/types";
-import { Container, Heading, toast, usePrompt } from "@medusajs/ui";
-
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-
-import { ActionMenu } from "@components/common/action-menu";
-import { SectionRow } from "@components/common/section";
-
-import { useDeleteShippingProfile } from "@hooks/api";
+import { ActionMenu } from '@components/common/action-menu';
+import { SectionRow } from '@components/common/section';
+import { useDeleteShippingProfile } from '@hooks/api';
+import { Trash } from '@medusajs/icons';
+import type { AdminShippingProfileResponse } from '@medusajs/types';
+import { Container, Heading, toast, usePrompt } from '@medusajs/ui';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 type ShippingProfileGeneralSectionProps = {
-  profile: AdminShippingProfileResponse["shipping_profile"];
+  profile: AdminShippingProfileResponse['shipping_profile'];
 };
 
-export const ShippingProfileGeneralSection = ({
-  profile,
-}: ShippingProfileGeneralSectionProps) => {
+export const ShippingProfileGeneralSection = ({ profile }: ShippingProfileGeneralSectionProps) => {
   const { t } = useTranslation();
   const prompt = usePrompt();
   const navigate = useNavigate();
@@ -25,14 +20,14 @@ export const ShippingProfileGeneralSection = ({
 
   const handleDelete = async () => {
     const res = await prompt({
-      title: t("shippingProfile.delete.title"),
-      description: t("shippingProfile.delete.description", {
-        name: profile.name,
+      title: t('shippingProfile.delete.title'),
+      description: t('shippingProfile.delete.description', {
+        name: profile.name
       }),
       verificationText: profile.name,
-      verificationInstruction: t("general.typeToConfirm"),
-      confirmText: t("actions.delete"),
-      cancelText: t("actions.cancel"),
+      verificationInstruction: t('general.typeToConfirm'),
+      confirmText: t('actions.delete'),
+      cancelText: t('actions.cancel')
     });
 
     if (!res) {
@@ -42,22 +37,28 @@ export const ShippingProfileGeneralSection = ({
     await mutateAsync(undefined, {
       onSuccess: () => {
         toast.success(
-          t("shippingProfile.delete.successToast", {
-            name: profile.name,
-          }),
+          t('shippingProfile.delete.successToast', {
+            name: profile.name
+          })
         );
 
-        navigate("/settings/locations/shipping-profiles", { replace: true });
+        navigate('/settings/locations/shipping-profiles', { replace: true });
       },
-      onError: (error) => {
+      onError: error => {
         toast.error(error.message);
-      },
+      }
     });
   };
 
   return (
-    <Container className="divide-y p-0" data-testid="shipping-profile-general-section-container">
-      <div className="flex items-center justify-between px-6 py-4" data-testid="shipping-profile-general-section-header">
+    <Container
+      className="divide-y p-0"
+      data-testid="shipping-profile-general-section-container"
+    >
+      <div
+        className="flex items-center justify-between px-6 py-4"
+        data-testid="shipping-profile-general-section-header"
+      >
         <Heading data-testid="shipping-profile-general-section-heading">{profile.name}</Heading>
         <ActionMenu
           groups={[
@@ -65,16 +66,20 @@ export const ShippingProfileGeneralSection = ({
               actions: [
                 {
                   icon: <Trash />,
-                  label: t("actions.delete"),
-                  onClick: handleDelete,
-                },
-              ],
-            },
+                  label: t('actions.delete'),
+                  onClick: handleDelete
+                }
+              ]
+            }
           ]}
           data-testid="shipping-profile-general-section-action-menu"
         />
       </div>
-      <SectionRow title={t("fields.type")} value={profile.type} data-testid="shipping-profile-general-section-type-row" />
+      <SectionRow
+        title={t('fields.type')}
+        value={profile.type}
+        data-testid="shipping-profile-general-section-type-row"
+      />
     </Container>
   );
 };

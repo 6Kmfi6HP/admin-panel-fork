@@ -1,4 +1,4 @@
-import type { ConfigurationRuleType } from "@/types";
+import type { ConfigurationRuleType } from '@/types';
 
 export interface CreateConfigurationRuleDTO {
   rule_type: ConfigurationRuleType;

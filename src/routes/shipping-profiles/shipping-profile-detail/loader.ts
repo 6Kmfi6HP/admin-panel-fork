@@ -1,13 +1,11 @@
-import type { LoaderFunctionArgs } from "react-router-dom";
-
-import { shippingProfileQueryKeys } from "@hooks/api";
-
-import { sdk } from "@lib/client";
-import { queryClient } from "@lib/query-client";
+import { shippingProfileQueryKeys } from '@hooks/api';
+import { sdk } from '@lib/client';
+import { queryClient } from '@lib/query-client';
+import type { LoaderFunctionArgs } from 'react-router-dom';
 
 const shippingProfileQuery = (id: string) => ({
   queryKey: shippingProfileQueryKeys.detail(id),
-  queryFn: async () => sdk.admin.shippingProfile.retrieve(id),
+  queryFn: async () => sdk.admin.shippingProfile.retrieve(id)
 });
 
 export const shippingProfileLoader = async ({ params }: LoaderFunctionArgs) => {

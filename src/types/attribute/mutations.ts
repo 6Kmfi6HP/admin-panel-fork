@@ -1,4 +1,4 @@
-import type { AttributeUIComponent } from "@/types";
+import type { AttributeUIComponent } from '@/types';
 
 export interface CreateAttributeValueDTO {
   value: string;
@@ -35,7 +35,7 @@ export interface CreateAttributeDTO {
   is_required?: boolean;
   metadata?: Record<string, unknown>;
   ui_component: AttributeUIComponent;
-  possible_values?: Omit<CreateAttributeValueDTO, "attribute_id">[];
+  possible_values?: Omit<CreateAttributeValueDTO, 'attribute_id'>[];
   product_category_ids?: string[];
 }
 

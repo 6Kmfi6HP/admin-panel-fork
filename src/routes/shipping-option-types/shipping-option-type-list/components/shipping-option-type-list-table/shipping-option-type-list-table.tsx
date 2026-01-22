@@ -1,22 +1,19 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import type { HttpTypes } from "@medusajs/types";
-import { Button, Container, Heading, Text } from "@medusajs/ui";
+import { _DataTable } from '@components/table/data-table';
+import { useShippingOptionTypes } from '@hooks/api';
+import { useShippingOptionTypeTableColumns } from '@hooks/table/columns/use-shipping-option-type-table-columns';
+import { useShippingOptionTypeTableFilters } from '@hooks/table/filters/use-shipping-option-type-table-filters';
+import { useShippingOptionTypeTableQuery } from '@hooks/table/query/use-shipping-option-type-table-query';
+import { useDataTable } from '@hooks/use-data-table';
+import type { HttpTypes } from '@medusajs/types';
+import { Button, Container, Heading, Text } from '@medusajs/ui';
+import { keepPreviousData } from '@tanstack/react-query';
+import { createColumnHelper } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
-import { keepPreviousData } from "@tanstack/react-query";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-
-import { _DataTable } from "@components/table/data-table";
-
-import { useShippingOptionTypes } from "@hooks/api";
-import { useShippingOptionTypeTableColumns } from "@hooks/table/columns/use-shipping-option-type-table-columns";
-import { useShippingOptionTypeTableFilters } from "@hooks/table/filters/use-shipping-option-type-table-filters";
-import { useShippingOptionTypeTableQuery } from "@hooks/table/query/use-shipping-option-type-table-query";
-import { useDataTable } from "@hooks/use-data-table";
-
-import { ShippingOptionTypeRowActions } from "./shipping-option-type-table-row-actions";
+import { ShippingOptionTypeRowActions } from './shipping-option-type-table-row-actions';
 
 const PAGE_SIZE = 20;
 
@@ -24,12 +21,14 @@ export const ShippingOptionTypeListTable = () => {
   const { t } = useTranslation();
 
   const { searchParams, raw } = useShippingOptionTypeTableQuery({
-    pageSize: PAGE_SIZE,
+    pageSize: PAGE_SIZE
   });
-  const { shipping_option_types, count, isLoading, isError, error } =
-    useShippingOptionTypes(searchParams, {
-      placeholderData: keepPreviousData,
-    });
+  const { shipping_option_types, count, isLoading, isError, error } = useShippingOptionTypes(
+    searchParams,
+    {
+      placeholderData: keepPreviousData
+    }
+  );
 
   const filters = useShippingOptionTypeTableFilters();
   const columns = useColumns();
@@ -38,8 +37,8 @@ export const ShippingOptionTypeListTable = () => {
     columns,
     data: shipping_option_types,
     count,
-    getRowId: (row) => row.id,
-    pageSize: PAGE_SIZE,
+    getRowId: row => row.id,
+    pageSize: PAGE_SIZE
   });
 
   if (isError) {
@@ -47,16 +46,33 @@ export const ShippingOptionTypeListTable = () => {
   }
 
   return (
-    <Container className="divide-y p-0" data-testid="shipping-option-type-list-table-container">
-      <div className="flex items-center justify-between px-6 py-4" data-testid="shipping-option-type-list-table-header">
+    <Container
+      className="divide-y p-0"
+      data-testid="shipping-option-type-list-table-container"
+    >
+      <div
+        className="flex items-center justify-between px-6 py-4"
+        data-testid="shipping-option-type-list-table-header"
+      >
         <div>
-          <Heading data-testid="shipping-option-type-list-table-heading">{t("shippingOptionTypes.domain")}</Heading>
-          <Text className="text-ui-fg-subtle" size="small" data-testid="shipping-option-type-list-table-subtitle">
-            {t("shippingOptionTypes.subtitle")}
+          <Heading data-testid="shipping-option-type-list-table-heading">
+            {t('shippingOptionTypes.domain')}
+          </Heading>
+          <Text
+            className="text-ui-fg-subtle"
+            size="small"
+            data-testid="shipping-option-type-list-table-subtitle"
+          >
+            {t('shippingOptionTypes.subtitle')}
           </Text>
         </div>
-        <Button size="small" variant="secondary" asChild data-testid="shipping-option-type-list-table-create-button">
-          <Link to="create">{t("actions.create")}</Link>
+        <Button
+          size="small"
+          variant="secondary"
+          asChild
+          data-testid="shipping-option-type-list-table-create-button"
+        >
+          <Link to="create">{t('actions.create')}</Link>
         </Button>
       </div>
       <_DataTable
@@ -67,11 +83,11 @@ export const ShippingOptionTypeListTable = () => {
         pageSize={PAGE_SIZE}
         count={count}
         orderBy={[
-          { key: "label", label: t("fields.label") },
-          { key: "code", label: t("fields.code") },
-          { key: "description", label: t("fields.description") },
-          { key: "created_at", label: t("fields.createdAt") },
-          { key: "updated_at", label: t("fields.updatedAt") },
+          { key: 'label', label: t('fields.label') },
+          { key: 'code', label: t('fields.code') },
+          { key: 'description', label: t('fields.description') },
+          { key: 'created_at', label: t('fields.createdAt') },
+          { key: 'updated_at', label: t('fields.updatedAt') }
         ]}
         navigateTo={({ original }) => original.id}
         queryObject={raw}
@@ -92,14 +108,12 @@ const useColumns = () => {
     () => [
       ...base,
       columnHelper.display({
-        id: "actions",
+        id: 'actions',
         cell: ({ row }) => {
-          return (
-            <ShippingOptionTypeRowActions shippingOptionType={row.original} />
-          );
-        },
-      }),
+          return <ShippingOptionTypeRowActions shippingOptionType={row.original} />;
+        }
+      })
     ],
-    [base],
+    [base]
   );
 };

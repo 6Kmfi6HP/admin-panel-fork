@@ -1,8 +1,6 @@
-import { SingleColumnPage } from "@components/layout/pages";
-
-import { RegionListTable } from "@routes/regions/region-list/components/region-list-table";
-
-import { useExtension } from "@providers/extension-provider";
+import { SingleColumnPage } from '@components/layout/pages';
+import { useExtension } from '@providers/extension-provider';
+import { RegionListTable } from '@routes/regions/region-list/components/region-list-table';
 
 export const RegionList = () => {
   const { getWidgets } = useExtension();
@@ -10,8 +8,8 @@ export const RegionList = () => {
   return (
     <SingleColumnPage
       widgets={{
-        before: getWidgets("region.list.before"),
-        after: getWidgets("region.list.after"),
+        before: getWidgets('region.list.before'),
+        after: getWidgets('region.list.after')
       }}
     >
       <RegionListTable />

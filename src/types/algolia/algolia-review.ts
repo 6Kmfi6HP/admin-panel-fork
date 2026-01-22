@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export type AlgoliaReview = z.infer<typeof AlgoliaReviewValidator>;
 export const AlgoliaReviewValidator = z.object({
@@ -7,5 +7,5 @@ export const AlgoliaReviewValidator = z.object({
   reference_id: z.string(),
   rating: z.coerce.number(),
   customer_note: z.string().nullable(),
-  seller_note: z.string().nullable(),
+  seller_note: z.string().nullable()
 });

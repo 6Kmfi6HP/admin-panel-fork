@@ -1,19 +1,12 @@
-import { useParams } from "react-router-dom";
+import { RouteFocusModal } from '@components/modals';
+import { useSalesChannel } from '@hooks/api';
+import { useParams } from 'react-router-dom';
 
-import { RouteFocusModal } from "@components/modals";
-
-import { useSalesChannel } from "@hooks/api";
-
-import { AddProductsToSalesChannelForm } from "./components";
+import { AddProductsToSalesChannelForm } from './components';
 
 export const SalesChannelAddProducts = () => {
   const { id } = useParams();
-  const {
-    sales_channel,
-    isPending: isLoading,
-    isError,
-    error,
-  } = useSalesChannel(id!);
+  const { sales_channel, isPending: isLoading, isError, error } = useSalesChannel(id!);
 
   if (isError) {
     throw error;

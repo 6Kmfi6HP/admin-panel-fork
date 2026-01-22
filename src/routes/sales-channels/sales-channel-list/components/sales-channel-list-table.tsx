@@ -1,23 +1,14 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from 'react';
 
-import { PencilSquare, Trash } from "@medusajs/icons";
-import type { HttpTypes } from "@medusajs/types";
-import {
-  Container,
-  createDataTableColumnHelper,
-  toast,
-  usePrompt,
-} from "@medusajs/ui";
-
-import { keepPreviousData } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-
-import { DataTable } from "@components/data-table";
-import * as hooks from "@components/data-table/helpers/sales-channels";
-
-import { useStore } from "@hooks/api";
-import { useDeleteSalesChannelLazy, useSalesChannels } from "@hooks/api";
+import { DataTable } from '@components/data-table';
+import * as hooks from '@components/data-table/helpers/sales-channels';
+import { useDeleteSalesChannelLazy, useSalesChannels, useStore } from '@hooks/api';
+import { PencilSquare, Trash } from '@medusajs/icons';
+import type { HttpTypes } from '@medusajs/types';
+import { Container, createDataTableColumnHelper, toast, usePrompt } from '@medusajs/ui';
+import { keepPreviousData } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 type SalesChannelWithIsDefault = HttpTypes.AdminSalesChannel & {
   is_default?: boolean;
@@ -31,25 +22,22 @@ export const SalesChannelListTable = () => {
   const { store } = useStore();
 
   const searchParams = hooks.useSalesChannelTableQuery({
-    pageSize: PAGE_SIZE,
+    pageSize: PAGE_SIZE
   });
 
-  const { sales_channels, count, isPending, isError, error } = useSalesChannels(
-    searchParams,
-    {
-      placeholderData: keepPreviousData,
-    },
-  );
+  const { sales_channels, count, isPending, isError, error } = useSalesChannels(searchParams, {
+    placeholderData: keepPreviousData
+  });
 
   const columns = useColumns();
   const filters = hooks.useSalesChannelTableFilters();
   const emptyState = hooks.useSalesChannelTableEmptyState();
 
   const sales_channels_data: SalesChannelWithIsDefault[] =
-    sales_channels?.map((sales_channel) => {
+    sales_channels?.map(sales_channel => {
       return {
         ...sales_channel,
-        is_default: store?.default_sales_channel_id === sales_channel.id,
+        is_default: store?.default_sales_channel_id === sales_channel.id
       };
     }) ?? [];
 
@@ -58,24 +46,27 @@ export const SalesChannelListTable = () => {
   }
 
   return (
-    <Container className="p-0" data-testid="sales-channel-list-table-container">
+    <Container
+      className="p-0"
+      data-testid="sales-channel-list-table-container"
+    >
       <div data-testid="sales-channel-list-table">
         <DataTable
           data={sales_channels_data}
           columns={columns}
           rowCount={count}
-          getRowId={(row) => row.id}
+          getRowId={row => row.id}
           pageSize={PAGE_SIZE}
           filters={filters}
           isLoading={isPending}
           emptyState={emptyState}
-          heading={t("salesChannels.domain")}
-          subHeading={t("salesChannels.subtitle")}
+          heading={t('salesChannels.domain')}
+          subHeading={t('salesChannels.subtitle')}
           action={{
-            label: t("actions.create"),
-            to: "/settings/sales-channels/create",
+            label: t('actions.create'),
+            to: '/settings/sales-channels/create'
           }}
-          rowHref={(row) => `/settings/sales-channels/${row.id}`}
+          rowHref={row => `/settings/sales-channels/${row.id}`}
         />
       </div>
     </Container>
@@ -97,14 +88,14 @@ const useColumns = () => {
   const handleDelete = useCallback(
     async (salesChannel: HttpTypes.AdminSalesChannel) => {
       const confirm = await prompt({
-        title: t("general.areYouSure"),
-        description: t("salesChannels.deleteSalesChannelWarning", {
-          name: salesChannel.name,
+        title: t('general.areYouSure'),
+        description: t('salesChannels.deleteSalesChannelWarning', {
+          name: salesChannel.name
         }),
-        verificationInstruction: t("general.typeToConfirm"),
+        verificationInstruction: t('general.typeToConfirm'),
         verificationText: salesChannel.name,
-        confirmText: t("actions.delete"),
-        cancelText: t("actions.cancel"),
+        confirmText: t('actions.delete'),
+        cancelText: t('actions.cancel')
       });
 
       if (!confirm) {
@@ -113,49 +104,46 @@ const useColumns = () => {
 
       await mutateAsync(salesChannel.id, {
         onSuccess: () => {
-          toast.success(t("salesChannels.toast.delete"));
+          toast.success(t('salesChannels.toast.delete'));
         },
-        onError: (e) => {
+        onError: e => {
           toast.error(e.message);
-        },
+        }
       });
     },
-    [t, prompt, mutateAsync],
+    [t, prompt, mutateAsync]
   );
 
   return useMemo(
     () => [
       ...base,
       columnHelper.action({
-        actions: (ctx) => {
+        actions: ctx => {
           const disabledTooltip = ctx.row.original.is_default
-            ? t("salesChannels.tooltip.cannotDeleteDefault")
+            ? t('salesChannels.tooltip.cannotDeleteDefault')
             : undefined;
 
           return [
             [
               {
                 icon: <PencilSquare />,
-                label: t("actions.edit"),
-                onClick: () =>
-                  navigate(
-                    `/settings/sales-channels/${ctx.row.original.id}/edit`,
-                  ),
-              },
+                label: t('actions.edit'),
+                onClick: () => navigate(`/settings/sales-channels/${ctx.row.original.id}/edit`)
+              }
             ],
             [
               {
                 icon: <Trash />,
-                label: t("actions.delete"),
+                label: t('actions.delete'),
                 onClick: () => handleDelete(ctx.row.original),
                 disabled: ctx.row.original.is_default,
-                disabledTooltip,
-              },
-            ],
+                disabledTooltip
+              }
+            ]
           ];
-        },
-      }),
+        }
+      })
     ],
-    [base, handleDelete, navigate, t],
+    [base, handleDelete, navigate, t]
   );
 };

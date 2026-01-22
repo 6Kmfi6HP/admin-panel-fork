@@ -1,8 +1,6 @@
-import { SingleColumnPage } from "@components/layout/pages";
-
-import { ShippingOptionTypeListTable } from "@routes/shipping-option-types/shipping-option-type-list/components/shipping-option-type-list-table";
-
-import { useExtension } from "@providers/extension-provider";
+import { SingleColumnPage } from '@components/layout/pages';
+import { useExtension } from '@providers/extension-provider';
+import { ShippingOptionTypeListTable } from '@routes/shipping-option-types/shipping-option-type-list/components/shipping-option-type-list-table';
 
 export const ShippingOptionTypeList = () => {
   const { getWidgets } = useExtension();
@@ -10,8 +8,8 @@ export const ShippingOptionTypeList = () => {
   return (
     <SingleColumnPage
       widgets={{
-        after: getWidgets("shipping_option_type.list.after"),
-        before: getWidgets("shipping_option_type.list.before"),
+        after: getWidgets('shipping_option_type.list.after'),
+        before: getWidgets('shipping_option_type.list.before')
       }}
     >
       <ShippingOptionTypeListTable />

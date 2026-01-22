@@ -1,4 +1,4 @@
-import type { CommissionLineDTO } from "./common";
+import type { CommissionLineDTO } from './common';
 
 export type Price = {
   amount: number;
@@ -22,10 +22,7 @@ export type CreateCommissionRuleDTO = {
   rate: CreateCommissionRateDTO;
 };
 
-export type CreateCommissionLineDTO = Omit<
-  CommissionLineDTO,
-  "id" | "created_at" | "updated_at"
->;
+export type CreateCommissionLineDTO = Omit<CommissionLineDTO, 'id' | 'created_at' | 'updated_at'>;
 
 export type UpdateCommissionRateDTO = Partial<CreateCommissionRateDTO> & {
   id: string;

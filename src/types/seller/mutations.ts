@@ -1,15 +1,7 @@
-import type {
-  MemberInviteDTO,
-  MemberRole,
-  SellerDTO,
-  StoreStatus,
-} from "./common";
+import type { MemberInviteDTO, MemberRole, SellerDTO, StoreStatus } from './common';
 
 export interface CreateSellerDTO
-  extends Omit<
-    Partial<SellerDTO>,
-    "id" | "created_at" | "updated_at" | "members"
-  > {
+  extends Omit<Partial<SellerDTO>, 'id' | 'created_at' | 'updated_at' | 'members'> {
   name: string;
 }
 
@@ -53,7 +45,7 @@ export interface UpdateMemberDTO {
 export interface CreateMemberInviteDTO
   extends Omit<
     MemberInviteDTO,
-    "id" | "created_at" | "updated_at" | "accepted" | "expires_at" | "token"
+    'id' | 'created_at' | 'updated_at' | 'accepted' | 'expires_at' | 'token'
   > {
   seller_id: string;
 }

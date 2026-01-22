@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 
-import type { HttpTypes } from "@medusajs/types";
-
-import type { OnChangeFn, PaginationState } from "@tanstack/react-table";
+import type { HttpTypes } from '@medusajs/types';
 import {
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { useSearchParams } from "react-router-dom";
+  type OnChangeFn,
+  type PaginationState
+} from '@tanstack/react-table';
+import { useSearchParams } from 'react-router-dom';
 
 type UseTaxRegionTableProps = {
   data?: HttpTypes.AdminTaxRate[];
@@ -21,22 +21,22 @@ export const useTaxOverrideTable = ({
   data = [],
   count = 0,
   pageSize: _pageSize = 10,
-  prefix,
+  prefix
 }: UseTaxRegionTableProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const offsetKey = `${prefix ? `${prefix}_` : ""}offset`;
+  const offsetKey = `${prefix ? `${prefix}_` : ''}offset`;
   const offset = searchParams.get(offsetKey);
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: offset ? Math.ceil(Number(offset) / _pageSize) : 0,
-    pageSize: _pageSize,
+    pageSize: _pageSize
   });
   const pagination = useMemo(
     () => ({
       pageIndex,
-      pageSize,
+      pageSize
     }),
-    [pageIndex, pageSize],
+    [pageIndex, pageSize]
   );
 
   useEffect(() => {
@@ -46,19 +46,17 @@ export const useTaxOverrideTable = ({
       return;
     }
 
-    setPagination((prev) => ({
+    setPagination(prev => ({
       ...prev,
-      pageIndex: index,
+      pageIndex: index
     }));
   }, [offset, _pageSize, pageIndex]);
 
-  const onPaginationChange = (
-    updater: (old: PaginationState) => PaginationState,
-  ) => {
+  const onPaginationChange = (updater: (old: PaginationState) => PaginationState) => {
     const state = updater(pagination);
     const { pageIndex, pageSize } = state;
 
-    setSearchParams((prev) => {
+    setSearchParams(prev => {
       if (!pageIndex) {
         prev.delete(offsetKey);
 
@@ -81,15 +79,15 @@ export const useTaxOverrideTable = ({
     columns: [], // We don't actually want to render any columns
     pageCount: Math.ceil(count / pageSize),
     state: {
-      pagination,
+      pagination
     },
     getCoreRowModel: getCoreRowModel(),
     onPaginationChange: onPaginationChange as OnChangeFn<PaginationState>,
     getPaginationRowModel: getPaginationRowModel(),
-    manualPagination: true,
+    manualPagination: true
   });
 
   return {
-    table,
+    table
   };
 };
