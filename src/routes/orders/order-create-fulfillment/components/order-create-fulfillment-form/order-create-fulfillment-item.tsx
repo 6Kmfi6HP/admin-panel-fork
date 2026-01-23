@@ -138,10 +138,10 @@ export function OrderCreateFulfillmentItem({
       }}
       render={({ field }) => {
         return (
-          <div className="bg-ui-bg-subtle shadow-elevation-card-rest my-2 rounded-xl">
-            <div className="flex flex-row items-center">
+          <div className="bg-ui-bg-subtle shadow-elevation-card-rest my-2 rounded-xl" data-testid={`order-create-fulfillment-item-${item.id}`}>
+            <div className="flex flex-row items-center" data-testid={`order-create-fulfillment-item-${item.id}-content`}>
               {disabled && (
-                <div className="inline-flex items-center ml-4">
+                <div className="inline-flex items-center ml-4" data-testid={`order-create-fulfillment-item-${item.id}-disabled-indicator`}>
                   <Tooltip
                     content={t("orders.fulfillment.disabledItemTooltip")}
                     side="top"
@@ -156,45 +156,46 @@ export function OrderCreateFulfillmentItem({
                   "flex flex-col flex-1 gap-x-2 gap-y-2 p-3 text-sm sm:flex-row",
                   disabled && "opacity-50 pointer-events-none"
                 )}
+                data-testid={`order-create-fulfillment-item-${item.id}-details`}
               >
-                <div className="flex flex-1 items-center gap-x-3">
-                  <Thumbnail src={item.thumbnail} />
-                  <div className="flex flex-col">
-                    <div>
+                <div className="flex flex-1 items-center gap-x-3" data-testid={`order-create-fulfillment-item-${item.id}-info`}>
+                  <Thumbnail src={item.thumbnail} data-testid={`order-create-fulfillment-item-${item.id}-thumbnail`} />
+                  <div className="flex flex-col" data-testid={`order-create-fulfillment-item-${item.id}-text`}>
+                    <div data-testid={`order-create-fulfillment-item-${item.id}-title`}>
                       <Text className="txt-small" as="span" weight="plus">
                         {item.title}
                       </Text>
-                      {item.variant_sku && <span>({item.variant_sku})</span>}
+                      {item.variant_sku && <span data-testid={`order-create-fulfillment-item-${item.id}-sku`}>({item.variant_sku})</span>}
                     </div>
-                    <Text as="div" className="text-ui-fg-subtle txt-small">
+                    <Text as="div" className="text-ui-fg-subtle txt-small" data-testid={`order-create-fulfillment-item-${item.id}-variant-title`}>
                       {item.variant_title}
                     </Text>
                   </div>
                 </div>
 
-                <div className="flex flex-1 items-center gap-x-1">
+                <div className="flex flex-1 items-center gap-x-1" data-testid={`order-create-fulfillment-item-${item.id}-quantities`}>
                   <div className="mr-2 block h-[16px] w-[2px] bg-gray-200" />
 
-                  <div className="text-small flex flex-1 flex-col">
-                    <span className="text-ui-fg-subtle font-medium">
+                  <div className="text-small flex flex-1 flex-col" data-testid={`order-create-fulfillment-item-${item.id}-available`}>
+                    <span className="text-ui-fg-subtle font-medium" data-testid={`order-create-fulfillment-item-${item.id}-available-label`}>
                       {t("orders.fulfillment.available")}
                     </span>
-                    <span className="text-ui-fg-subtle">
+                    <span className="text-ui-fg-subtle" data-testid={`order-create-fulfillment-item-${item.id}-available-value`}>
                       {availableQuantity || "N/A"}
                     </span>
                   </div>
 
-                  <div className="flex flex-1 items-center gap-x-1">
+                  <div className="flex flex-1 items-center gap-x-1" data-testid={`order-create-fulfillment-item-${item.id}-in-stock`}>
                     <div className="mr-2 block h-[16px] w-[2px] bg-gray-200" />
 
                     <div className="flex flex-col">
-                      <span className="text-ui-fg-subtle font-medium">
+                      <span className="text-ui-fg-subtle font-medium" data-testid={`order-create-fulfillment-item-${item.id}-in-stock-label`}>
                         {t("orders.fulfillment.inStock")}
                       </span>
-                      <span className="text-ui-fg-subtle">
+                      <span className="text-ui-fg-subtle" data-testid={`order-create-fulfillment-item-${item.id}-in-stock-value`}>
                         {inStockQuantity || "N/A"}{" "}
                         {inStockQuantity && (
-                          <span className="font-medium text-red-500">
+                          <span className="font-medium text-red-500" data-testid={`order-create-fulfillment-item-${item.id}-in-stock-reserved`}>
                             -{form.getValues(`quantity.${item.id}`)}
                           </span>
                         )}
@@ -202,10 +203,9 @@ export function OrderCreateFulfillmentItem({
                     </div>
                   </div>
 
-                  <div className="flex flex-1 items-center gap-1">
-
-                    <Form.Item>
-                      <Form.Control>
+                  <div className="flex flex-1 items-center gap-1" data-testid={`order-create-fulfillment-item-${item.id}-quantity-input-section`}>
+                    <Form.Item data-testid={`order-create-fulfillment-item-${item.id}-quantity-item`}>
+                      <Form.Control data-testid={`order-create-fulfillment-item-${item.id}-quantity-control`}>
                         <Input
                           className="bg-ui-bg-base txt-small w-[50px] rounded-lg text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                           type="number"
@@ -235,12 +235,13 @@ export function OrderCreateFulfillmentItem({
                               }
                             }
                           }}
+                          data-testid={`order-create-fulfillment-item-${item.id}-quantity-input`}
                         />
                       </Form.Control>
+                      <Form.ErrorMessage data-testid={`order-create-fulfillment-item-${item.id}-quantity-error`} />
                     </Form.Item>
 
-
-                    <span className="text-ui-fg-subtle">
+                    <span className="text-ui-fg-subtle" data-testid={`order-create-fulfillment-item-${item.id}-quantity-label`}>
                       / {item.quantity} {t("fields.qty")}
                     </span>
                   </div>
