@@ -1184,7 +1184,7 @@
     "edit": {
       "email": {
         "title": "Edytuj adres e-mail",
-        "requestSuccess": "Adres e-mail zamówienia został zmieniony na {{email}}."
+        "requestSuccess": "Adres e-mail został pomyślnie zaktualizowany."
       },
       "shippingAddress": {
         "title": "Edytuj adres dostawy",

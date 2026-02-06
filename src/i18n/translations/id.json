@@ -1119,7 +1119,7 @@
     "edit": {
       "email": {
         "title": "Edit email",
-        "requestSuccess": "Email pesanan diperbarui menjadi {{email}}."
+        "requestSuccess": "Email berhasil diperbarui."
       },
       "shippingAddress": {
         "title": "Edit alamat pengiriman",

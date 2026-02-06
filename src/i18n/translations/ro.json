@@ -1076,7 +1076,7 @@
     "edit": {
       "email": {
         "title": "Editați e-mailul",
-        "requestSuccess": "E-mail de comandă actualizat la {{email}}."
+        "requestSuccess": "E-mailul a fost actualizat cu succes."
       },
       "shippingAddress": {
         "title": "Editați adresa de livrare",

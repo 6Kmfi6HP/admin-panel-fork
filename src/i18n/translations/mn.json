@@ -1076,7 +1076,7 @@
     "edit": {
       "email": {
         "title": "Имэйлийг засах",
-        "requestSuccess": "Захиалгын имэйл {{email}}-д шинэчлэгдсэн."
+        "requestSuccess": "Имэйл амжилттай шинэчлэгдлээ."
       },
       "shippingAddress": {
         "title": "Хүргэлтийн хаягийг засах",

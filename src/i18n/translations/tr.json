@@ -1410,7 +1410,7 @@
     "edit": {
       "email": {
         "title": "E-postayı düzenle",
-        "requestSuccess": "Sipariş e-postası {{email}} olarak güncellendi."
+        "requestSuccess": "E-posta başarıyla güncellendi."
       },
       "shippingAddress": {
         "title": "Teslimat adresini düzenle",

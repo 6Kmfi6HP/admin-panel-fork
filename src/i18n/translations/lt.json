@@ -1117,7 +1117,7 @@
     "edit": {
       "email": {
         "title": "Keisti el. paštą",
-        "requestSuccess": "Užsakymo el. paštas pakeitas į {{email}}."
+        "requestSuccess": "El. paštas sėkmingai atnaujintas."
       },
       "shippingAddress": {
         "title": "Keisti pristatymo adresą",

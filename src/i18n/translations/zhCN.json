@@ -1119,7 +1119,7 @@
     "edit": {
       "email": {
         "title": "编辑邮箱",
-        "requestSuccess": "订单邮箱已更新为 {{email}}。"
+        "requestSuccess": "邮箱已成功更新。"
       },
       "shippingAddress": {
         "title": "编辑配送地址",
