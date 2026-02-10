@@ -66,7 +66,15 @@ export const OrderListTable = () => {
         columns={columns}
         table={table}
         pagination
-        navigateTo={row => `/orders/${row.original.id}`}
+        navigateTo={row => {
+          if (isOrderSet(row.original)) {
+            if (hasMultipleOrders(row.original)) {
+              return '';
+            }
+            return `/orders/${row.original.orders[0].id}`;
+          }
+          return `/orders/${row.original.id}`;
+        }}
         filters={filters}
         count={count}
         search
@@ -81,6 +89,7 @@ export const OrderListTable = () => {
         noRecords={{
           message: t('orders.list.noRecordsMessage')
         }}
+        enableExpandAll
       />
     </Container>
   );

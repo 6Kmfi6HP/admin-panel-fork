@@ -174,22 +174,14 @@ export const useOrderSetTableColumns = () => {
         id: 'payment_status',
         header: () => <PaymentStatusHeader />,
         cell: ({ row }) =>
-          renderOrderCell(
-            row,
-            order => <PaymentStatusCell status={order.payment_status} />,
-            orderSet => <PaymentStatusCell status={orderSet.payment_status} />
-          )
+          renderOrderCell(row, order => <PaymentStatusCell status={order.payment_status} />)
       }),
 
       columnHelper.display({
         id: 'fulfillment_status',
         header: () => <FulfillmentStatusHeader />,
         cell: ({ row }) =>
-          renderOrderCell(
-            row,
-            order => <FulfillmentStatusCell status={order.fulfillment_status} />,
-            orderSet => <FulfillmentStatusCell status={orderSet.fulfillment_status} />
-          )
+          renderOrderCell(row, order => <FulfillmentStatusCell status={order.fulfillment_status} />)
       }),
 
       columnHelper.display({
