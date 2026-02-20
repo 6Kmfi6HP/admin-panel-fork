@@ -11,7 +11,6 @@ import zod from 'zod';
 import { CreateCollectionForm } from '../create-collection-form';
 import { useCreateCollection, usePostCollectionDetails } from '@hooks/api';
 import { CreateCollectionRank } from '../create-collection-rank/create-collection-rank';
-import { HttpTypes } from '@medusajs/types';
 import { sdk } from '@lib/client';
 
 export const CreateCollectionSchema = zod.object({
