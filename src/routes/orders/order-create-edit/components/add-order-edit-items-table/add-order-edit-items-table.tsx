@@ -62,6 +62,7 @@ export const AddOrderEditItemsTable = ({
       '*inventory_items.inventory.location_levels,+inventory_quantity,*product.categories,*product.collection',
     has_price: true,
     has_inventory: true,
+    has_stock_location: true,
     ...(sellerId ? { seller_id: sellerId } : {})
   });
 
