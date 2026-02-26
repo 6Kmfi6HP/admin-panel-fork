@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { _DataTable } from '@components/table/data-table';
 import { useDataTable } from '@hooks/use-data-table';
@@ -10,6 +10,7 @@ import type {
   NumericalComparisonOperator
 } from '@medusajs/types';
 import { Badge } from '@medusajs/ui';
+import { useAdminManagedLocations } from '@routes/orders/order-detail/context/admin-managed-locations-context';
 import type { OnChangeFn, RowSelectionState } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
 
@@ -34,14 +35,46 @@ export const AddReturnItemsTable = ({
   currencyCode
 }: AddReturnItemsTableProps) => {
   const { t } = useTranslation();
+  const { canAdminActOnItem } = useAdminManagedLocations();
 
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>(
-    selectedItems.reduce((acc, id) => {
-      acc[id] = true;
+  const isRowSelectable = useMemo(() => {
+    return (item: AdminOrderLineItem) => {
+      if (getReturnableQuantity(item) <= 0) return false;
 
-      return acc;
-    }, {} as RowSelectionState)
-  );
+      return canAdminActOnItem(item);
+    };
+  }, [canAdminActOnItem]);
+
+  const getRowDisabledReason = useMemo(() => {
+    return (item: AdminOrderLineItem) => {
+      if (getReturnableQuantity(item) <= 0) return null;
+      if (!canAdminActOnItem(item)) return t('orders.returns.cantCreateReturnByAdmin');
+
+      return null;
+    };
+  }, [canAdminActOnItem, t]);
+
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>(() => {
+    const initial: RowSelectionState = {};
+    selectedItems.forEach(id => {
+      const item = items.find(i => i.id === id);
+      if (!item || !isRowSelectable(item)) return;
+      initial[id] = true;
+    });
+
+    return initial;
+  });
+
+  useEffect(() => {
+    const next: RowSelectionState = {};
+    selectedItems.forEach(id => {
+      const item = items.find(i => i.id === id);
+      if (!item || getReturnableQuantity(item) <= 0) return;
+      if (!canAdminActOnItem(item)) return;
+      next[id] = true;
+    });
+    setRowSelection(next);
+  }, [selectedItems, items, canAdminActOnItem]);
 
   const updater: OnChangeFn<RowSelectionState> = fn => {
     const newState: RowSelectionState = typeof fn === 'function' ? fn(rowSelection) : fn;
@@ -105,7 +138,7 @@ export const AddReturnItemsTable = ({
     return results.slice(offset, offset + limit);
   }, [items, currencyCode, searchParams]);
 
-  const columns = useReturnItemTableColumns(currencyCode);
+  const columns = useReturnItemTableColumns(currencyCode, getRowDisabledReason);
   const filters = useReturnItemTableFilters();
 
   const { table } = useDataTable({
@@ -115,9 +148,7 @@ export const AddReturnItemsTable = ({
     enablePagination: true,
     getRowId: row => row.id,
     pageSize: PAGE_SIZE,
-    enableRowSelection: row => {
-      return getReturnableQuantity(row.original) > 0;
-    },
+    enableRowSelection: row => isRowSelectable(row.original),
     rowSelection: {
       state: rowSelection,
       updater
