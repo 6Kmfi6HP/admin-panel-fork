@@ -1,15 +1,19 @@
-import { Fragment, useMemo } from 'react';
+import { Fragment } from 'react';
 
-import { Buildings, InformationCircle, XCircle } from '@medusajs/icons';
 import {
-  AdminOrder,
-  AdminOrderFulfillment,
-  AdminOrderLineItem,
-  HttpTypes,
-  OrderLineItemDTO
-} from '@medusajs/types';
+  ExtendedAdminOrder,
+  ExtendedAdminOrderFulfillment,
+  ExtendedAdminOrderLineItem,
+  ExtendedAdminProductVariant,
+  ManagedBy,
+  StockLocationOwner
+} from '@custom-types/order';
+import { Buildings, XCircle } from '@medusajs/icons';
+import { HttpTypes, OrderLineItemDTO } from '@medusajs/types';
 import {
+  Badge,
   Button,
+  clx,
   Container,
   Copy,
   Heading,
@@ -33,18 +37,13 @@ import {
 import { useStockLocation } from '../../../../../hooks/api/stock-locations';
 import { formatProvider } from '../../../../../lib/format-provider';
 import { getLocaleAmount } from '../../../../../lib/money-amount-helpers';
-import { filterItemsFulfillableByAdmin } from '../../../../../lib/order-item';
 import { FulfillmentSetType } from '../../../../locations/common/constants';
 
 type OrderFulfillmentSectionProps = {
-  order: AdminOrder;
-  stockLocations: HttpTypes.AdminStockLocation[];
+  order: ExtendedAdminOrder;
 };
 
-export const OrderFulfillmentSection = ({
-  order,
-  stockLocations
-}: OrderFulfillmentSectionProps) => {
+export const OrderFulfillmentSection = ({ order }: OrderFulfillmentSectionProps) => {
   const fulfillments = order.fulfillments || [];
 
   return (
@@ -52,17 +51,13 @@ export const OrderFulfillmentSection = ({
       className="flex flex-col gap-y-3"
       data-testid="order-fulfillment-section"
     >
-      <UnfulfilledItemBreakdown
-        order={order}
-        stockLocations={stockLocations}
-      />
+      <UnfulfilledItemBreakdown order={order} />
       {fulfillments.map((f, index) => (
         <Fulfillment
           key={f.id}
           index={index}
           fulfillment={f}
           order={order}
-          stockLocations={stockLocations}
         />
       ))}
     </div>
@@ -76,10 +71,17 @@ const UnfulfilledItem = ({
   item: OrderLineItemDTO & { variant: HttpTypes.AdminProductVariant };
   currencyCode: string;
 }) => {
+  const { t } = useTranslation();
+  const isManagedByVendor =
+    (item.variant as ExtendedAdminProductVariant)?.managed_by === ManagedBy.VENDOR;
+
   return (
     <div
       key={item.id}
-      className="grid grid-cols-2 items-start px-6 py-4 text-ui-fg-subtle"
+      className={clx(
+        'grid grid-cols-2 items-center px-6 py-4 text-ui-fg-subtle',
+        isManagedByVendor && 'grid-cols-[1fr_0.5fr_1fr]'
+      )}
     >
       <div className="flex items-start gap-x-4">
         <Thumbnail src={item.thumbnail} />
@@ -104,6 +106,27 @@ const UnfulfilledItem = ({
           <Text size="small">{item.variant?.options?.map(o => o.value).join(' · ')}</Text>
         </div>
       </div>
+      {isManagedByVendor && (
+        <div className="ml-auto flex w-fit">
+          <Tooltip
+            content={t('orders.fulfillment.managedByVendorTooltip')}
+            className="text-center"
+          >
+            <Badge
+              color="blue"
+              className="h-5 text-nowrap rounded-full px-[7px] py-0"
+            >
+              <Text
+                size="xsmall"
+                as="span"
+                weight="plus"
+              >
+                {t('orders.fulfillment.managedByVendorBadge')}
+              </Text>
+            </Badge>
+          </Tooltip>
+        </div>
+      )}
       <div className="grid grid-cols-3 items-center gap-x-4">
         <div className="flex items-center justify-end">
           <Text size="small">{getLocaleAmount(item.unit_price, currencyCode)}</Text>
@@ -113,7 +136,7 @@ const UnfulfilledItem = ({
             <span className="tabular-nums">{item.quantity - item.detail.fulfilled_quantity}</span>x
           </Text>
         </div>
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-end gap-x-2">
           <Text size="small">{getLocaleAmount(item.subtotal || 0, currencyCode)}</Text>
         </div>
       </div>
@@ -121,13 +144,7 @@ const UnfulfilledItem = ({
   );
 };
 
-const UnfulfilledItemBreakdown = ({
-  order,
-  stockLocations
-}: {
-  order: AdminOrder;
-  stockLocations: HttpTypes.AdminStockLocation[];
-}) => {
+const UnfulfilledItemBreakdown = ({ order }: { order: ExtendedAdminOrder }) => {
   // Create an array of order items that haven't been fulfilled or at least not fully fulfilled
   const unfulfilledItemsWithShipping = order.items!.filter(
     i => i.requires_shipping && i.detail.fulfilled_quantity < i.quantity
@@ -144,7 +161,6 @@ const UnfulfilledItemBreakdown = ({
           order={order}
           unfulfilledItems={unfulfilledItemsWithShipping}
           requiresShipping={true}
-          stockLocations={stockLocations}
         />
       )}
 
@@ -153,7 +169,6 @@ const UnfulfilledItemBreakdown = ({
           order={order}
           unfulfilledItems={unfulfilledItemsWithoutShipping}
           requiresShipping={false}
-          stockLocations={stockLocations}
         />
       )}
     </>
@@ -163,13 +178,11 @@ const UnfulfilledItemBreakdown = ({
 const UnfulfilledItemDisplay = ({
   order,
   unfulfilledItems,
-  requiresShipping = false,
-  stockLocations
+  requiresShipping = false
 }: {
-  order: AdminOrder;
-  unfulfilledItems: AdminOrderLineItem[];
+  order: ExtendedAdminOrder;
+  unfulfilledItems: ExtendedAdminOrderLineItem[];
   requiresShipping: boolean;
-  stockLocations: HttpTypes.AdminStockLocation[];
 }) => {
   const { t } = useTranslation();
 
@@ -177,12 +190,10 @@ const UnfulfilledItemDisplay = ({
     return;
   }
 
-  const adminLocationIds = useMemo(() => {
-    return new Set(stockLocations.map(location => location.id));
-  }, [stockLocations]);
-
-  const itemsThatCanBeFulfilled = filterItemsFulfillableByAdmin(order.items, adminLocationIds);
-  const canAdminFulfill = itemsThatCanBeFulfilled.length > 0;
+  const canAdminFulfill = order.items.some(
+    item =>
+      item.variant?.managed_by === ManagedBy.ADMIN || item.variant?.managed_by === ManagedBy.BOTH
+  );
 
   return (
     <Container
@@ -240,21 +251,13 @@ const UnfulfilledItemDisplay = ({
         </div>
       </div>
       <div data-testid="order-fulfillment-unfulfilled-items">
-        {unfulfilledItems.map((item: AdminOrderLineItem) => {
-          const cantBeFulfilledByAdmin =
-            itemsThatCanBeFulfilled.findIndex(i => i.id === item.id) === -1;
+        {unfulfilledItems.map((item: ExtendedAdminOrderLineItem) => {
           return (
             <Fragment key={item.id}>
               <UnfulfilledItem
                 item={item}
                 currencyCode={order.currency_code}
               />
-              {cantBeFulfilledByAdmin && (
-                <div className="flex items-center gap-x-3 border-t border-dashed bg-ui-bg-subtle px-6 py-4 text-ui-fg-subtle">
-                  <InformationCircle className="text-ui-fg-subtle" />
-                  <Text size="small">{t('orders.fulfillment.cantBeFulfilledByAdmin')}</Text>
-                </div>
-              )}
             </Fragment>
           );
         })}
@@ -266,19 +269,15 @@ const UnfulfilledItemDisplay = ({
 const Fulfillment = ({
   fulfillment,
   order,
-  index,
-  stockLocations
+  index
 }: {
-  fulfillment: AdminOrderFulfillment;
-  order: AdminOrder;
+  fulfillment: ExtendedAdminOrderFulfillment;
+  order: ExtendedAdminOrder;
   index: number;
-  stockLocations: HttpTypes.AdminStockLocation[];
 }) => {
   const { t } = useTranslation();
   const prompt = usePrompt();
   const navigate = useNavigate();
-
-  const canAdminFulfill = stockLocations.some(location => location.id === fulfillment.location_id);
 
   const showLocation = !!fulfillment.location_id;
 
@@ -288,6 +287,8 @@ const Fulfillment = ({
   const { stock_location, isError, error } = useStockLocation(fulfillment.location_id!, undefined, {
     enabled: showLocation
   });
+
+  const canAdminFulfill = fulfillment.stock_location_owner === StockLocationOwner.ADMIN;
 
   let statusText = fulfillment.requires_shipping
     ? isPickUpFulfillment

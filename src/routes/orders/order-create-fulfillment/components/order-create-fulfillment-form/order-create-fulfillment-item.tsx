@@ -21,6 +21,7 @@ type OrderEditItemProps = {
   reservations: HttpTypes.AdminReservation[];
   form: UseFormReturn<zod.infer<typeof CreateFulfillmentSchema>>;
   disabled: boolean;
+  managedByAdmin: boolean;
 };
 
 export function OrderCreateFulfillmentItem({
@@ -28,7 +29,8 @@ export function OrderCreateFulfillmentItem({
   form,
   locationId,
   reservations,
-  disabled
+  disabled,
+  managedByAdmin
 }: OrderEditItemProps) {
   const { t } = useTranslation();
 
@@ -144,7 +146,11 @@ export function OrderCreateFulfillmentItem({
         <div className="ml-3 inline-flex items-center">
           {disabled ? (
             <Tooltip
-              content={t('orders.fulfillment.disabledItemTooltip')}
+              content={
+                managedByAdmin
+                  ? t('orders.fulfillment.disabledItemTooltip')
+                  : t('orders.fulfillment.disabledItemTooltipManagedByVendor')
+              }
               side="top"
               className="text-center"
             >

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { ExtendedAdminOrder, ManagedBy } from '@custom-types/order';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AdminOrder, HttpTypes, OrderLineItemDTO } from '@medusajs/types';
+import { HttpTypes, OrderLineItemDTO } from '@medusajs/types';
 import { Alert, Button, Heading, Select, Switch, Text, toast } from '@medusajs/ui';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -17,16 +18,13 @@ import { useCreateOrderFulfillment } from '../../../../../hooks/api/orders';
 import { useComboboxData } from '../../../../../hooks/use-combobox-data';
 import { useDocumentDirection } from '../../../../../hooks/use-document-direction';
 import { sdk } from '../../../../../lib/client';
-import {
-  filterItemsFulfillableByAdmin,
-  getFulfillableQuantity
-} from '../../../../../lib/order-item';
+import { getFulfillableQuantity } from '../../../../../lib/order-item';
 import { getReservationsLimitCount } from '../../../../../lib/orders';
 import { CreateFulfillmentSchema } from './constants';
 import { OrderCreateFulfillmentItem } from './order-create-fulfillment-item';
 
 type OrderCreateFulfillmentFormProps = {
-  order: AdminOrder;
+  order: ExtendedAdminOrder;
   requiresShipping: boolean;
 };
 
@@ -64,7 +62,7 @@ export function OrderCreateFulfillmentForm({
     const itemsWithQuantity = (order.items || []).filter(
       item => item.requires_shipping === requiresShipping && getFulfillableQuantity(item) > 0
     );
-    return filterItemsFulfillableByAdmin(itemsWithQuantity, adminLocationIds);
+    return itemsWithQuantity;
   });
 
   const form = useForm<zod.infer<typeof CreateFulfillmentSchema>>({
@@ -139,7 +137,7 @@ export function OrderCreateFulfillmentForm({
     }
 
     if (items.length === 0) {
-      toast.error(t('orders.fulfillment.error.noItems'));
+      toast.error(t('orders.fulfillment.error.fulfillmentNotAvailable'));
       return;
     }
 
@@ -198,20 +196,18 @@ export function OrderCreateFulfillmentForm({
         item => item.requires_shipping === requiresShipping && getFulfillableQuantity(item) > 0
       ) || [];
 
-    const itemsToFulfill = filterItemsFulfillableByAdmin(itemsWithQuantity, adminLocationIds);
+    setFulfillableItems(itemsWithQuantity);
 
-    setFulfillableItems(itemsToFulfill);
-
-    if (itemsToFulfill.length) {
+    if (itemsWithQuantity.length) {
       form.clearErrors('root');
     } else {
       form.setError('root', {
         type: 'manual',
-        message: t('orders.fulfillment.error.noItems')
+        message: t('orders.fulfillment.error.fulfillmentNotAvailable')
       });
     }
 
-    const quantityMap = itemsToFulfill.reduce(
+    const quantityMap = itemsWithQuantity.reduce(
       (acc, item) => {
         acc[item.id] = getFulfillableQuantity(item as OrderLineItemDTO);
         return acc;
@@ -250,7 +246,12 @@ export function OrderCreateFulfillmentForm({
     return !allItemsHaveLocation;
   }, [fulfillableItems, selectedLocationId]);
 
-  const hasNoFulfillableItems = fulfillableItems.length === 0;
+  const hasNoFulfillableItems = useMemo(() => {
+    return fulfillableItems.every(
+      item =>
+        item.variant?.managed_by !== ManagedBy.ADMIN && item.variant?.managed_by !== ManagedBy.BOTH
+    );
+  }, [fulfillableItems]);
 
   return (
     <RouteFocusModal.Form
@@ -275,9 +276,10 @@ export function OrderCreateFulfillmentForm({
             <Heading level="h2">{t('orders.fulfillment.create')}</Heading>
             {hasNoFulfillableItems ? (
               <NoRecords
-                title={t('orders.fulfillment.error.noItems')}
-                message={t('orders.fulfillment.error.noItemsDescription')}
-                className="h-[200px] text-center"
+                showIcon={false}
+                title={t('orders.fulfillment.error.fulfillmentNotAvailable')}
+                message={t('orders.fulfillment.error.fulfillmentNotAvailableDescription')}
+                className="py-8 text-center"
                 data-testid="order-create-fulfillment-no-items"
               />
             ) : (
@@ -455,6 +457,10 @@ export function OrderCreateFulfillmentForm({
                             shipping_options.find(o => o.id === shippingOptionId)
                               ?.shipping_profile_id === item.variant?.product?.shipping_profile?.id;
 
+                          const managedByAdmin =
+                            item.variant?.managed_by === ManagedBy.ADMIN ||
+                            item.variant?.managed_by === ManagedBy.BOTH;
+
                           return (
                             <OrderCreateFulfillmentItem
                               key={item.id}
@@ -463,9 +469,11 @@ export function OrderCreateFulfillmentForm({
                               locationId={selectedLocationId}
                               disabled={
                                 (requiresShipping && !isShippingProfileMatching) ||
-                                showLevelsWarning
+                                showLevelsWarning ||
+                                !managedByAdmin
                               }
                               reservations={reservations}
+                              managedByAdmin={managedByAdmin}
                             />
                           );
                         })}
@@ -478,7 +486,7 @@ export function OrderCreateFulfillmentForm({
                         className="flex items-center"
                         data-testid="order-create-fulfillment-items-error"
                       >
-                        {form.formState.errors.root.message}
+                        {form.formState.errors.root?.message}
                       </Alert>
                     )}
                   </div>
