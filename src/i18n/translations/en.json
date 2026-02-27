@@ -1326,6 +1326,7 @@
       "search": "Search items",
       "available": "Available",
       "inStock": "In stock",
+      "noLevelsWarningDescription": "The selected location does not have an inventory level for the selected items. To proceed with allocation, create an inventory level for selected location.",
       "disabledItemTooltip": "The location you have selected doesn't allow allocation of this item.",
       "disabledItemTooltipManagedByVendor": "You can't allocate this item because its inventory is managed by the Vendor.",
       "managedByVendorBadge": "Managed by Vendor",
@@ -1342,7 +1343,8 @@
         "allocationNotAvailableDescription": "Items have already been allocated or are managed by the Vendor.",
         "noLocation": "Location is required",
         "wrongQuantity": "Only one item is available for allocation",
-        "wrongQuantity_other": "Quantity should be a number between 1 and {{number}}"
+        "wrongQuantity_other": "Quantity should be a number between 1 and {{number}}",
+        "noItemsSelected": "Please select at least one item to allocate"
       }
     },
     "shipment": {

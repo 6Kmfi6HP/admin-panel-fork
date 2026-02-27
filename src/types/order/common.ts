@@ -1,6 +1,14 @@
-import type { AdminOrder, PaginatedResponse } from "@medusajs/types";
-
-import type { SellerDTO } from "@custom-types/seller";
+import type { SellerDTO } from '@custom-types/seller';
+import type {
+  AdminOrder,
+  AdminOrderFulfillment,
+  AdminOrderLineItem,
+  AdminProductVariant,
+  AdminProductVariantInventoryItemLink,
+  InventoryItemDTO,
+  OrderLineItemDTO,
+  PaginatedResponse
+} from '@medusajs/types';
 
 export interface Order {
   id: string;
@@ -55,3 +63,47 @@ export interface OrderSet extends Order {
 export type AdminOrderListResponse = PaginatedResponse<{
   orders: AdminOrder[];
 }>;
+
+export enum ManagedBy {
+  ADMIN = 'admin',
+  VENDOR = 'vendor',
+  BOTH = 'both',
+  NONE = 'none'
+}
+
+export enum StockLocationOwner {
+  ADMIN = 'admin',
+  VENDOR = 'vendor'
+}
+
+export interface InventoryLocationLevel {
+  id: string;
+  location_id: string;
+  stocked_quantity: number;
+  available_quantity: number;
+  reserved_quantity: number;
+  incoming_quantity: number;
+}
+
+export interface ExtendedInventoryItemDTO extends InventoryItemDTO {
+  location_levels?: InventoryLocationLevel[];
+}
+
+export interface ExtendedAdminProductVariant extends AdminProductVariant {
+  managed_by: ManagedBy;
+  inventory?: ExtendedInventoryItemDTO[];
+  inventory_items: AdminProductVariantInventoryItemLink[];
+}
+
+export interface ExtendedAdminOrderLineItem extends AdminOrderLineItem {
+  variant?: ExtendedAdminProductVariant;
+}
+
+export interface ExtendedAdminOrderFulfillment extends AdminOrderFulfillment {
+  stock_location_owner?: StockLocationOwner;
+}
+
+export interface ExtendedAdminOrder extends AdminOrder {
+  items: ExtendedAdminOrderLineItem[];
+  fulfillments?: ExtendedAdminOrderFulfillment[];
+}

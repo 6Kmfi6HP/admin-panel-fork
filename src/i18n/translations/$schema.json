@@ -4984,6 +4984,9 @@
             "inStock": {
               "type": "string"
             },
+            "noLevelsWarningDescription": {
+              "type": "string"
+            },
             "disabledItemTooltip": {
               "type": "string"
             },
@@ -5035,6 +5038,9 @@
                 },
                 "wrongQuantity_other": {
                   "type": "string"
+                },
+                "noItemsSelected": {
+                  "type": "string"
                 }
               },
               "required": [
@@ -5043,7 +5049,8 @@
                 "allocationNotAvailableDescription",
                 "noLocation",
                 "wrongQuantity",
-                "wrongQuantity_other"
+                "wrongQuantity_other",
+                "noItemsSelected"
               ],
               "additionalProperties": false
             }
@@ -5057,6 +5064,7 @@
             "search",
             "available",
             "inStock",
+            "noLevelsWarningDescription",
             "disabledItemTooltip",
             "disabledItemTooltipManagedByVendor",
             "managedByVendorBadge",

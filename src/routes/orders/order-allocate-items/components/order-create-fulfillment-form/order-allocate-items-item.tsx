@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
+import { ExtendedAdminOrderLineItem, ExtendedInventoryItemDTO } from '@custom-types/order';
 import { Component, InformationCircleSolid, TriangleDownMini } from '@medusajs/icons';
-import { InventoryItemDTO, OrderLineItemDTO } from '@medusajs/types';
 import { Checkbox, CheckboxCheckedState, clx, Divider, Input, Text, Tooltip } from '@medusajs/ui';
 import { UseFormReturn, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -14,14 +14,14 @@ import { AllocateItemsSchema } from './constants';
 import { checkInventoryKit } from './utils';
 
 type OrderAllocateItemsItemProps = {
-  item: OrderLineItemDTO;
+  item: ExtendedAdminOrderLineItem;
   locationId?: string;
   form: UseFormReturn<zod.infer<typeof AllocateItemsSchema>>;
   disabled: boolean;
   managedByAdmin: boolean;
   onQuantityChange: (
-    inventoryItem: InventoryItemDTO,
-    lineItem: OrderLineItemDTO,
+    inventoryItem: ExtendedInventoryItemDTO,
+    lineItem: ExtendedAdminOrderLineItem,
     hasInventoryKit: boolean,
     value: number | null,
     isRoot?: boolean
@@ -73,12 +73,6 @@ export function OrderAllocateItemsItem({
       inStockQuantity: locationInventory.stocked_quantity
     };
   }, [variant, locationId]);
-
-  const hasQuantityError =
-    !hasInventoryKit &&
-    availableQuantity &&
-    quantityField[`${item.id}-${item.variant?.inventory[0].id}`] &&
-    quantityField[`${item.id}-${item.variant?.inventory[0].id}`] > availableQuantity;
 
   const minValue = 0;
   const maxValue = Math.min(
@@ -150,9 +144,16 @@ export function OrderAllocateItemsItem({
                 data-testid={`order-allocate-items-item-${item.id}-thumbnail`}
               />
             </div>
-            <div className="flex flex-col" data-testid={`order-allocate-items-item-${item.id}-text`}>
+            <div
+              className="flex flex-col"
+              data-testid={`order-allocate-items-item-${item.id}-text`}
+            >
               <div data-testid={`order-allocate-items-item-${item.id}-title`}>
-                <Text className="txt-small" as="span" weight="plus">
+                <Text
+                  className="txt-small"
+                  as="span"
+                  weight="plus"
+                >
                   {item.title}
                 </Text>{' '}
                 {item.variant_sku && (
@@ -182,7 +183,10 @@ export function OrderAllocateItemsItem({
               className="flex flex-1 items-center gap-x-4"
               data-testid={`order-allocate-items-item-${item.id}-quantities`}
             >
-              <Divider orientation="vertical" className="h-4" />
+              <Divider
+                orientation="vertical"
+                className="h-4"
+              />
               <div
                 className="text-small flex flex-1 flex-col"
                 data-testid={`order-allocate-items-item-${item.id}-available`}
@@ -200,17 +204,20 @@ export function OrderAllocateItemsItem({
                   {availableQuantity || 'N/A'}
                   {availableQuantity &&
                     !hasInventoryKit &&
-                    quantityField[`${item.id}-${item.variant?.inventory[0].id}`] && (
+                    quantityField[`${item.id}-${item.variant?.inventory?.[0]?.id}`] && (
                       <span
                         className="txt-small ml-1 font-medium text-red-500"
                         data-testid={`order-allocate-items-item-${item.id}-available-reserved`}
                       >
-                        -{quantityField[`${item.id}-${item.variant?.inventory[0].id}`]}
+                        -{quantityField[`${item.id}-${item.variant?.inventory?.[0]?.id}`]}
                       </span>
                     )}
                 </span>
               </div>
-              <Divider orientation="vertical" className="h-4" />
+              <Divider
+                orientation="vertical"
+                className="h-4"
+              />
               <div
                 className="flex flex-1 items-center gap-x-1"
                 data-testid={`order-allocate-items-item-${item.id}-in-stock`}
@@ -240,7 +247,7 @@ export function OrderAllocateItemsItem({
                   name={
                     hasInventoryKit
                       ? `quantity.${item.id}-`
-                      : `quantity.${item.id}-${item.variant?.inventory[0].id}`
+                      : `quantity.${item.id}-${item.variant?.inventory?.[0]?.id}`
                   }
                   rules={{
                     required: !hasInventoryKit,
@@ -264,25 +271,36 @@ export function OrderAllocateItemsItem({
                             onChange={e => {
                               const val = e.target.value === '' ? null : Number(e.target.value);
 
+                              const fieldName = hasInventoryKit
+                                ? `quantity.${item.id}-`
+                                : `quantity.${item.id}-${item.variant?.inventory?.[0]?.id}`;
+
                               onQuantityChange(
-                                item.variant?.inventory[0],
+                                item.variant?.inventory?.[0]!,
                                 item,
                                 hasInventoryKit,
                                 val,
                                 true
                               );
 
-                              if (!isNaN(val)) {
+                              field.onChange(val);
+
+                              if (val !== null && !isNaN(val)) {
                                 if (val < minValue || val > maxValue) {
-                                  form.setError(`quantity.${item.id}`, {
-                                    type: 'manual',
-                                    message: t('orders.allocateItems.error.wrongQuantity', {
-                                      count: maxValue,
-                                      number: maxValue
-                                    })
-                                  });
+                                  form.setError(
+                                    fieldName as keyof typeof form.formState.defaultValues,
+                                    {
+                                      type: 'manual',
+                                      message: t('orders.allocateItems.error.wrongQuantity', {
+                                        count: maxValue,
+                                        number: maxValue
+                                      })
+                                    }
+                                  );
                                 } else {
-                                  form.clearErrors(`quantity.${item.id}`);
+                                  form.clearErrors(
+                                    fieldName as keyof typeof form.formState.defaultValues
+                                  );
                                 }
                               }
                             }}
@@ -331,8 +349,10 @@ export function OrderAllocateItemsItem({
                             onChange={e => {
                               const val = e.target.value === '' ? null : Number(e.target.value);
 
+                              field.onChange(val);
+
                               onQuantityChange(
-                                item.variant?.inventory[0],
+                                item.variant?.inventory?.[0]!,
                                 item,
                                 hasInventoryKit,
                                 val,
@@ -341,22 +361,38 @@ export function OrderAllocateItemsItem({
                             }}
                           />
                         </Form.Control>
+                        <Form.ErrorMessage
+                          className="absolute -right-4 translate-x-full"
+                          data-testid={`order-allocate-items-item-${item.id}-kit-quantity-error`}
+                        />
                       </Form.Item>
                     );
                   }}
                 />{' '}
-                <span className={clx('shrink-0 text-ui-fg-subtle', disabled && 'text-ui-fg-disabled')}>
+                <span
+                  className={clx('shrink-0 text-ui-fg-subtle', disabled && 'text-ui-fg-disabled')}
+                >
                   / {item.quantity} {t('fields.qty')}
                 </span>
               </div>
             </div>
           )}
         </div>
+
+        {!hasInventoryKit && (
+          <Form.ErrorMessage
+            className="flex justify-end pb-2 pr-3"
+            data-testid={`order-allocate-items-item-${item.id}-general-error`}
+          />
+        )}
       </div>
 
       {hasInventoryKit && (
         <div className="px-4 py-2">
-          <div onClick={() => setIsOpen(o => !o)} className="flex cursor-pointer items-center gap-x-2">
+          <div
+            onClick={() => setIsOpen(o => !o)}
+            className="flex cursor-pointer items-center gap-x-2"
+          >
             <TriangleDownMini
               style={{ transform: `rotate(${isOpen ? -90 : 0}deg)` }}
               className="-mt-[1px] text-ui-fg-muted"
@@ -372,12 +408,15 @@ export function OrderAllocateItemsItem({
       )}
 
       {isOpen &&
-        variant.inventory.map((i, ind) => {
+        variant?.inventory?.map((i, ind) => {
           const location = i.location_levels?.find(l => l.location_id === locationId);
 
+          const fieldValue = quantityField[`${item.id}-${i.id}`];
           const hasQuantityError =
-            !!quantityField[`${item.id}-${i.id}`] &&
-            quantityField[`${item.id}-${i.id}`] > location?.available_quantity;
+            !!fieldValue &&
+            typeof fieldValue === 'number' &&
+            location &&
+            fieldValue > location.available_quantity;
 
           return (
             <div
@@ -404,7 +443,10 @@ export function OrderAllocateItemsItem({
 
               <div className="flex flex-1 flex-row justify-between">
                 <div className="flex items-center gap-3">
-                  <Divider orientation="vertical" className="h-4" />
+                  <Divider
+                    orientation="vertical"
+                    className="h-4"
+                  />
 
                   <div className="txt-small flex flex-col">
                     <span className="font-medium text-ui-fg-subtle">
@@ -422,7 +464,10 @@ export function OrderAllocateItemsItem({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Divider orientation="vertical" className="h-4" />
+                  <Divider
+                    orientation="vertical"
+                    className="h-4"
+                  />
 
                   <div className="txt-small flex flex-col">
                     <span className="font-medium text-ui-fg-subtle">
@@ -433,7 +478,10 @@ export function OrderAllocateItemsItem({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Divider orientation="vertical" className="h-4" />
+                  <Divider
+                    orientation="vertical"
+                    className="h-4"
+                  />
 
                   <div className="txt-small mr-1 flex flex-row items-center gap-2 text-ui-fg-subtle">
                     <Form.Field
@@ -465,7 +513,7 @@ export function OrderAllocateItemsItem({
                         );
                       }}
                     />
-                    / {item.quantity * variant.inventory_items[ind].required_quantity}{' '}
+                    / {item.quantity * (variant?.inventory_items?.[ind]?.required_quantity || 1)}{' '}
                     {t('fields.qty')}
                   </div>
                 </div>

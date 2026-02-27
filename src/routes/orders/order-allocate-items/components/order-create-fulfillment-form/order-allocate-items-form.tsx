@@ -1,9 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { ExtendedAdminOrder, ManagedBy } from '@custom-types/order';
+import {
+  ExtendedAdminOrder,
+  ExtendedAdminOrderLineItem,
+  ExtendedInventoryItemDTO,
+  ManagedBy
+} from '@custom-types/order';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { InventoryItemDTO, OrderLineItemDTO } from '@medusajs/types';
-import { Alert, Button, Heading, toast } from '@medusajs/ui';
+import { MagnifyingGlass } from '@medusajs/icons';
+import { Alert, Button, Heading, Input, Text, toast } from '@medusajs/ui';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import * as zod from 'zod';
@@ -31,6 +36,7 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
   const { t } = useTranslation();
   const { handleSuccess } = useRouteModal();
   const [disableSubmit, setDisableSubmit] = useState(false);
+  const [filterTerm, setFilterTerm] = useState('');
 
   const { mutateAsync: allocateItems, isPending: isMutating } = useCreateReservationItem();
 
@@ -44,11 +50,7 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
       }))
   });
 
-  const adminLocationIds = useMemo(() => {
-    return new Set(stockLocations.options.map(opt => opt.value));
-  }, [stockLocations.options]);
-
-  const [allocatableItems, setAllocatableItems] = useState(() => {
+  const allocatableItems = useMemo(() => {
     const itemsWithQuantity = (order.items || []).filter(
       item =>
         item.variant?.manage_inventory &&
@@ -56,12 +58,31 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
         getFulfillableQuantity(item) > 0
     );
     return itemsWithQuantity;
-  });
+  }, [order.items]);
+
+  const filteredItems = useMemo(() => {
+    if (!filterTerm) {
+      return allocatableItems;
+    }
+    return allocatableItems.filter(
+      i =>
+        i.variant_title?.toLowerCase().includes(filterTerm.toLowerCase()) ||
+        i.product_title?.toLowerCase().includes(filterTerm.toLowerCase()) ||
+        i.title?.toLowerCase().includes(filterTerm.toLowerCase()) ||
+        i.variant_sku?.toLowerCase().includes(filterTerm.toLowerCase())
+    );
+  }, [allocatableItems, filterTerm]);
 
   const form = useForm<zod.infer<typeof AllocateItemsSchema>>({
     defaultValues: {
       quantity: defaultAllocations(allocatableItems),
-      selected_items: allocatableItems.map(item => item.id),
+      selected_items: allocatableItems
+        .filter(
+          item =>
+            item.variant?.managed_by === ManagedBy.ADMIN ||
+            item.variant?.managed_by === ManagedBy.BOTH
+        )
+        .map(item => item.id),
       location_id: ''
     },
     resolver: zodResolver(AllocateItemsSchema)
@@ -74,10 +95,12 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
 
   const handleSubmit = form.handleSubmit(async data => {
     if (!selectedLocationId) {
-      form.setError('location_id', {
-        type: 'manual',
-        message: t('orders.allocateItems.error.noLocation')
-      });
+      toast.error(t('orders.allocateItems.error.noLocation'));
+      return;
+    }
+
+    if (data.selected_items.length === 0) {
+      toast.error(t('orders.allocateItems.error.noItemsSelected'));
       return;
     }
 
@@ -91,10 +114,7 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
         .map(([key, quantity]) => [...key.split('-'), quantity]);
 
       if (payload.some(d => d[2] === '')) {
-        form.setError('root.quantityNotAllocated', {
-          type: 'manual',
-          message: t('orders.allocateItems.error.quantityNotAllocated')
-        });
+        toast.error(t('orders.allocateItems.error.quantityNotAllocated'));
 
         return;
       }
@@ -132,18 +152,17 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
         toast.error(t('general.error'), {
           description: t('orders.allocateItems.toast.error', {
             items: failedItems
-          }),
-          dismissLabel: t('actions.close')
+          })
         });
       }
     } catch (e) {
-      toast.error(e.message);
+      toast.error(e instanceof Error ? e.message : 'An error occurred');
     }
   });
 
   const onQuantityChange = (
-    inventoryItem: InventoryItemDTO,
-    lineItem: OrderLineItemDTO,
+    inventoryItem: ExtendedInventoryItemDTO,
+    lineItem: ExtendedAdminOrderLineItem,
     hasInventoryKit: boolean,
     value: number | null,
     isRoot?: boolean
@@ -155,6 +174,7 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
         ? `quantity.${lineItem.id}-`
         : `quantity.${lineItem.id}-${inventoryItem.id}`;
 
+    // @ts-ignore - dynamic form field key
     form.setValue(key, value);
 
     if (value) {
@@ -178,19 +198,25 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
 
       const item = allocatableItems.find(i => i.id === lineItem.id);
 
-      item.variant?.inventory_items?.forEach((ii, ind) => {
+      item?.variant?.inventory_items?.forEach((ii, ind) => {
         const num = value || 0;
-        const inventory = item.variant?.inventory[ind];
+        const inventory = item?.variant?.inventory?.[ind];
 
-        form.setValue(`quantity.${lineItem.id}-${inventory.id}`, num * ii.required_quantity);
-
-        if (value) {
-          const location = inventory?.location_levels?.find(
-            l => l.location_id === selectedLocationId
+        if (inventory) {
+          // @ts-ignore - dynamic form field key
+          form.setValue(
+            `quantity.${lineItem.id}-${inventory.id}`,
+            num * (ii.required_quantity || 1)
           );
-          if (location) {
-            if (location.available_quantity < value) {
-              shouldDisableSubmit = true;
+
+          if (value) {
+            const location = inventory?.location_levels?.find(
+              l => l.location_id === selectedLocationId
+            );
+            if (location) {
+              if (location.available_quantity < value) {
+                shouldDisableSubmit = true;
+              }
             }
           }
         }
@@ -204,8 +230,23 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
   useEffect(() => {
     if (selectedLocationId) {
       form.setValue('quantity', defaultAllocations(allocatableItems));
+      form.setValue(
+        'selected_items',
+        allocatableItems
+          .filter(
+            item =>
+              item.variant?.managed_by === ManagedBy.ADMIN ||
+              item.variant?.managed_by === ManagedBy.BOTH
+          )
+          .map(item => item.id)
+      );
     }
-  }, [selectedLocationId]);
+  }, [selectedLocationId, allocatableItems]);
+
+  const selectedItems = useWatch({
+    name: 'selected_items',
+    control: form.control
+  });
 
   const showLevelsWarning = useMemo(() => {
     if (!selectedLocationId) {
@@ -218,6 +259,10 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
           return true;
         }
 
+        if (!selectedItems.includes(item.id)) {
+          return true;
+        }
+
         if (!item.variant?.manage_inventory) {
           return true;
         }
@@ -225,12 +270,12 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
         const inventory = item.variant?.inventory?.[0];
         const locationLevels = inventory?.location_levels;
 
-        return locationLevels?.find((l: any) => l.location_id === selectedLocationId);
+        return locationLevels?.find(l => l.location_id === selectedLocationId);
       })
       .every(Boolean);
 
     return !allItemsHaveLocation;
-  }, [allocatableItems, selectedLocationId]);
+  }, [allocatableItems, selectedLocationId, selectedItems]);
 
   const hasNoAllocatableItems = useMemo(() => {
     return allocatableItems.every(
@@ -317,7 +362,7 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
                           {t('orders.returns.noInventoryLevel')}
                         </span>
                         <span className="text-ui-fg-muted">
-                          {t('orders.returns.noInventoryLevelDesc')}
+                          {t('orders.allocateItems.noLevelsWarningDescription')}
                         </span>
                       </Alert>
                     )}
@@ -328,37 +373,62 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
                       className="mt-8 space-y-3"
                       data-testid="order-allocate-items-items-item"
                     >
-                      <div>
-                        <Form.Label data-testid="order-allocate-items-items-label">
-                          {t('orders.allocateItems.itemsToAllocate')}
-                        </Form.Label>
-                        <Form.Hint data-testid="order-allocate-items-items-hint">
-                          {t('orders.allocateItems.itemsToAllocateDesc')}
-                        </Form.Hint>
+                      <div className="flex flex-row items-center gap-x-4">
+                        <div className="flex-1">
+                          <Form.Label data-testid="order-allocate-items-items-label">
+                            {t('orders.allocateItems.itemsToAllocate')}
+                          </Form.Label>
+                          <Form.Hint data-testid="order-allocate-items-items-hint">
+                            {t('orders.allocateItems.itemsToAllocateDesc')}
+                          </Form.Hint>
+                        </div>
+                        <div className="flex-1 sm:max-w-[200px]">
+                          <Input
+                            value={filterTerm}
+                            onChange={e => setFilterTerm(e.target.value)}
+                            placeholder={t('orders.allocateItems.search')}
+                            autoComplete="off"
+                            type="search"
+                            data-testid="order-allocate-items-search-input"
+                          />
+                        </div>
                       </div>
 
-                      <div
-                        className="flex flex-col gap-y-2"
-                        data-testid="order-allocate-items-items-list"
-                      >
-                        {allocatableItems.map(item => {
-                          const managedByAdmin =
-                            item.variant?.managed_by === ManagedBy.ADMIN ||
-                            item.variant?.managed_by === ManagedBy.BOTH;
+                      {filteredItems.length === 0 && filterTerm ? (
+                        <div className="flex flex-col items-center justify-center gap-y-2 rounded-xl bg-ui-bg-subtle p-3 text-center shadow-elevation-card-rest">
+                          <MagnifyingGlass className="text-ui-fg-subtle" />
+                          <Text
+                            size="small"
+                            leading="compact"
+                            weight="plus"
+                          >
+                            {t('general.noSearchResults')}
+                          </Text>
+                        </div>
+                      ) : (
+                        <div
+                          className="flex flex-col gap-y-2"
+                          data-testid="order-allocate-items-items-list"
+                        >
+                          {filteredItems.map(item => {
+                            const managedByAdmin =
+                              item.variant?.managed_by === ManagedBy.ADMIN ||
+                              item.variant?.managed_by === ManagedBy.BOTH;
 
-                          return (
-                            <OrderAllocateItemsItem
-                              key={item.id}
-                              form={form}
-                              item={item}
-                              locationId={selectedLocationId}
-                              onQuantityChange={onQuantityChange}
-                              disabled={showLevelsWarning || !managedByAdmin}
-                              managedByAdmin={managedByAdmin}
-                            />
-                          );
-                        })}
-                      </div>
+                            return (
+                              <OrderAllocateItemsItem
+                                key={item.id}
+                                form={form}
+                                item={item}
+                                locationId={selectedLocationId}
+                                onQuantityChange={onQuantityChange}
+                                disabled={showLevelsWarning || !managedByAdmin}
+                                managedByAdmin={managedByAdmin}
+                              />
+                            );
+                          })}
+                        </div>
+                      )}
                     </Form.Item>
                     {form.formState.errors.root && (
                       <Alert
@@ -399,7 +469,7 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
                 disabled={!selectedLocationId || disableSubmit}
                 data-testid="order-allocate-items-submit-button"
               >
-                {t('orders.allocateItems.action')}
+                {t('actions.confirm')}
               </Button>
             </div>
           </RouteFocusModal.Footer>
@@ -409,13 +479,14 @@ export function OrderAllocateItemsForm({ order }: OrderAllocateItemsFormProps) {
   );
 }
 
-function defaultAllocations(items: OrderLineItemDTO[]) {
-  const ret = {};
+function defaultAllocations(items: ExtendedAdminOrderLineItem[]) {
+  const ret: Record<string, string | number> = {};
 
   items.forEach(item => {
     const hasInventoryKit = checkInventoryKit(item);
 
-    ret[hasInventoryKit ? `${item.id}-` : `${item.id}-${item.variant?.inventory[0].id}`] = '';
+    const firstInventoryId = item.variant?.inventory?.[0]?.id;
+    ret[hasInventoryKit ? `${item.id}-` : `${item.id}-${firstInventoryId}`] = '';
 
     if (hasInventoryKit) {
       item.variant?.inventory?.forEach(i => {
