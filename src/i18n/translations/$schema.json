@@ -5312,9 +5312,17 @@
                 },
                 "reasonRequired": {
                   "type": "string"
+                },
+                "refundAmountError": {
+                  "type": "string"
                 }
               },
-              "required": ["amountToLarge", "amountNegative", "reasonRequired"],
+              "required": [
+                "amountToLarge",
+                "amountNegative",
+                "reasonRequired",
+                "refundAmountError"
+              ],
               "additionalProperties": false
             }
           },
