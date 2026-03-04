@@ -1022,11 +1022,14 @@
     },
     "transfer": {
       "title": "نقل الملكية",
-      "requestSuccess": "تم إرسال طلب نقل الطلب إلى: {{email}}.",
+      "requestSuccess": "تم إرسال طلب نقل الطلب إلى {{customerDetails}}.",
       "currentOwner": "المالك الحالي",
       "newOwner": "المالك الجديد",
       "currentOwnerDescription": "العميل المرتبط حاليًا بهذا الطلب.",
-      "newOwnerDescription": "العميل الذي سيتم نقل هذا الطلب إليه."
+      "newOwnerDescription": "العميل الذي سيتم نقل هذا الطلب إليه.",
+      "errors": {
+        "orderChangeAlreadyExists": "لا يمكن نقل الطلب لأن هناك طلب نقل نشط موجود."
+      }
     },
     "payment": {
       "title": "المدفوعات",
@@ -1094,15 +1097,23 @@
     "edit": {
       "email": {
         "title": "تحرير البريد الإلكتروني",
-        "requestSuccess": "تم تحديث البريد الإلكتروني للطلب إلى {{email}}."
+        "requestSuccess": "تم تحديث البريد الإلكتروني بنجاح."
       },
       "shippingAddress": {
         "title": "تحرير عنوان الشحن",
-        "requestSuccess": "تم تحديث عنوان الشحن للطلب."
+        "requestSuccess": "تم تحديث عنوان الشحن للطلب.",
+        "validation": {
+          "addressRequired": "الرجاء إدخال العنوان",
+          "countryRequired": "الرجاء تحديد البلد"
+        }
       },
       "billingAddress": {
         "title": "تحرير عنوان الفواتير",
-        "requestSuccess": "تم تحديث عنوان الفواتير للطلب."
+        "requestSuccess": "تم تحديث عنوان الفواتير للطلب.",
+        "validation": {
+          "addressRequired": "الرجاء إدخال العنوان",
+          "countryRequired": "الرجاء تحديد البلد"
+        }
       }
     },
     "returns": {
@@ -1264,7 +1275,9 @@
     "shipment": {
       "title": "تحديد الشحنة كمشحونة",
       "trackingNumber": "رقم التتبع",
+      "trackingUrl": "رابط التتبع",
       "addTracking": "إضافة رقم التتبع",
+      "hideTracking": "إخفاء رقم التتبع",
       "sendNotification": "إرسال إشعار",
       "sendNotificationHint": "إخطار العميل حول هذه الشحنة.",
       "toastCreated": "تم إنشاء الشحنة بنجاح."
@@ -2210,7 +2223,8 @@
       "header": "المنتجات",
       "actions": {
         "addProducts": "إضافة منتجات",
-        "editPrices": "تحرير الأسعار"
+        "editPrices": "تحرير الأسعار",
+        "editPricesDisabled": "أضف المنتجات قبل تحرير الأسعار"
       },
       "delete": {
         "confirmation_one": "أنت على وشك حذف الأسعار لـ {{count}} منتج في قائمة الأسعار. لا يمكن التراجع عن هذا الإجراء.",
@@ -2610,7 +2624,10 @@
         "placeholder": "خطأ في الحجم",
         "tooltip": "يجب أن تكون القيمة معرفًا فريدًا لسبب الإرجاع."
       },
-      "label": { "label": "التسمية", "placeholder": "خطأ في الحجم" },
+      "label": {
+        "label": "التسمية",
+        "placeholder": "خطأ في الحجم"
+      },
       "description": {
         "label": "الوصف",
         "placeholder": "تلقى العميل الحجم الخطأ"

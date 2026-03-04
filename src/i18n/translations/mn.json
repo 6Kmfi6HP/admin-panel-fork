@@ -1004,11 +1004,14 @@
     },
     "transfer": {
       "title": "Өмчлөл шилжүүлэх",
-      "requestSuccess": "Захиалгын шилжүүлэх хүсэлт: {{email}}-д илгээгдсэн.",
+      "requestSuccess": "Захиалгын шилжүүлэх хүсэлт {{customerDetails}}-д илгээгдсэн.",
       "currentOwner": "Одоогийн эзэмшигч",
       "newOwner": "Шинэ эзэмшигч",
       "currentOwnerDescription": "Энэ захиалга холбоотой одоогийн үйлчлүүлэгч.",
-      "newOwnerDescription": "Энэ захиалгыг шилжүүлэх үйлчлүүлэгч."
+      "newOwnerDescription": "Энэ захиалгыг шилжүүлэх үйлчлүүлэгч.",
+      "errors": {
+        "orderChangeAlreadyExists": "Идэвхтэй шилжүүлэх хүсэлт байгаа тул захиалгыг шилжүүлж болохгүй."
+      }
     },
     "payment": {
       "title": "Төлбөрүүд",
@@ -1076,15 +1079,23 @@
     "edit": {
       "email": {
         "title": "Имэйлийг засах",
-        "requestSuccess": "Захиалгын имэйл {{email}}-д шинэчлэгдсэн."
+        "requestSuccess": "Имэйл амжилттай шинэчлэгдлээ."
       },
       "shippingAddress": {
         "title": "Хүргэлтийн хаягийг засах",
-        "requestSuccess": "Захиалгын хүргэлтийн хаяг шинэчлэгдсэн."
+        "requestSuccess": "Захиалгын хүргэлтийн хаяг шинэчлэгдсэн.",
+        "validation": {
+          "addressRequired": "Хаяг оруулна уу",
+          "countryRequired": "Улс сонгоно уу"
+        }
       },
       "billingAddress": {
         "title": "Төлбөрийн хаягийг засах",
-        "requestSuccess": "Захиалгын төлбөрийн хаяг шинэчлэгдсэн."
+        "requestSuccess": "Захиалгын төлбөрийн хаяг шинэчлэгдсэн.",
+        "validation": {
+          "addressRequired": "Хаяг оруулна уу",
+          "countryRequired": "Улс сонгоно уу"
+        }
       }
     },
     "returns": {
@@ -1246,7 +1257,9 @@
     "shipment": {
       "title": "Биелэлтийг илгээгдсэн гэж тэмдэглэх",
       "trackingNumber": "Мөрдөх дугаар",
+      "trackingUrl": "Мөрдөх URL",
       "addTracking": "Мөрдөх дугаар нэмэх",
+      "hideTracking": "Мөрдөх дугаарыг нуух",
       "sendNotification": "Мэдэгдэл илгээх",
       "sendNotificationHint": "Энэ хүргэлтийн талаар үйлчлүүлэгчдэд мэдэгдэх.",
       "toastCreated": "Хүргэлт амжилттай үүсгэгдсэн."
@@ -1399,7 +1412,7 @@
       "refundableAmount": "Буцаах боломжтой хэмжээ",
       "returnableQuantity": "Буцаах боломжтой хэмжээ"
     }
-  },    
+  },
   "draftOrders": {
     "domain": "Ноорог захиалгууд",
     "deleteWarning": "Та {{id}} ноорог захиалгыг устгах гэж байна. Энэ үйлдлийг буцаах боломжгүй.",
@@ -2188,7 +2201,8 @@
       "header": "Бүтээгдэхүүнүүд",
       "actions": {
         "addProducts": "Бүтээгдэхүүнүүд нэмэх",
-        "editPrices": "Үнийг засах"
+        "editPrices": "Үнийг засах",
+        "editPricesDisabled": "Үнийг засахын өмнө бүтээгдэхүүн нэмнэ үү"
       },
       "delete": {
         "confirmation_one": "Та үнийн жагсаалтад {{count}} бүтээгдэхүүний үнийг устгах гэж байна. Энэ үйлдлийг буцаах боломжгүй.",
@@ -2247,7 +2261,7 @@
         "attribute": "Үйлчлүүлэгчдийн бүлгүүд"
       }
     }
-  },  
+  },
   "profile": {
     "domain": "Профайл",
     "manageYourProfileDetails": "Профайлын дэлгэрэнгүй мэдээллийг удирдах.",
@@ -2317,7 +2331,7 @@
       "currenciesRemoved": "Дэлгүүрээс валютууд амжилттай устгагдлаа",
       "updatedTaxInclusivitySuccessfully": "Татвар багтсан үнийг амжилттай шинэчлэгдлээ"
     }
-  },  
+  },
   "regions": {
     "domain": "Бүсүүд",
     "subtitle": "Бүс гэдэг нь та бүтээгдэхүүнээ борлуулдаг газар юм. Энэ нь олон улсыг хамарч, өөр өөр татварын хувь, үйлчилгээ үзүүлэгчид, валюттай байж болно.",
@@ -2420,7 +2434,7 @@
       "productTypeOverridesHeader": "Бүтээгдэхүүний төрлүүд",
       "shippingOptionOverridesHeader": "Хүргэлтийн сонголтууд"
     }
-  },  
+  },
   "locations": {
     "domain": "Байршлууд",
     "editLocation": "Байршлыг засах",
@@ -2551,7 +2565,7 @@
       "revokedAtLabel": "Цуцлагдсан",
       "createdByLabel": "Үүсгэсэн"
     }
-  },  
+  },
   "returnReasons": {
     "domain": "Буцаалтын Шалтгаанууд",
     "subtitle": "Буцаагдсан зүйлсийн шалтгааныг удирдах.",
@@ -2578,7 +2592,10 @@
         "placeholder": "wrong_size",
         "tooltip": "Утга нь буцаалтын шалтгааны хувьд өвөрмөц танигч байх ёстой."
       },
-      "label": { "label": "Шошго", "placeholder": "Буруу хэмжээ" },
+      "label": {
+        "label": "Шошго",
+        "placeholder": "Буруу хэмжээ"
+      },
       "description": {
         "label": "Тайлбар",
         "placeholder": "Үйлчлүүлэгч буруу хэмжээтэй бүтээгдэхүүн хүлээн авсан"
@@ -2676,7 +2693,7 @@
         "timeout": "Цаг хэтрэх"
       }
     }
-  },  
+  },
   "productTypes": {
     "domain": "Бүтээгдэхүүний Төрлүүд",
     "subtitle": "Бүтээгдэхүүнээ төрөлд ангилах.",
@@ -2923,5 +2940,5 @@
     "minutes_other": "Минут",
     "seconds_one": "Секунд",
     "seconds_other": "Секунд"
-  }  
+  }
 }

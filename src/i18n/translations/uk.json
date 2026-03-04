@@ -954,11 +954,14 @@
     },
     "transfer": {
       "title": "Передати право власності",
-      "requestSuccess": "Запит на передачу замовлення надіслано на: {{email}}.",
+      "requestSuccess": "Запит на передачу замовлення надіслано до {{customerDetails}}.",
       "currentOwner": "Поточний власник",
       "newOwner": "Новий власник",
       "currentOwnerDescription": "Клієнт, який наразі пов'язаний з цим замовленням.",
-      "newOwnerDescription": "Клієнт, якому буде передано це замовлення."
+      "newOwnerDescription": "Клієнт, якому буде передано це замовлення.",
+      "errors": {
+        "orderChangeAlreadyExists": "Неможливо передати замовлення, оскільки існує активний запит на передачу."
+      }
     },
     "payment": {
       "title": "Платежі",
@@ -1026,15 +1029,23 @@
     "edit": {
       "email": {
         "title": "Редагувати email",
-        "requestSuccess": "Email замовлення оновлено на {{email}}."
+        "requestSuccess": "Email було успішно оновлено."
       },
       "shippingAddress": {
         "title": "Редагувати адресу доставки",
-        "requestSuccess": "Адреса доставки замовлення оновлена."
+        "requestSuccess": "Адреса доставки замовлення оновлена.",
+        "validation": {
+          "addressRequired": "Будь ласка, введіть адресу",
+          "countryRequired": "Будь ласка, виберіть країну"
+        }
       },
       "billingAddress": {
         "title": "Редагувати адресу для рахунку",
-        "requestSuccess": "Адреса для рахунку замовлення оновлена."
+        "requestSuccess": "Адреса для рахунку замовлення оновлена.",
+        "validation": {
+          "addressRequired": "Будь ласка, введіть адресу",
+          "countryRequired": "Будь ласка, виберіть країну"
+        }
       }
     },
     "returns": {
@@ -1196,7 +1207,9 @@
     "shipment": {
       "title": "Позначити відправлення як відправлене",
       "trackingNumber": "Номер відстеження",
+      "trackingUrl": "URL відстеження",
       "addTracking": "Додати номер відстеження",
+      "hideTracking": "Приховати номер відстеження",
       "sendNotification": "Надіслати сповіщення",
       "sendNotificationHint": "Сповістіть клієнта про це відправлення.",
       "toastCreated": "Відправлення успішно створено."
@@ -2125,7 +2138,8 @@
       "header": "Продукти",
       "actions": {
         "addProducts": "Додати продукти",
-        "editPrices": "Редагувати ціни"
+        "editPrices": "Редагувати ціни",
+        "editPricesDisabled": "Додайте продукти перед редагуванням цін"
       },
       "delete": {
         "confirmation_one": "Ви збираєтесь видалити ціни для {{count}} продукту в ціновому списку. Цю дію неможливо скасувати.",
@@ -2514,7 +2528,10 @@
         "placeholder": "неправильний_розмір",
         "tooltip": "Значення має бути унікальним ідентифікатором для причини повернення."
       },
-      "label": { "label": "Мітка", "placeholder": "Неправильний розмір" },
+      "label": {
+        "label": "Мітка",
+        "placeholder": "Неправильний розмір"
+      },
       "description": {
         "label": "Опис",
         "placeholder": "Клієнт отримав неправильний розмір"

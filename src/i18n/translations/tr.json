@@ -1012,11 +1012,14 @@
     },
     "transfer": {
       "title": "Mülkiyeti Devret",
-      "requestSuccess": "Sipariş devri talebi şu kişiye gönderildi: {{email}}.",
+      "requestSuccess": "Sipariş devri talebi {{customerDetails}} adresine gönderildi.",
       "currentOwner": "Mevcut Sahip",
       "newOwner": "Yeni Sahip",
       "currentOwnerDescription": "Bu siparişle şu anda ilişkili olan müşteri.",
-      "newOwnerDescription": "Bu siparişin devredileceği müşteri."
+      "newOwnerDescription": "Bu siparişin devredileceği müşteri.",
+      "errors": {
+        "orderChangeAlreadyExists": "Aktif bir transfer talebi olduğu için sipariş transfer edilemez."
+      }
     },
     "payment": {
       "title": "Ödemeler",
@@ -1240,7 +1243,9 @@
     "shipment": {
       "title": "Gönderimi İşaretle",
       "trackingNumber": "Takip numarası",
+      "trackingUrl": "Takip URL'si",
       "addTracking": "Takip numarası ekle",
+      "hideTracking": "Takip numarasını gizle",
       "sendNotification": "Bildirim gönder",
       "sendNotificationHint": "Müşteriye bu gönderim hakkında bilgi ver.",
       "toastCreated": "Gönderim başarıyla oluşturuldu."
@@ -1410,15 +1415,23 @@
     "edit": {
       "email": {
         "title": "E-postayı düzenle",
-        "requestSuccess": "Sipariş e-postası {{email}} olarak güncellendi."
+        "requestSuccess": "E-posta başarıyla güncellendi."
       },
       "shippingAddress": {
         "title": "Teslimat adresini düzenle",
-        "requestSuccess": "Sipariş teslimat adresi güncellendi."
+        "requestSuccess": "Sipariş teslimat adresi güncellendi.",
+        "validation": {
+          "addressRequired": "Lütfen bir adres girin",
+          "countryRequired": "Lütfen bir ülke seçin"
+        }
       },
       "billingAddress": {
         "title": "Fatura adresini düzenle",
-        "requestSuccess": "Sipariş fatura adresi güncellendi."
+        "requestSuccess": "Sipariş fatura adresi güncellendi.",
+        "validation": {
+          "addressRequired": "Lütfen bir adres girin",
+          "countryRequired": "Lütfen bir ülke seçin"
+        }
       }
     }
   },
@@ -2210,7 +2223,8 @@
       "header": "Ürünler",
       "actions": {
         "addProducts": "Ürünleri ekle",
-        "editPrices": "Fiyatları düzenle"
+        "editPrices": "Fiyatları düzenle",
+        "editPricesDisabled": "Fiyatları düzenlemeden önce ürün ekleyin"
       },
       "delete": {
         "confirmation_one": "Fiyat listesindeki {{count}} ürün için fiyatları silmek üzeresiniz. Bu işlem geri alınamaz.",

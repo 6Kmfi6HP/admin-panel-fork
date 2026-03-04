@@ -1004,11 +1004,14 @@
     },
     "transfer": {
       "title": "Transferați proprietatea",
-      "requestSuccess": "Solicitare de transfer de comandă trimisă la: {{email}}.",
+      "requestSuccess": "Solicitarea de transfer de comandă a fost trimisă către {{customerDetails}}.",
       "currentOwner": "Actual proprietar",
       "newOwner": "Noul proprietar",
       "currentOwnerDescription": "Clientul se referă în prezent la această comandă.",
-      "newOwnerDescription": "Clientului să transfere această comandă."
+      "newOwnerDescription": "Clientului să transfere această comandă.",
+      "errors": {
+        "orderChangeAlreadyExists": "Comanda nu poate fi transferată deoarece există o solicitare de transfer activă."
+      }
     },
     "payment": {
       "title": "Plăți",
@@ -1076,15 +1079,23 @@
     "edit": {
       "email": {
         "title": "Editați e-mailul",
-        "requestSuccess": "E-mail de comandă actualizat la {{email}}."
+        "requestSuccess": "E-mailul a fost actualizat cu succes."
       },
       "shippingAddress": {
         "title": "Editați adresa de livrare",
-        "requestSuccess": "Adresa de livrare a comenzii a fost actualizată."
+        "requestSuccess": "Adresa de livrare a comenzii a fost actualizată.",
+        "validation": {
+          "addressRequired": "Vă rugăm să introduceți o adresă",
+          "countryRequired": "Vă rugăm să selectați o țară"
+        }
       },
       "billingAddress": {
         "title": "Editați adresa de facturare",
-        "requestSuccess": "Adresa de facturare a comenzii a fost actualizată."
+        "requestSuccess": "Adresa de facturare a comenzii a fost actualizată.",
+        "validation": {
+          "addressRequired": "Vă rugăm să introduceți o adresă",
+          "countryRequired": "Vă rugăm să selectați o țară"
+        }
       }
     },
     "returns": {
@@ -1246,7 +1257,9 @@
     "shipment": {
       "title": "Marcați îndeplinirea expediate",
       "trackingNumber": "Număr de urmărire",
+      "trackingUrl": "URL de urmărire",
       "addTracking": "Adăugați numărul de urmărire",
+      "hideTracking": "Ascundeți numărul de urmărire",
       "sendNotification": "Trimite o notificare",
       "sendNotificationHint": "Notificați clientul despre această expediere.",
       "toastCreated": "Expedierea a fost creată cu succes."
@@ -2188,7 +2201,8 @@
       "header": "Produse",
       "actions": {
         "addProducts": "Adăugați produse",
-        "editPrices": "Editați prețurile"
+        "editPrices": "Editați prețurile",
+        "editPricesDisabled": "Adăugați produse înainte de a edita prețurile"
       },
       "delete": {
         "confirmation_one": "Sunteți pe cale să ștergeți prețurile pentru {{count}} produs în lista de prețuri. ",

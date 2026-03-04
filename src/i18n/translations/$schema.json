@@ -4098,6 +4098,16 @@
             },
             "newOwnerDescription": {
               "type": "string"
+            },
+            "errors": {
+              "type": "object",
+              "properties": {
+                "orderChangeAlreadyExists": {
+                  "type": "string"
+                }
+              },
+              "required": ["orderChangeAlreadyExists"],
+              "additionalProperties": false
             }
           },
           "required": [
@@ -4106,7 +4116,8 @@
             "currentOwner",
             "newOwner",
             "currentOwnerDescription",
-            "newOwnerDescription"
+            "newOwnerDescription",
+            "errors"
           ],
           "additionalProperties": false
         },
@@ -4390,9 +4401,22 @@
                 },
                 "requestSuccess": {
                   "type": "string"
+                },
+                "validation": {
+                  "type": "object",
+                  "properties": {
+                    "addressRequired": {
+                      "type": "string"
+                    },
+                    "countryRequired": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["addressRequired", "countryRequired"],
+                  "additionalProperties": false
                 }
               },
-              "required": ["title", "requestSuccess"],
+              "required": ["title", "requestSuccess", "validation"],
               "additionalProperties": false
             },
             "billingAddress": {
@@ -4403,9 +4427,22 @@
                 },
                 "requestSuccess": {
                   "type": "string"
+                },
+                "validation": {
+                  "type": "object",
+                  "properties": {
+                    "addressRequired": {
+                      "type": "string"
+                    },
+                    "countryRequired": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["addressRequired", "countryRequired"],
+                  "additionalProperties": false
                 }
               },
-              "required": ["title", "requestSuccess"],
+              "required": ["title", "requestSuccess", "validation"],
               "additionalProperties": false
             }
           },
@@ -4503,6 +4540,15 @@
               "type": "string"
             },
             "activeChangeError": {
+              "type": "string"
+            },
+            "cantBeReceivedByAdmin": {
+              "type": "string"
+            },
+            "cantBeCanceledByAdmin": {
+              "type": "string"
+            },
+            "cantCreateReturnByAdmin": {
               "type": "string"
             },
             "cancel": {
@@ -4677,6 +4723,9 @@
             "damagedItemReceived",
             "damagedItemsReturned",
             "activeChangeError",
+            "cantBeReceivedByAdmin",
+            "cantBeCanceledByAdmin",
+            "cantCreateReturnByAdmin",
             "cancel",
             "placeholders",
             "receive",
@@ -5018,7 +5067,13 @@
             "trackingNumber": {
               "type": "string"
             },
+            "trackingUrl": {
+              "type": "string"
+            },
             "addTracking": {
+              "type": "string"
+            },
+            "hideTracking": {
               "type": "string"
             },
             "sendNotification": {
@@ -5034,7 +5089,9 @@
           "required": [
             "title",
             "trackingNumber",
+            "trackingUrl",
             "addTracking",
+            "hideTracking",
             "sendNotification",
             "sendNotificationHint",
             "toastCreated"
@@ -8732,9 +8789,12 @@
                 },
                 "editPrices": {
                   "type": "string"
+                },
+                "editPricesDisabled": {
+                  "type": "string"
                 }
               },
-              "required": ["addProducts", "editPrices"],
+              "required": ["addProducts", "editPrices", "editPricesDisabled"],
               "additionalProperties": false
             },
             "delete": {

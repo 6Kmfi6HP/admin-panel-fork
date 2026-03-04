@@ -1045,11 +1045,14 @@
     },
     "transfer": {
       "title": "Perleisti nuosavybę",
-      "requestSuccess": "Užsakymo nuosavybės perleidimo prašymas išsiųstas į {{email}}.",
+      "requestSuccess": "Užsakymo nuosavybės perleidimo prašymas išsiųstas į {{customerDetails}}.",
       "currentOwner": "Dabartinis savininkas",
       "newOwner": "Naujas savininkas",
       "currentOwnerDescription": "Pirkėjas jau susietas su šiuo užsakymu.",
-      "newOwnerDescription": "Pirkėjas kuriam perleidžiamos užsakymmo nuosavybė."
+      "newOwnerDescription": "Pirkėjas kuriam perleidžiamos užsakymmo nuosavybė.",
+      "errors": {
+        "orderChangeAlreadyExists": "Užsakymas negali būti perleistas, nes yra aktyvus perleidimo prašymas."
+      }
     },
     "payment": {
       "title": "Apmokėjimas",
@@ -1117,15 +1120,23 @@
     "edit": {
       "email": {
         "title": "Keisti el. paštą",
-        "requestSuccess": "Užsakymo el. paštas pakeitas į {{email}}."
+        "requestSuccess": "El. paštas sėkmingai atnaujintas."
       },
       "shippingAddress": {
         "title": "Keisti pristatymo adresą",
-        "requestSuccess": "Užsakymo pristatymo adresas pakeistas."
+        "requestSuccess": "Užsakymo pristatymo adresas pakeistas.",
+        "validation": {
+          "addressRequired": "Prašome įvesti adresą",
+          "countryRequired": "Prašome pasirinkti šalį"
+        }
       },
       "billingAddress": {
         "title": "Keisti adresą sąskaitai",
-        "requestSuccess": "Užsakymo adresas sąskaitai pakeistas."
+        "requestSuccess": "Užsakymo adresas sąskaitai pakeistas.",
+        "validation": {
+          "addressRequired": "Prašome įvesti adresą",
+          "countryRequired": "Prašome pasirinkti šalį"
+        }
       }
     },
     "returns": {
@@ -1287,7 +1298,9 @@
     "shipment": {
       "title": "Žymėti vykdymą išsiųstu",
       "trackingNumber": "Sekimo numeris",
+      "trackingUrl": "Sekimo URL",
       "addTracking": "Pridėti sekimo numerį",
+      "hideTracking": "Slėpti sekimo numerį",
       "sendNotification": "Siųsti pranešimą",
       "sendNotificationHint": "Praneškite klientui apie šį siuntimą.",
       "toastCreated": "Siuntimas sėkmingai sukurtas."
@@ -2249,7 +2262,8 @@
       "header": "Prekės",
       "actions": {
         "addProducts": "Pridėti prekes",
-        "editPrices": "Keisti prices"
+        "editPrices": "Keisti prices",
+        "editPricesDisabled": "Pridėkite prekes prieš keisdami kainas"
       },
       "delete": {
         "confirmation_one": "Ketinate pašalinti kainas {{count}} prekei kainoraštyje. Šis veiksmas neatstatomas.",
@@ -2661,7 +2675,10 @@
         "placeholder": "klaidingas_dydis",
         "tooltip": "Vertė turėtų būti unikalus grąžinimo priežasties identifikatorius."
       },
-      "label": { "label": "Antraštė", "placeholder": "Klaidingas dydis" },
+      "label": {
+        "label": "Antraštė",
+        "placeholder": "Klaidingas dydis"
+      },
       "description": {
         "label": "Aprašymas",
         "placeholder": "Klientas gavo netinkamą dydį"

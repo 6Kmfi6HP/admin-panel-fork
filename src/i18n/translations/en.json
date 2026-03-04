@@ -1088,11 +1088,14 @@
     },
     "transfer": {
       "title": "Transfer ownership",
-      "requestSuccess": "Order transfer request sent to: {{email}}.",
+      "requestSuccess": "Transfer request was sent to {{customerDetails}}.",
       "currentOwner": "Current owner",
       "newOwner": "New owner",
       "currentOwnerDescription": "The customer currently related to this order.",
-      "newOwnerDescription": "The customer to transfer this order to."
+      "newOwnerDescription": "The customer to transfer this order to.",
+      "errors": {
+        "orderChangeAlreadyExists": "Order can not be transferred because there is an active transfer request."
+      }
     },
     "payment": {
       "title": "Payments",
@@ -1122,7 +1125,7 @@
       "markAsPaidPayment": "Payment of {{amount}} will be marked as paid.",
       "markAsPaidPaymentSuccess": "Payment of {{amount}} successfully marked as paid",
       "createRefund": "Create Refund",
-      "refundPaymentSuccess": "Refund of amount {{amount}} successful",
+      "refundPaymentSuccess": "Payment {{amount}} was successfully refunded.",
       "createRefundWrongQuantity": "Quantity should be a number between 1 and {{number}}",
       "refundAmount": "Refund {{ amount }}",
       "paymentLink": "Copy payment link for {{ amount }}",
@@ -1162,20 +1165,28 @@
     "edit": {
       "email": {
         "title": "Edit email",
-        "requestSuccess": "Order email updated to {{email}}."
+        "requestSuccess": "Email was successfully updated."
       },
       "shippingAddress": {
         "title": "Edit shipping address",
-        "requestSuccess": "Order shipping address updated."
+        "requestSuccess": "Shipping address was successfully updated.",
+        "validation": {
+          "addressRequired": "Please enter an address",
+          "countryRequired": "Please select a country"
+        }
       },
       "billingAddress": {
         "title": "Edit billing address",
-        "requestSuccess": "Order billing address updated."
+        "requestSuccess": "Billing address was successfully updated.",
+        "validation": {
+          "addressRequired": "Please enter an address",
+          "countryRequired": "Please select a country"
+        }
       }
     },
     "returns": {
       "create": "Create Return",
-      "confirm": "Confirm Return",
+      "confirm": "Confirm",
       "confirmText": "You are about to confirm a Return. This action cannot be undone.",
       "inbound": "Inbound",
       "outbound": "Outbound",
@@ -1190,11 +1201,15 @@
       "note": "Note",
       "noInventoryLevel": "No inventory level",
       "noInventoryLevelDesc": "The selected location does not have an inventory level for the selected items. The return can be requested but can’t be received until an inventory level is created for the selected location.",
-      "noteHint": "You can type freely if you want to specify something.",
+      "noteHint": "Add an internal note for the return.",
       "location": "Location",
       "locationHint": "Choose which location you want to return the items to.",
+      "pleaseChooseLocation": "Please choose a location",
       "inboundShipping": "Return shipping",
       "inboundShippingHint": "Choose which method you want to use.",
+      "noAddedItems": "No added items",
+      "addAtLeastOneItem": "Add at least one item from the order to create the return",
+      "pleaseAddAtLeastOneItem": "Please add at least one item from the order",
       "returnableQuantityLabel": "Returnable quantity",
       "refundableAmountLabel": "Refundable amount",
       "returnRequestedInfo": "{{requestedItemsCount}}x items return requested",
@@ -1204,8 +1219,11 @@
       "damagedItemReceived": "Damaged items received",
       "damagedItemsReturned": "{{quantity}}x damaged items returned",
       "activeChangeError": "There is an active order change in progress on this order. Please finish or discard the change first.",
+      "cantBeReceivedByAdmin": "This return cannot be received by admin.",
+      "cantBeCanceledByAdmin": "This return cannot be canceled by admin.",
+      "cantCreateReturnByAdmin": "This return cannot be created by admin because order products are only available at vendor locations.",
       "cancel": {
-        "title": "Cancel Return",
+        "title": "Cancel",
         "description": "Are you sure you want to cancel the return request?"
       },
       "placeholders": {
@@ -1225,11 +1243,12 @@
         "itemsLabel": "Items received",
         "title": "Receive items for #{{returnId}}",
         "sendNotificationHint": "Notify customer about received return.",
-        "inventoryWarning": "Please note that we will automatically adjust the inventory levels based on your input above.",
+        "inventoryWarning": "We will automatically adjust the inventory levels based on your input.",
+        "quantityInputLabel": "How many items aren't damaged and can be returned to {{location}}?",
         "writeOffInputLabel": "How many of the items are damaged?",
         "toast": {
           "success": "Return received successfully.",
-          "errorLargeValue": "Quantity is greater than requested item quantity.",
+          "errorLargeValue": "You cannot receive more items than were requested for return.",
           "errorNegativeValue": "Quantity cannot be a negative value.",
           "errorLargeDamagedValue": "Damaged items quantity + non damaged received quantity exceeds total item quantity on the return. Please decrease quantity of non damaged items."
         }
@@ -1331,12 +1350,14 @@
       }
     },
     "shipment": {
-      "title": "Mark fulfillment shipped",
+      "title": "Mark Fulfillment as Shipped",
       "trackingNumber": "Tracking number",
+      "trackingUrl": "Tracking URL",
       "addTracking": "Add tracking number",
+      "hideTracking": "Hide tracking number",
       "sendNotification": "Send notification",
-      "sendNotificationHint": "Notify the customer about this shipment.",
-      "toastCreated": "Shipment created successfully."
+      "sendNotificationHint": "Notify the customer about shipment",
+      "toastCreated": "Shipment was successfully created."
     },
     "fulfillment": {
       "cancelWarning": "You are about to cancel a fulfillment. This action cannot be undone.",
@@ -2345,7 +2366,8 @@
       "header": "Products",
       "actions": {
         "addProducts": "Add products",
-        "editPrices": "Edit prices"
+        "editPrices": "Edit prices",
+        "editPricesDisabled": "Add products before editing prices"
       },
       "delete": {
         "confirmation_one": "You are about to delete the prices for {{count}} product in the price list. This action cannot be undone.",

@@ -1072,11 +1072,14 @@
     },
     "transfer": {
       "title": "Chuyển quyền sở hữu",
-      "requestSuccess": "Yêu cầu chuyển đơn hàng đã được gửi đến: {{email}}.",
+      "requestSuccess": "Yêu cầu chuyển đơn hàng đã được gửi đến {{customerDetails}}.",
       "currentOwner": "Chủ sở hữu hiện tại",
       "newOwner": "Chủ sở hữu mới",
       "currentOwnerDescription": "Khách hàng hiện đang liên quan đến đơn hàng này.",
-      "newOwnerDescription": "Khách hàng mà đơn hàng này sẽ được chuyển đến."
+      "newOwnerDescription": "Khách hàng mà đơn hàng này sẽ được chuyển đến.",
+      "errors": {
+        "orderChangeAlreadyExists": "Không thể chuyển đơn hàng vì đã có yêu cầu chuyển đang hoạt động."
+      }
     },
     "payment": {
       "title": "Thanh toán",
@@ -1145,15 +1148,23 @@
     "edit": {
       "email": {
         "title": "Chỉnh sửa email",
-        "requestSuccess": "Email đơn hàng đã được cập nhật thành {{email}}."
+        "requestSuccess": "Email đã được cập nhật thành công."
       },
       "shippingAddress": {
         "title": "Chỉnh sửa địa chỉ giao hàng",
-        "requestSuccess": "Địa chỉ giao hàng của đơn hàng đã được cập nhật."
+        "requestSuccess": "Địa chỉ giao hàng của đơn hàng đã được cập nhật.",
+        "validation": {
+          "addressRequired": "Vui lòng nhập địa chỉ",
+          "countryRequired": "Vui lòng chọn quốc gia"
+        }
       },
       "billingAddress": {
         "title": "Chỉnh sửa địa chỉ thanh toán",
-        "requestSuccess": "Địa chỉ thanh toán của đơn hàng đã được cập nhật."
+        "requestSuccess": "Địa chỉ thanh toán của đơn hàng đã được cập nhật.",
+        "validation": {
+          "addressRequired": "Vui lòng nhập địa chỉ",
+          "countryRequired": "Vui lòng chọn quốc gia"
+        }
       }
     },
     "returns": {
@@ -1315,7 +1326,9 @@
     "shipment": {
       "title": "Đánh dấu giao hàng đã gửi",
       "trackingNumber": "Số theo dõi",
+      "trackingUrl": "URL theo dõi",
       "addTracking": "Thêm số theo dõi",
+      "hideTracking": "Ẩn số theo dõi",
       "sendNotification": "Gửi thông báo",
       "sendNotificationHint": "Thông báo cho khách hàng về lô hàng này.",
       "toastCreated": "Lô hàng đã được tạo thành công."
@@ -2291,7 +2304,8 @@
       "header": "Sản phẩm",
       "actions": {
         "addProducts": "Thêm sản phẩm",
-        "editPrices": "Chỉnh sửa giá"
+        "editPrices": "Chỉnh sửa giá",
+        "editPricesDisabled": "Thêm sản phẩm trước khi chỉnh sửa giá"
       },
       "delete": {
         "confirmation_one": "Bạn sắp xóa giá của {{count}} sản phẩm trong bảng giá. Hành động này không thể hoàn tác.",
@@ -2702,7 +2716,10 @@
         "placeholder": "wrong_size",
         "tooltip": "Giá trị nên là một định danh duy nhất cho lý do trả hàng."
       },
-      "label": { "label": "Nhãn", "placeholder": "Kích thước sai" },
+      "label": {
+        "label": "Nhãn",
+        "placeholder": "Kích thước sai"
+      },
       "description": {
         "label": "Mô tả",
         "placeholder": "Khách hàng nhận nhầm kích thước"
