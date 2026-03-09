@@ -5024,6 +5024,27 @@
             "search": {
               "type": "string"
             },
+            "available": {
+              "type": "string"
+            },
+            "inStock": {
+              "type": "string"
+            },
+            "noLevelsWarningDescription": {
+              "type": "string"
+            },
+            "disabledItemTooltip": {
+              "type": "string"
+            },
+            "disabledItemTooltipManagedByVendor": {
+              "type": "string"
+            },
+            "managedByVendorBadge": {
+              "type": "string"
+            },
+            "managedByVendorTooltip": {
+              "type": "string"
+            },
             "consistsOf": {
               "type": "string"
             },
@@ -5048,9 +5069,35 @@
               "properties": {
                 "quantityNotAllocated": {
                   "type": "string"
+                },
+                "allocationNotAvailable": {
+                  "type": "string"
+                },
+                "allocationNotAvailableDescription": {
+                  "type": "string"
+                },
+                "noLocation": {
+                  "type": "string"
+                },
+                "wrongQuantity": {
+                  "type": "string"
+                },
+                "wrongQuantity_other": {
+                  "type": "string"
+                },
+                "noItemsSelected": {
+                  "type": "string"
                 }
               },
-              "required": ["quantityNotAllocated"],
+              "required": [
+                "quantityNotAllocated",
+                "allocationNotAvailable",
+                "allocationNotAvailableDescription",
+                "noLocation",
+                "wrongQuantity",
+                "wrongQuantity_other",
+                "noItemsSelected"
+              ],
               "additionalProperties": false
             }
           },
@@ -5061,6 +5108,13 @@
             "itemsToAllocate",
             "itemsToAllocateDesc",
             "search",
+            "available",
+            "inStock",
+            "noLevelsWarningDescription",
+            "disabledItemTooltip",
+            "disabledItemTooltipManagedByVendor",
+            "managedByVendorBadge",
+            "managedByVendorTooltip",
             "consistsOf",
             "requires",
             "toast",
