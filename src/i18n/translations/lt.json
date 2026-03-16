@@ -1049,11 +1049,14 @@
     },
     "transfer": {
       "title": "Perleisti nuosavybę",
-      "requestSuccess": "Užsakymo nuosavybės perleidimo prašymas išsiųstas į {{email}}.",
+      "requestSuccess": "Užsakymo nuosavybės perleidimo prašymas išsiųstas į {{customerDetails}}.",
       "currentOwner": "Dabartinis savininkas",
       "newOwner": "Naujas savininkas",
       "currentOwnerDescription": "Pirkėjas jau susietas su šiuo užsakymu.",
-      "newOwnerDescription": "Pirkėjas kuriam perleidžiamos užsakymmo nuosavybė."
+      "newOwnerDescription": "Pirkėjas kuriam perleidžiamos užsakymmo nuosavybė.",
+      "errors": {
+        "orderChangeAlreadyExists": "Užsakymas negali būti perleistas, nes yra aktyvus perleidimo prašymas."
+      }
     },
     "payment": {
       "title": "Apmokėjimas",
@@ -1299,7 +1302,9 @@
     "shipment": {
       "title": "Žymėti vykdymą išsiųstu",
       "trackingNumber": "Sekimo numeris",
+      "trackingUrl": "Sekimo URL",
       "addTracking": "Pridėti sekimo numerį",
+      "hideTracking": "Slėpti sekimo numerį",
       "sendNotification": "Siųsti pranešimą",
       "sendNotificationHint": "Praneškite klientui apie šį siuntimą.",
       "toastCreated": "Siuntimas sėkmingai sukurtas."

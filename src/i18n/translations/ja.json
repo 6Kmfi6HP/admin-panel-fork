@@ -958,11 +958,14 @@
     },
     "transfer": {
       "title": "所有権の移転",
-      "requestSuccess": "注文移転リクエストが{{email}}に送信されました。",
+      "requestSuccess": "注文移転リクエストが{{customerDetails}}に送信されました。",
       "currentOwner": "現在の所有者",
       "newOwner": "新しい所有者",
       "currentOwnerDescription": "この注文に現在関連付けられている顧客。",
-      "newOwnerDescription": "この注文を移転する顧客。"
+      "newOwnerDescription": "この注文を移転する顧客。",
+      "errors": {
+        "orderChangeAlreadyExists": "アクティブな移転リクエストが存在するため、注文を移転できません。"
+      }
     },
     "payment": {
       "title": "支払い",
@@ -1208,7 +1211,9 @@
     "shipment": {
       "title": "出荷済みとしてマーク",
       "trackingNumber": "追跡番号",
+      "trackingUrl": "追跡URL",
       "addTracking": "追跡番号を追加",
+      "hideTracking": "追跡番号を非表示",
       "sendNotification": "通知を送信",
       "sendNotificationHint": "この出荷について顧客に通知します。",
       "toastCreated": "出荷が正常に作成されました。"

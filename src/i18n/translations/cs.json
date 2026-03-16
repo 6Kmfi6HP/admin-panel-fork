@@ -1075,11 +1075,14 @@
     },
     "transfer": {
       "title": "Převod vlastnictví",
-      "requestSuccess": "Žádost o převod objednávky byla odeslána na: {{email}}.",
+      "requestSuccess": "Žádost o převod objednávky byla odeslána na {{customerDetails}}.",
       "currentOwner": "Současný vlastník",
       "newOwner": "Nový vlastník",
       "currentOwnerDescription": "Zákazník aktuálně spojený s touto objednávkou.",
-      "newOwnerDescription": "Zákazník, na kterého se objednávka převede."
+      "newOwnerDescription": "Zákazník, na kterého se objednávka převede.",
+      "errors": {
+        "orderChangeAlreadyExists": "Objednávka nemůže být převedena, protože existuje aktivní žádost o převod."
+      }
     },
     "payment": {
       "title": "Platby",
@@ -1322,7 +1325,9 @@
     "shipment": {
       "title": "Označit plnění jako odeslané",
       "trackingNumber": "Sledovací číslo",
+      "trackingUrl": "Sledovací URL",
       "addTracking": "Přidat sledovací číslo",
+      "hideTracking": "Skrýt sledovací číslo",
       "sendNotification": "Odeslat oznámení",
       "sendNotificationHint": "Oznámit zákazníkovi o této zásilce.",
       "toastCreated": "Zásilka byla úspěšně vytvořena."

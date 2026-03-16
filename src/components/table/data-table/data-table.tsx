@@ -42,9 +42,10 @@ export const _DataTable = <TData,>({
   pageSize,
   isLoading = false,
   noHeader = false,
-  layout = "fit",
+  layout = 'fit',
   noRecords: noRecordsProps = {},
   enableExpandAll = false,
+  filterBarContent
 }: DataTableProps<TData>) => {
   const handleToggleExpandAll = useCallback(() => {
     table.toggleAllRowsExpanded(!table.getIsAllRowsExpanded());
@@ -74,7 +75,7 @@ export const _DataTable = <TData,>({
     return (
       <NoRecords
         className={clx({
-          "flex h-full flex-col overflow-hidden": layout === "fill",
+          'flex h-full flex-col overflow-hidden': layout === 'fill'
         })}
         {...noRecordsProps}
       />
@@ -83,8 +84,8 @@ export const _DataTable = <TData,>({
 
   return (
     <div
-      className={clx("divide-y", {
-        "flex h-full flex-col overflow-hidden": layout === "fill",
+      className={clx('divide-y', {
+        'flex h-full flex-col overflow-hidden': layout === 'fill'
       })}
     >
       <MemoizedDataTableQuery
@@ -95,6 +96,7 @@ export const _DataTable = <TData,>({
         enableExpandAll={enableExpandAll}
         isAllExpanded={isAllExpanded}
         onToggleExpandAll={handleToggleExpandAll}
+        filterBarContent={filterBarContent}
       />
       <DataTableRoot
         table={table}

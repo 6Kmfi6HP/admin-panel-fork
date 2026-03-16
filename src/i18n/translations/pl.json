@@ -1115,11 +1115,14 @@
     },
     "transfer": {
       "title": "Przekaż własność",
-      "requestSuccess": "Wniosek o przekazanie zamówienia do: {{email}}.",
+      "requestSuccess": "Wniosek o przekazanie zamówienia został wysłany do {{customerDetails}}.",
       "currentOwner": "Obecny właściciel",
       "newOwner": "Nowy właściciel",
       "currentOwnerDescription": "Klient obecnie związany z tym zamówieniem.",
-      "newOwnerDescription": "Klient, do którego chcesz przekazać to zamówienie."
+      "newOwnerDescription": "Klient, do którego chcesz przekazać to zamówienie.",
+      "errors": {
+        "orderChangeAlreadyExists": "Zamówienie nie może zostać przekazane, ponieważ istnieje aktywny wniosek o przekazanie."
+      }
     },
     "payment": {
       "title": "Płatności",
@@ -1367,7 +1370,9 @@
     "shipment": {
       "title": "Oznacz realizację jako wysłaną",
       "trackingNumber": "Numer do śledzenia przesyłki",
+      "trackingUrl": "URL do śledzenia przesyłki",
       "addTracking": "Dodaj numer do śledzenia przesyłki",
+      "hideTracking": "Ukryj numer do śledzenia przesyłki",
       "sendNotification": "Wyślij powiadomienie",
       "sendNotificationHint": "Powiadom klienta o tej wysyłce.",
       "toastCreated": "Wysyłka została pomyślnie utworzona."

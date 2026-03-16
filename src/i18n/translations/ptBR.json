@@ -952,11 +952,14 @@
     },
     "transfer": {
       "title": "Transferir propriedade",
-      "requestSuccess": "Solicitação de transferência do pedido enviada para: {{email}}.",
+      "requestSuccess": "Solicitação de transferência do pedido enviada para {{customerDetails}}.",
       "currentOwner": "Proprietário atual",
       "newOwner": "Novo proprietário",
       "currentOwnerDescription": "O cliente atualmente relacionado a este pedido.",
-      "newOwnerDescription": "O cliente para o qual este pedido será transferido."
+      "newOwnerDescription": "O cliente para o qual este pedido será transferido.",
+      "errors": {
+        "orderChangeAlreadyExists": "O pedido não pode ser transferido porque existe uma solicitação de transferência ativa."
+      }
     },
     "payment": {
       "title": "Pagamentos",
@@ -1194,7 +1197,9 @@
     "shipment": {
       "title": "Marcar atendimento como enviado",
       "trackingNumber": "Número de rastreamento",
+      "trackingUrl": "URL de rastreamento",
       "addTracking": "Adicionar número de rastreamento",
+      "hideTracking": "Ocultar número de rastreamento",
       "sendNotification": "Enviar notificação",
       "sendNotificationHint": "Notificar o cliente sobre este envio.",
       "toastCreated": "Envio criado com sucesso."

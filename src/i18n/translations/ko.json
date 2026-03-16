@@ -1051,11 +1051,14 @@
     },
     "transfer": {
       "title": "소유권 이전",
-      "requestSuccess": "주문 이전 요청이 {{email}}에게 전송되었습니다.",
+      "requestSuccess": "주문 이전 요청이 {{customerDetails}}에게 전송되었습니다.",
       "currentOwner": "현재 소유자",
       "newOwner": "새 소유자",
       "currentOwnerDescription": "이 주문과 현재 관련된 고객입니다.",
-      "newOwnerDescription": "이 주문을 이전할 고객입니다."
+      "newOwnerDescription": "이 주문을 이전할 고객입니다.",
+      "errors": {
+        "orderChangeAlreadyExists": "활성 이전 요청이 존재하므로 주문을 이전할 수 없습니다."
+      }
     },
     "payment": {
       "title": "결제",
@@ -1302,7 +1305,9 @@
     "shipment": {
       "title": "발송 처리",
       "trackingNumber": "추적 번호",
+      "trackingUrl": "추적 URL",
       "addTracking": "추적 번호 추가",
+      "hideTracking": "추적 번호 숨기기",
       "sendNotification": "알림 전송",
       "sendNotificationHint": "이 배송에 대해 고객에게 알립니다.",
       "toastCreated": "배송이 성공적으로 생성되었습니다."

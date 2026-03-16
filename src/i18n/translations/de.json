@@ -952,11 +952,14 @@
     },
     "transfer": {
       "title": "Eigentumsübertragung",
-      "requestSuccess": "Anfrage zur Eigentumsübertragung an: {{email}}.",
+      "requestSuccess": "Anfrage zur Eigentumsübertragung wurde an {{customerDetails}} gesendet.",
       "currentOwner": "Aktueller Besitzer",
       "newOwner": "Neuer Besitzer",
       "currentOwnerDescription": "Der Kunde, der derzeit mit dieser Bestellung verbunden ist.",
-      "newOwnerDescription": "Der Kunde, an den Sie diese Bestellung übertragen möchten."
+      "newOwnerDescription": "Der Kunde, an den Sie diese Bestellung übertragen möchten.",
+      "errors": {
+        "orderChangeAlreadyExists": "Die Bestellung kann nicht übertragen werden, da eine aktive Übertragungsanfrage besteht."
+      }
     },
     "payment": {
       "title": "Zahlungen",
@@ -1194,7 +1197,9 @@
     "shipment": {
       "title": "Als Versand markieren",
       "trackingNumber": "Tracking-Nummer",
+      "trackingUrl": "Tracking-URL",
       "addTracking": "Tracking-Nummer hinzufügen",
+      "hideTracking": "Tracking-Nummer ausblenden",
       "sendNotification": "Benachrichtigung senden",
       "sendNotificationHint": "Benachrichtigen Sie den Kunden über diese Lieferung.",
       "toastCreated": "Sendung erfolgreich erstellt."

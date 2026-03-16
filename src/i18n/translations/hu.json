@@ -1047,11 +1047,14 @@
     },
     "transfer": {
       "title": "Rendelés átadása",
-      "requestSuccess": "Rendelésátadási kérelem elküldve: {{email}}.",
+      "requestSuccess": "Rendelésátadási kérelem elküldve {{customerDetails}} részére.",
       "currentOwner": "Jelenlegi tulajdonos",
       "newOwner": "Új tulajdonos",
       "currentOwnerDescription": "A rendelés jelenlegi tulajdonosa.",
-      "newOwnerDescription": "A rendelés új tulajdonosa."
+      "newOwnerDescription": "A rendelés új tulajdonosa.",
+      "errors": {
+        "orderChangeAlreadyExists": "A rendelés nem adható át, mert van egy aktív átadási kérelem."
+      }
     },
     "payment": {
       "title": "Fizetés",
@@ -1297,7 +1300,9 @@
     "shipment": {
       "title": "Teljesítés megjelölése szállítottként",
       "trackingNumber": "Nyomkövetési szám",
+      "trackingUrl": "Nyomkövetési URL",
       "addTracking": "Nyomkövetési szám hozzáadása",
+      "hideTracking": "Nyomkövetési szám elrejtése",
       "sendNotification": "Értesítés küldése",
       "sendNotificationHint": "Értesítse a vásárlót erről a szállításról.",
       "toastCreated": "Szállítás sikeresen létrehozva."

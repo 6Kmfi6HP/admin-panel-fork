@@ -1008,11 +1008,14 @@
     },
     "transfer": {
       "title": "Пренесете ја сопственоста",
-      "requestSuccess": "Барањето за пренос на нарачка испратено до: {{email}}.",
+      "requestSuccess": "Барањето за пренос на нарачка испратено до {{customerDetails}}.",
       "currentOwner": "Тековен сопственик",
       "newOwner": "Нов сопственик",
       "currentOwnerDescription": "Клиентот во моментов е поврзан со оваа нарачка.",
-      "newOwnerDescription": "Клиентот да ја пренесе оваа нарачка на."
+      "newOwnerDescription": "Клиентот да ја пренесе оваа нарачка на.",
+      "errors": {
+        "orderChangeAlreadyExists": "Нарачката не може да се пренесе бидејќи постои активно барање за пренос."
+      }
     },
     "payment": {
       "title": "Плаќања",
@@ -1258,7 +1261,9 @@
     "shipment": {
       "title": "Исполнувањето на ознаката е испратено",
       "trackingNumber": "Број за следење",
+      "trackingUrl": "URL за следење",
       "addTracking": "Додадете број за следење",
+      "hideTracking": "Сокриј број за следење",
       "sendNotification": "Испрати известување",
       "sendNotificationHint": "Известете го клиентот за оваа пратка.",
       "toastCreated": "Пратката е успешно креирана."

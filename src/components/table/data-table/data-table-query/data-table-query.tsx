@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { Filter } from '..';
 import { DataTableExpandAll } from '../data-table-expand-all';
 import { DataTableFilter } from '../data-table-filter';
@@ -12,6 +14,7 @@ export interface DataTableQueryProps<TData> {
   enableExpandAll?: boolean;
   isAllExpanded?: boolean;
   onToggleExpandAll?: () => void;
+  filterBarContent?: ReactNode;
 }
 
 export const DataTableQuery = <TData,>({
@@ -21,9 +24,10 @@ export const DataTableQuery = <TData,>({
   prefix,
   enableExpandAll,
   isAllExpanded,
-  onToggleExpandAll
+  onToggleExpandAll,
+  filterBarContent
 }: DataTableQueryProps<TData>) => {
-  const hasQueryControls = search || orderBy || filters || prefix || enableExpandAll;
+  const hasQueryControls = search || orderBy || filters || prefix || enableExpandAll || filterBarContent;
   const shouldShowExpandAll = enableExpandAll && onToggleExpandAll && isAllExpanded !== undefined;
 
   return (
@@ -33,7 +37,7 @@ export const DataTableQuery = <TData,>({
         data-testid="data-table-query"
       >
         <div
-          className="w-full max-w-[60%]"
+          className="flex w-full max-w-[60%] items-center gap-2"
           data-testid="data-table-filters-container"
         >
           {filters && filters.length > 0 && (
@@ -42,6 +46,7 @@ export const DataTableQuery = <TData,>({
               prefix={prefix}
             />
           )}
+          {filterBarContent}
         </div>
         <div
           className="flex shrink-0 items-center gap-x-2"
