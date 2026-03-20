@@ -3,6 +3,8 @@
   "general": {
     "ascending": "Ascending",
     "descending": "Descending",
+    "expandAll": "Expand all rows",
+    "collapseAll": "Collapse all rows",
     "add": "Add",
     "start": "Start",
     "end": "End",
@@ -584,6 +586,9 @@
       "collection": {
         "label": "Collection"
       },
+      "category": {
+        "label": "Category"
+      },
       "categories": {
         "label": "Categories"
       },
@@ -1059,7 +1064,9 @@
     "orderCanceled": "Order canceled successfully",
     "onDateFromSalesChannel": "{{date}} from {{salesChannel}}",
     "list": {
-      "noRecordsMessage": "Your orders will show up here."
+      "noRecordsMessage": "Your orders will show up here.",
+      "multipleVendors": "{{count}} vendors",
+      "vendorFallback": "Unknown vendor"
     },
     "status": {
       "not_paid": "Not paid",
@@ -1201,7 +1208,9 @@
       "note": "Note",
       "noInventoryLevel": "No inventory level",
       "noInventoryLevelDesc": "The selected location does not have an inventory level for the selected items. The return can be requested but can’t be received until an inventory level is created for the selected location.",
-      "noteHint": "Add an internal note for the return.",
+      "noteHintClaim": "Add an internal note for the claim.",
+      "noteHintReturn": "Add an internal note for the return.",
+      "noteHint": "Add an internal note for the exchange.",
       "location": "Location",
       "locationHint": "Choose which location you want to return the items to.",
       "pleaseChooseLocation": "Please choose a location",
@@ -1264,7 +1273,7 @@
     },
     "claims": {
       "create": "Create Claim",
-      "confirm": "Confirm Claim",
+      "confirm": "Confirm",
       "confirmText": "You are about to confirm a Claim. This action cannot be undone.",
       "manage": "Manage Claim",
       "outbound": "Outbound",
@@ -1272,7 +1281,15 @@
       "outboundTotal": "Outbound total",
       "outboundShipping": "Outbound shipping",
       "outboundShippingHint": "Choose which method you want to use.",
+      "noAddedItems": "No added items",
+      "noAddedItemsHintInbound": "Add at least one item from the order to create the claim.",
+      "noAddedItemsHintOutbound": "You can optionally add items you want to send as replacements",
+      "validation": {
+        "addAtLeastOneItem": "Please add at least one item from the order",
+        "chooseLocation": "Please choose a location"
+      },
       "refundAmount": "Estimated difference",
+      "cantCreateClaimByAdmin": "This claim cannot be created by admin because order products are only available at vendor locations.",
       "activeChangeError": "There is an active order change on this order. Please finish or discard the previous change.",
       "actions": {
         "cancelClaim": {
@@ -1280,7 +1297,7 @@
         }
       },
       "cancel": {
-        "title": "Cancel Claim",
+        "title": "Cancel",
         "description": "Are you sure you want to cancel the claim?"
       },
       "tooltips": {
@@ -1306,6 +1323,17 @@
       "outboundShipping": "Outbound shipping",
       "outboundShippingHint": "Choose which method you want to use.",
       "refundAmount": "Estimated difference",
+      "noAddedItems": "No records yet",
+      "noAddedItemsHintInbound": "Add at least one item from the order to create the exchange",
+      "noAddedItemsHintOutbound": "Add at least one item you want to send in the exchange",
+      "sendNotificationHint": "Notify customer about exchange.",
+      "cantCreateExchangeByAdmin": "This exchange cannot be created by admin because order products are only available at vendor locations.",
+      "validation": {
+        "addAtLeastOneInboundItem": "Please add at least one item from the order",
+        "addAtLeastOneOutboundItem": "Please add at least one item to send in the exchange",
+        "chooseLocation": "Please choose a location",
+        "chooseOutboundShipping": "Please choose an outbound shipping"
+      },
       "activeChangeError": "There is an active order change on this order. Please finish or discard the previous change.",
       "actions": {
         "cancelExchange": {
@@ -1334,19 +1362,32 @@
     },
     "allocateItems": {
       "action": "Allocate items",
-      "title": "Allocate order items",
-      "locationDescription": "Choose which location you want to allocate from.",
+      "title": "Allocate Items",
+      "locationDescription": "Choose which location you want to allocate items from.",
       "itemsToAllocate": "Items to allocate",
-      "itemsToAllocateDesc": "Select the number of items you wish to allocate",
+      "itemsToAllocateDesc": "Choose items and quantities to allocate",
       "search": "Search items",
+      "available": "Available",
+      "inStock": "In stock",
+      "noLevelsWarningDescription": "The selected location does not have an inventory level for the selected items. To proceed with allocation, create an inventory level for selected location.",
+      "disabledItemTooltip": "The location you have selected doesn't allow allocation of this item.",
+      "disabledItemTooltipManagedByVendor": "You can't allocate this item because its inventory is managed by the Vendor.",
+      "managedByVendorBadge": "Managed by Vendor",
+      "managedByVendorTooltip": "Allocation of this item is managed by the Vendor.",
       "consistsOf": "Consists of {{num}}x inventory items",
       "requires": "Requires {{num}} per variant",
       "toast": {
-        "created": "Items successfully allocated",
+        "created": "Allocation was successfully created.",
         "error": "Failed to allocate following items: {{items}}"
       },
       "error": {
-        "quantityNotAllocated": "There are unallocated items."
+        "quantityNotAllocated": "There are unallocated items.",
+        "allocationNotAvailable": "Allocation not available",
+        "allocationNotAvailableDescription": "Items have already been allocated or are managed by the Vendor.",
+        "noLocation": "Location is required",
+        "wrongQuantity": "Only one item is available for allocation",
+        "wrongQuantity_other": "Quantity should be a number between 1 and {{number}}",
+        "noItemsSelected": "Please select at least one item to allocate"
       }
     },
     "shipment": {
@@ -3120,6 +3161,9 @@
     "customer": "Customer",
     "date": "Date",
     "order": "Order",
+    "orderId": "Order ID",
+    "groupId": "Group ID",
+    "vendor": "Vendor",
     "fulfillment": "Fulfillment",
     "provider": "Provider",
     "payment": "Payment",
