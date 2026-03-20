@@ -3,6 +3,8 @@
   "general": {
     "ascending": "Өсөх",
     "descending": "Буурах",
+    "expandAll": "Бүх мөрүүдийг дэлгэх",
+    "collapseAll": "Бүх мөрүүдийг хураах",
     "add": "Нэмэх",
     "start": "Эхлэх",
     "end": "Дуусах",
@@ -976,7 +978,9 @@
     "orderCanceled": "Захиалга амжилттай цуцлагдлаа",
     "onDateFromSalesChannel": "{{date}} нь {{salesChannel}}-ээс",
     "list": {
-      "noRecordsMessage": "Таны захиалгууд энд харагдана."
+      "noRecordsMessage": "Таны захиалгууд энд харагдана.",
+      "multipleVendors": "{{count}} борлуулагч",
+      "vendorFallback": "Тодорхойгүй борлуулагч"
     },
     "status": {
       "not_paid": "Төлөгдөөгүй",
@@ -1004,11 +1008,14 @@
     },
     "transfer": {
       "title": "Өмчлөл шилжүүлэх",
-      "requestSuccess": "Захиалгын шилжүүлэх хүсэлт: {{email}}-д илгээгдсэн.",
+      "requestSuccess": "Захиалгын шилжүүлэх хүсэлт {{customerDetails}}-д илгээгдсэн.",
       "currentOwner": "Одоогийн эзэмшигч",
       "newOwner": "Шинэ эзэмшигч",
       "currentOwnerDescription": "Энэ захиалга холбоотой одоогийн үйлчлүүлэгч.",
-      "newOwnerDescription": "Энэ захиалгыг шилжүүлэх үйлчлүүлэгч."
+      "newOwnerDescription": "Энэ захиалгыг шилжүүлэх үйлчлүүлэгч.",
+      "errors": {
+        "orderChangeAlreadyExists": "Идэвхтэй шилжүүлэх хүсэлт байгаа тул захиалгыг шилжүүлж болохгүй."
+      }
     },
     "payment": {
       "title": "Төлбөрүүд",
@@ -1254,7 +1261,9 @@
     "shipment": {
       "title": "Биелэлтийг илгээгдсэн гэж тэмдэглэх",
       "trackingNumber": "Мөрдөх дугаар",
+      "trackingUrl": "Мөрдөх URL",
       "addTracking": "Мөрдөх дугаар нэмэх",
+      "hideTracking": "Мөрдөх дугаарыг нуух",
       "sendNotification": "Мэдэгдэл илгээх",
       "sendNotificationHint": "Энэ хүргэлтийн талаар үйлчлүүлэгчдэд мэдэгдэх.",
       "toastCreated": "Хүргэлт амжилттай үүсгэгдсэн."
@@ -2861,6 +2870,9 @@
     "customer": "Үйлчлүүлэгч",
     "date": "Огноо",
     "order": "Захиалга",
+    "orderId": "Захиалгын ID",
+    "groupId": "Бүлгийн ID",
+    "vendor": "Борлуулагч",
     "fulfillment": "Биелэлт",
     "provider": "Үйлчилгээ үзүүлэгч",
     "payment": "Төлбөр",

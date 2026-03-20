@@ -3,6 +3,8 @@
   "general": {
     "ascending": "Tăng dần",
     "descending": "Giảm dần",
+    "expandAll": "Mở rộng tất cả hàng",
+    "collapseAll": "Thu gọn tất cả hàng",
     "add": "Thêm",
     "start": "Bắt đầu",
     "end": "Kết thúc",
@@ -1044,7 +1046,9 @@
     "orderCanceled": "Đơn hàng đã được hủy thành công",
     "onDateFromSalesChannel": "{{date}} từ {{salesChannel}}",
     "list": {
-      "noRecordsMessage": "Đơn hàng của bạn sẽ hiển thị ở đây."
+      "noRecordsMessage": "Đơn hàng của bạn sẽ hiển thị ở đây.",
+      "multipleVendors": "{{count}} nhà cung cấp",
+      "vendorFallback": "Nhà cung cấp không xác định"
     },
     "status": {
       "not_paid": "Chưa thanh toán",
@@ -1072,11 +1076,14 @@
     },
     "transfer": {
       "title": "Chuyển quyền sở hữu",
-      "requestSuccess": "Yêu cầu chuyển đơn hàng đã được gửi đến: {{email}}.",
+      "requestSuccess": "Yêu cầu chuyển đơn hàng đã được gửi đến {{customerDetails}}.",
       "currentOwner": "Chủ sở hữu hiện tại",
       "newOwner": "Chủ sở hữu mới",
       "currentOwnerDescription": "Khách hàng hiện đang liên quan đến đơn hàng này.",
-      "newOwnerDescription": "Khách hàng mà đơn hàng này sẽ được chuyển đến."
+      "newOwnerDescription": "Khách hàng mà đơn hàng này sẽ được chuyển đến.",
+      "errors": {
+        "orderChangeAlreadyExists": "Không thể chuyển đơn hàng vì đã có yêu cầu chuyển đang hoạt động."
+      }
     },
     "payment": {
       "title": "Thanh toán",
@@ -1323,7 +1330,9 @@
     "shipment": {
       "title": "Đánh dấu giao hàng đã gửi",
       "trackingNumber": "Số theo dõi",
+      "trackingUrl": "URL theo dõi",
       "addTracking": "Thêm số theo dõi",
+      "hideTracking": "Ẩn số theo dõi",
       "sendNotification": "Gửi thông báo",
       "sendNotificationHint": "Thông báo cho khách hàng về lô hàng này.",
       "toastCreated": "Lô hàng đã được tạo thành công."
@@ -2990,6 +2999,9 @@
     "customer": "Khách hàng",
     "date": "Ngày",
     "order": "Đơn hàng",
+    "orderId": "ID đơn hàng",
+    "groupId": "ID nhóm",
+    "vendor": "Nhà cung cấp",
     "fulfillment": "Xử lý giao hàng",
     "provider": "Nhà cung cấp",
     "payment": "Thanh toán",

@@ -3,6 +3,8 @@
   "general": {
     "ascending": "Αύξουσα",
     "descending": "Φθίνουσα",
+    "expandAll": "Ανάπτυξη όλων των γραμμών",
+    "collapseAll": "Σύμπτυξη όλων των γραμμών",
     "add": "Προσθήκη",
     "start": "Έναρξη",
     "end": "Τέλος",
@@ -994,7 +996,9 @@
     "orderCanceled": "Η παραγγελία ακυρώθηκε επιτυχώς.",
     "onDateFromSalesChannel": "{{date}} από {{salesChannel}}",
     "list": {
-      "noRecordsMessage": "Οι παραγγελίες σας θα εμφανίζονται εδώ."
+      "noRecordsMessage": "Οι παραγγελίες σας θα εμφανίζονται εδώ.",
+      "multipleVendors": "{{count}} πωλητές",
+      "vendorFallback": "Άγνωστος πωλητής"
     },
     "status": {
       "not_paid": "Μη πληρωμένο",
@@ -1022,11 +1026,14 @@
     },
     "transfer": {
       "title": "Μεταφορά ιδιοκτησίας",
-      "requestSuccess": "Το αίτημα μεταφοράς παραγγελίας στάλθηκε στο: {{email}}.",
+      "requestSuccess": "Το αίτημα μεταφοράς παραγγελίας στάλθηκε στο {{customerDetails}}.",
       "currentOwner": "Τρέχων κάτοχος",
       "newOwner": "Νέος κάτοχος",
       "currentOwnerDescription": "Ο πελάτης που σχετίζεται αυτήν τη στιγμή με αυτήν την παραγγελία.",
-      "newOwnerDescription": "Ο πελάτης στον οποίο θα μεταφερθεί αυτή η παραγγελία."
+      "newOwnerDescription": "Ο πελάτης στον οποίο θα μεταφερθεί αυτή η παραγγελία.",
+      "errors": {
+        "orderChangeAlreadyExists": "Η παραγγελία δεν μπορεί να μεταφερθεί επειδή υπάρχει ενεργό αίτημα μεταφοράς."
+      }
     },
     "payment": {
       "title": "Πληρωμές",
@@ -1272,7 +1279,9 @@
     "shipment": {
       "title": "Σημείωση εκπλήρωσης ως αποσταλμένη",
       "trackingNumber": "Αριθμός παρακολούθησης",
+      "trackingUrl": "URL παρακολούθησης",
       "addTracking": "Προσθήκη αριθμού παρακολούθησης",
+      "hideTracking": "Απόκρυψη αριθμού παρακολούθησης",
       "sendNotification": "Αποστολή ειδοποίησης",
       "sendNotificationHint": "Ειδοποιήστε τον πελάτη για αυτήν την αποστολή.",
       "toastCreated": "Η αποστολή δημιουργήθηκε με επιτυχία."
@@ -2895,6 +2904,9 @@
     "customer": "Πελάτης",
     "date": "Ημερομηνία",
     "order": "Παραγγελία",
+    "orderId": "ID παραγγελίας",
+    "groupId": "ID ομάδας",
+    "vendor": "Προμηθευτής",
     "fulfillment": "Εκπλήρωση",
     "provider": "Πάροχος",
     "payment": "Πληρωμή",

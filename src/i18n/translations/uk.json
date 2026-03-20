@@ -3,6 +3,8 @@
   "general": {
     "ascending": "По зростанню",
     "descending": "По спаданню",
+    "expandAll": "Розгорнути всі рядки",
+    "collapseAll": "Згорнути всі рядки",
     "add": "Додати",
     "start": "Почати",
     "end": "Кінець",
@@ -935,7 +937,9 @@
     "cancelWarning": "Ви збираєтеся скасувати замовлення {{id}}. Цю дію неможливо скасувати.",
     "onDateFromSalesChannel": "{{date}} з {{salesChannel}}",
     "list": {
-      "noRecordsMessage": "Ваші замовлення з'являться тут."
+      "noRecordsMessage": "Ваші замовлення з'являться тут.",
+      "multipleVendors": "{{count}} продавців",
+      "vendorFallback": "Невідомий продавець"
     },
     "summary": {
       "requestReturn": "Запросити повернення",
@@ -954,11 +958,14 @@
     },
     "transfer": {
       "title": "Передати право власності",
-      "requestSuccess": "Запит на передачу замовлення надіслано на: {{email}}.",
+      "requestSuccess": "Запит на передачу замовлення надіслано до {{customerDetails}}.",
       "currentOwner": "Поточний власник",
       "newOwner": "Новий власник",
       "currentOwnerDescription": "Клієнт, який наразі пов'язаний з цим замовленням.",
-      "newOwnerDescription": "Клієнт, якому буде передано це замовлення."
+      "newOwnerDescription": "Клієнт, якому буде передано це замовлення.",
+      "errors": {
+        "orderChangeAlreadyExists": "Неможливо передати замовлення, оскільки існує активний запит на передачу."
+      }
     },
     "payment": {
       "title": "Платежі",
@@ -1204,7 +1211,9 @@
     "shipment": {
       "title": "Позначити відправлення як відправлене",
       "trackingNumber": "Номер відстеження",
+      "trackingUrl": "URL відстеження",
       "addTracking": "Додати номер відстеження",
+      "hideTracking": "Приховати номер відстеження",
       "sendNotification": "Надіслати сповіщення",
       "sendNotificationHint": "Сповістіть клієнта про це відправлення.",
       "toastCreated": "Відправлення успішно створено."
@@ -2795,6 +2804,9 @@
     "customer": "Клієнт",
     "date": "Дата",
     "order": "Замовлення",
+    "orderId": "ID замовлення",
+    "groupId": "ID групи",
+    "vendor": "Продавець",
     "fulfillment": "Виконання",
     "provider": "Постачальник",
     "payment": "Оплата",

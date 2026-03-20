@@ -3,6 +3,8 @@
   "general": {
     "ascending": "升序",
     "descending": "降序",
+    "expandAll": "展开所有行",
+    "collapseAll": "折叠所有行",
     "add": "添加",
     "start": "开始",
     "end": "结束",
@@ -1019,7 +1021,9 @@
     "orderCanceled": "订单取消成功！",
     "onDateFromSalesChannel": "{{date}} 来自 {{salesChannel}}",
     "list": {
-      "noRecordsMessage": "您的订单将显示在这里。"
+      "noRecordsMessage": "您的订单将显示在这里。",
+      "multipleVendors": "{{count}}个供应商",
+      "vendorFallback": "未知供应商"
     },
     "status": {
       "not_paid": "未支付",
@@ -1047,11 +1051,14 @@
     },
     "transfer": {
       "title": "转移所有权",
-      "requestSuccess": "订单转移请求已发送至：{{email}}。",
+      "requestSuccess": "转移请求已发送至 {{customerDetails}}。",
       "currentOwner": "当前所有者",
       "newOwner": "新所有者",
       "currentOwnerDescription": "当前与此订单关联的客户。",
-      "newOwnerDescription": "要将此订单转移给的客户。"
+      "newOwnerDescription": "要将此订单转移给的客户。",
+      "errors": {
+        "orderChangeAlreadyExists": "无法转移订单，因为存在活动的转移请求。"
+      }
     },
     "payment": {
       "title": "支付",
@@ -1297,7 +1304,9 @@
     "shipment": {
       "title": "标记履行已发货",
       "trackingNumber": "追踪号码",
+      "trackingUrl": "追踪网址",
       "addTracking": "添加追踪号码",
+      "hideTracking": "隐藏追踪号码",
       "sendNotification": "发送通知",
       "sendNotificationHint": "通知客户关于此发货。",
       "toastCreated": "发货创建成功。"
@@ -2956,6 +2965,9 @@
     "customer": "客户",
     "date": "日期",
     "order": "订单",
+    "orderId": "订单ID",
+    "groupId": "组ID",
+    "vendor": "供应商",
     "fulfillment": "履约",
     "provider": "供应商",
     "payment": "支付",

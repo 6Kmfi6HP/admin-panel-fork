@@ -3,6 +3,8 @@
   "general": {
     "ascending": "صعودی",
     "descending": "نزولی",
+    "expandAll": "باز کردن همه ردیف‌ها",
+    "collapseAll": "بستن همه ردیف‌ها",
     "add": "اضافه کردن",
     "start": "شروع",
     "end": "پایان",
@@ -976,7 +978,9 @@
     "orderCanceled": "سفارش با موفقیت لغو شد",
     "onDateFromSalesChannel": "{{date}} از {{salesChannel}}",
     "list": {
-      "noRecordsMessage": "سفارشات شما اینجا نمایش داده خواهند شد."
+      "noRecordsMessage": "سفارشات شما اینجا نمایش داده خواهند شد.",
+      "multipleVendors": "{{count}} فروشنده",
+      "vendorFallback": "فروشنده ناشناس"
     },
     "status": {
       "not_paid": "پرداخت نشده",
@@ -1004,11 +1008,14 @@
     },
     "transfer": {
       "title": "انتقال مالکیت",
-      "requestSuccess": "درخواست انتقال سفارش به {{email}} ارسال شد.",
+      "requestSuccess": "درخواست انتقال سفارش به {{customerDetails}} ارسال شد.",
       "currentOwner": "مالک فعلی",
       "newOwner": "مالک جدید",
       "currentOwnerDescription": "مشتری که در حال حاضر به این سفارش مرتبط است.",
-      "newOwnerDescription": "مشتری که سفارش به او منتقل می‌شود."
+      "newOwnerDescription": "مشتری که سفارش به او منتقل می‌شود.",
+      "errors": {
+        "orderChangeAlreadyExists": "سفارش قابل انتقال نیست زیرا درخواست انتقال فعالی وجود دارد."
+      }
     },
     "payment": {
       "title": "پرداخت‌ها",
@@ -1254,7 +1261,9 @@
     "shipment": {
       "title": "علامت ‌گذاری به عنوان پردازش شده",
       "trackingNumber": "شماره رهگیری",
+      "trackingUrl": "URL رهگیری",
       "addTracking": "افزودن شماره رهگیری",
+      "hideTracking": "پنهان کردن شماره رهگیری",
       "sendNotification": "ارسال اطلاع‌رسانی",
       "sendNotificationHint": "به مشتری درباره این ارسال اطلاع دهید.",
       "toastCreated": "ارسال با موفقیت ایجاد شد."
@@ -2871,6 +2880,9 @@
     "customer": "مشتری",
     "date": "تاریخ",
     "order": "سفارش",
+    "orderId": "شناسه سفارش",
+    "groupId": "شناسه گروه",
+    "vendor": "فروشنده",
     "fulfillment": "پردازش",
     "provider": "ارائه‌دهنده",
     "payment": "پرداخت",

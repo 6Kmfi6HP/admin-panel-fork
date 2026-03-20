@@ -3,6 +3,8 @@
   "general": {
     "ascending": "Crescente",
     "descending": "Decrescente",
+    "expandAll": "Espandi tutte le righe",
+    "collapseAll": "Comprimi tutte le righe",
     "add": "Aggiungi",
     "start": "Inizio",
     "end": "Fine",
@@ -941,7 +943,9 @@
     "cancelWarning": "Stai per annullare l'ordine {{id}}. Questa azione non può essere annullata.",
     "onDateFromSalesChannel": "{{date}} da {{salesChannel}}",
     "list": {
-      "noRecordsMessage": "I tuoi ordini appariranno qui."
+      "noRecordsMessage": "I tuoi ordini appariranno qui.",
+      "multipleVendors": "{{count}} venditori",
+      "vendorFallback": "Venditore sconosciuto"
     },
     "summary": {
       "requestReturn": "Richiedi reso",
@@ -960,11 +964,14 @@
     },
     "transfer": {
       "title": "Trasferisci proprietà",
-      "requestSuccess": "Richiesta di trasferimento ordine inviata a: {{email}}.",
+      "requestSuccess": "Richiesta di trasferimento ordine inviata a {{customerDetails}}.",
       "currentOwner": "Proprietario attuale",
       "newOwner": "Nuovo proprietario",
       "currentOwnerDescription": "Il cliente attualmente associato a questo ordine.",
-      "newOwnerDescription": "Il cliente a cui trasferire questo ordine."
+      "newOwnerDescription": "Il cliente a cui trasferire questo ordine.",
+      "errors": {
+        "orderChangeAlreadyExists": "L'ordine non può essere trasferito perché esiste una richiesta di trasferimento attiva."
+      }
     },
     "payment": {
       "title": "Pagamenti",
@@ -1202,7 +1209,9 @@
     "shipment": {
       "title": "Segna adempimento spedito",
       "trackingNumber": "Numero di tracciamento",
+      "trackingUrl": "URL di tracciamento",
       "addTracking": "Aggiungi numero di tracciamento",
+      "hideTracking": "Nascondi numero di tracciamento",
       "sendNotification": "Invia notifica",
       "sendNotificationHint": "Notifica il cliente riguardo a questa spedizione.",
       "toastCreated": "Spedizione creata con successo."
@@ -2765,6 +2774,9 @@
     "customer": "Cliente",
     "date": "Data",
     "order": "Ordine",
+    "orderId": "ID ordine",
+    "groupId": "ID gruppo",
+    "vendor": "Fornitore",
     "fulfillment": "Evasione",
     "provider": "Fornitore",
     "payment": "Pagamento",

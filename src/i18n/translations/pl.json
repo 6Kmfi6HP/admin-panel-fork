@@ -3,6 +3,8 @@
   "general": {
     "ascending": "Rosnąco",
     "descending": "Malejąco",
+    "expandAll": "Rozwiń wszystkie wiersze",
+    "collapseAll": "Zwiń wszystkie wiersze",
     "add": "Dodaj",
     "start": "Początek",
     "end": "Koniec",
@@ -1082,7 +1084,9 @@
     "orderCanceled": "Zamówienie zostało pomyślnie anulowane",
     "onDateFromSalesChannel": "{{date}} z {{salesChannel}}",
     "list": {
-      "noRecordsMessage": "Twoje zamówienia pojawią się tutaj."
+      "noRecordsMessage": "Twoje zamówienia pojawią się tutaj.",
+      "multipleVendors": "{{count}} sprzedawców",
+      "vendorFallback": "Nieznany sprzedawca"
     },
     "status": {
       "not_paid": "Nieopłacone",
@@ -1111,11 +1115,14 @@
     },
     "transfer": {
       "title": "Przekaż własność",
-      "requestSuccess": "Wniosek o przekazanie zamówienia do: {{email}}.",
+      "requestSuccess": "Wniosek o przekazanie zamówienia został wysłany do {{customerDetails}}.",
       "currentOwner": "Obecny właściciel",
       "newOwner": "Nowy właściciel",
       "currentOwnerDescription": "Klient obecnie związany z tym zamówieniem.",
-      "newOwnerDescription": "Klient, do którego chcesz przekazać to zamówienie."
+      "newOwnerDescription": "Klient, do którego chcesz przekazać to zamówienie.",
+      "errors": {
+        "orderChangeAlreadyExists": "Zamówienie nie może zostać przekazane, ponieważ istnieje aktywny wniosek o przekazanie."
+      }
     },
     "payment": {
       "title": "Płatności",
@@ -1363,7 +1370,9 @@
     "shipment": {
       "title": "Oznacz realizację jako wysłaną",
       "trackingNumber": "Numer do śledzenia przesyłki",
+      "trackingUrl": "URL do śledzenia przesyłki",
       "addTracking": "Dodaj numer do śledzenia przesyłki",
+      "hideTracking": "Ukryj numer do śledzenia przesyłki",
       "sendNotification": "Wyślij powiadomienie",
       "sendNotificationHint": "Powiadom klienta o tej wysyłce.",
       "toastCreated": "Wysyłka została pomyślnie utworzona."
@@ -3114,6 +3123,9 @@
     "customer": "Klient",
     "date": "Data",
     "order": "Zamówienie",
+    "orderId": "ID zamówienia",
+    "groupId": "ID grupy",
+    "vendor": "Sprzedawca",
     "fulfillment": "Spełnienie",
     "provider": "Dostawca",
     "payment": "Zapłata",

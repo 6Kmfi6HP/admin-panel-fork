@@ -3,6 +3,8 @@
   "general": {
     "ascending": "Ascendente",
     "descending": "Descendente",
+    "expandAll": "Expandir todas las filas",
+    "collapseAll": "Contraer todas las filas",
     "add": "Agregar",
     "start": "Iniciar",
     "end": "Finalizar",
@@ -1102,7 +1104,9 @@
     "cancelWarning": "Estás a punto de cancelar el pedido {{id}}. Esta acción no puede deshacerse.",
     "onDateFromSalesChannel": "{{date}} desde {{salesChannel}}",
     "list": {
-      "noRecordsMessage": "Tus pedidos aparecerán aquí."
+      "noRecordsMessage": "Tus pedidos aparecerán aquí.",
+      "multipleVendors": "{{count}} vendedores",
+      "vendorFallback": "Vendedor desconocido"
     },
     "summary": {
       "requestReturn": "Solicitar devolución",
@@ -1122,11 +1126,14 @@
     },
     "transfer": {
       "title": "Transferir propiedad",
-      "requestSuccess": "Solicitud de transferencia de pedido enviada a: {{email}}.",
+      "requestSuccess": "Solicitud de transferencia de pedido enviada a {{customerDetails}}.",
       "currentOwner": "Propietario actual",
       "newOwner": "Nuevo propietario",
       "currentOwnerDescription": "El cliente actualmente relacionado con este pedido.",
-      "newOwnerDescription": "El cliente a quien se transferirá este pedido."
+      "newOwnerDescription": "El cliente a quien se transferirá este pedido.",
+      "errors": {
+        "orderChangeAlreadyExists": "El pedido no puede ser transferido porque existe una solicitud de transferencia activa."
+      }
     },
     "payment": {
       "title": "Pagos",
@@ -1352,7 +1359,9 @@
     "shipment": {
       "title": "Marcar cumplimiento enviado",
       "trackingNumber": "Número de seguimiento",
+      "trackingUrl": "URL de seguimiento",
       "addTracking": "Agregar número de seguimiento",
+      "hideTracking": "Ocultar número de seguimiento",
       "sendNotification": "Enviar notificación",
       "sendNotificationHint": "Notificar al cliente sobre este envío.",
       "toastCreated": "Envío creado correctamente."
@@ -3038,6 +3047,9 @@
     "customer": "Cliente",
     "date": "Fecha",
     "order": "Pedido",
+    "orderId": "ID de pedido",
+    "groupId": "ID de grupo",
+    "vendor": "Vendedor",
     "fulfillment": "Cumplimiento",
     "provider": "Proveedor",
     "payment": "Pago",

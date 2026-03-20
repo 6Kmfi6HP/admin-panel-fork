@@ -3,6 +3,8 @@
   "general": {
     "ascending": "Ascendent",
     "descending": "Descendent",
+    "expandAll": "Extinde toate rândurile",
+    "collapseAll": "Restrânge toate rândurile",
     "add": "Adăuga",
     "start": "Început",
     "end": "Sfârşit",
@@ -976,7 +978,9 @@
     "orderCanceled": "Comanda a fost anulată cu succes",
     "onDateFromSalesChannel": "{{date}} din {{salesChannel}}",
     "list": {
-      "noRecordsMessage": "Comenzile tale vor apărea aici."
+      "noRecordsMessage": "Comenzile tale vor apărea aici.",
+      "multipleVendors": "{{count}} furnizori",
+      "vendorFallback": "Furnizor necunoscut"
     },
     "status": {
       "not_paid": "Neplătit",
@@ -1004,11 +1008,14 @@
     },
     "transfer": {
       "title": "Transferați proprietatea",
-      "requestSuccess": "Solicitare de transfer de comandă trimisă la: {{email}}.",
+      "requestSuccess": "Solicitarea de transfer de comandă a fost trimisă către {{customerDetails}}.",
       "currentOwner": "Actual proprietar",
       "newOwner": "Noul proprietar",
       "currentOwnerDescription": "Clientul se referă în prezent la această comandă.",
-      "newOwnerDescription": "Clientului să transfere această comandă."
+      "newOwnerDescription": "Clientului să transfere această comandă.",
+      "errors": {
+        "orderChangeAlreadyExists": "Comanda nu poate fi transferată deoarece există o solicitare de transfer activă."
+      }
     },
     "payment": {
       "title": "Plăți",
@@ -1254,7 +1261,9 @@
     "shipment": {
       "title": "Marcați îndeplinirea expediate",
       "trackingNumber": "Număr de urmărire",
+      "trackingUrl": "URL de urmărire",
       "addTracking": "Adăugați numărul de urmărire",
+      "hideTracking": "Ascundeți numărul de urmărire",
       "sendNotification": "Trimite o notificare",
       "sendNotificationHint": "Notificați clientul despre această expediere.",
       "toastCreated": "Expedierea a fost creată cu succes."
@@ -2871,6 +2880,9 @@
     "customer": "Client",
     "date": "Data",
     "order": "Comanda",
+    "orderId": "ID comandă",
+    "groupId": "ID grup",
+    "vendor": "Furnizor",
     "fulfillment": "Îndeplinire",
     "provider": "Furnizor",
     "payment": "Plată",

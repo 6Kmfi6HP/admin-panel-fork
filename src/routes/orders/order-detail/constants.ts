@@ -31,19 +31,19 @@ const DEFAULT_PROPERTIES = [
 ];
 
 const DEFAULT_RELATIONS = [
-  '*customer',
-  '*items', // -> we get LineItem here with added `quantity` and `detail` which is actually an OrderItem (which is a parent object to LineItem in the DB)
-  '*items.variant',
-  '*items.variant.product',
-  '*items.variant.options',
-  '+items.variant.manage_inventory',
-  '*items.variant.inventory_items.inventory',
-  '+items.variant.inventory_items.required_quantity',
-  '+summary',
-  '*shipping_address',
-  '*billing_address',
-  '*sales_channel',
-  '*seller',
+  "*seller",
+  "*customer",
+  "*items", // -> we get LineItem here with added `quantity` and `detail` which is actually an OrderItem (which is a parent object to LineItem in the DB)
+  "*items.variant",
+  "*items.variant.product",
+  "*items.variant.options",
+  "+items.variant.manage_inventory",
+  "*items.variant.inventory_items.inventory",
+  "+items.variant.inventory_items.required_quantity",
+  "+summary",
+  "*shipping_address",
+  "*billing_address",
+  "*sales_channel",
   // "*promotions",
   '*shipping_methods',
   '*credit_lines',
