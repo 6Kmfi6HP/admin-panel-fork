@@ -1,4 +1,4 @@
-import { Container, Heading, StatusBadge, Text } from '@medusajs/ui';
+import { Button, Container, Heading, StatusBadge, Text } from '@medusajs/ui';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -12,11 +12,7 @@ export const OrderRemainingOrdersGroupSection = () => {
   const { t } = useTranslation();
   const { getFullDate } = useDate();
 
-  const { data, isLoading } = useOrderSet(id!);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const { data } = useOrderSet(id!);
 
   const { order_sets } = data || {};
 
@@ -39,20 +35,19 @@ export const OrderRemainingOrdersGroupSection = () => {
       >
         Other orders from this group #{display_id}
       </Heading>
-      {orders.map(order => {
-        const paymentStatus = getOrderPaymentStatus(t, order.payment_status ?? 'not_paid');
-        const fulfillmentStatus = getOrderFulfillmentStatus(
-          t,
-          order.fulfillment_status ?? 'not_fulfilled'
-        );
+      <div data-testid="order-remaining-orders-group-list">
+        {orders.map(order => {
+          const paymentStatus = getOrderPaymentStatus(t, order.payment_status ?? 'not_paid');
+          const fulfillmentStatus = getOrderFulfillmentStatus(
+            t,
+            order.fulfillment_status ?? 'not_fulfilled'
+          );
 
-        return (
-          <div
-            className="items-center px-6 py-4 text-ui-fg-base"
-            key={order.id}
-          >
-            <div
-              className="flex cursor-pointer items-center justify-between py-2"
+          return (
+            <Button
+              variant="secondary"
+              key={order.id}
+              className="cursor-pointer w-full flex text-left mt-4"
               onClick={() => {
                 navigate(`/orders/${order.id}`);
               }}
@@ -82,10 +77,10 @@ export const OrderRemainingOrdersGroupSection = () => {
                 <StatusBadge color={paymentStatus.color}>{paymentStatus.label}</StatusBadge>
                 <StatusBadge color={fulfillmentStatus.color}>{fulfillmentStatus.label}</StatusBadge>
               </div>
-            </div>
-          </div>
-        );
-      })}
+            </Button>
+          );
+        })}
+      </div>
     </Container>
   );
 };
